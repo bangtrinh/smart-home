@@ -8,9 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TopicDTO {
+public class SubscribeDTO {
     private Long id;
-    private String name;
-    private String path;
-    private String latest_data;
+    private Long userId;
+    private Long topicId;
 }

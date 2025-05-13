@@ -7,6 +7,8 @@ import com.project.IOT.entities.User;
 import com.project.IOT.responsitories.RoleRepository;
 import com.project.IOT.responsitories.UserRepository;
 import com.project.IOT.Config.JwtUtil;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -156,5 +158,11 @@ public class UserService implements UserDetailsService {
             .map(Role::getName)
             .collect(Collectors.toSet()));
         return dto;
+    }
+
+    public User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

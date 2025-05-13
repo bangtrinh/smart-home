@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface TopicRepository extends JpaRepository<Topic, Long> {
     Optional<Topic> findFirstByPath(String path);
+    Optional<Topic> findById(Long id);
 }

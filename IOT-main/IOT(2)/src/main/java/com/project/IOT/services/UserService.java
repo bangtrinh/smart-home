@@ -57,6 +57,12 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Email already exists");
         }
 
+        //kiểm tra tên đăng nhập đã tồn tại
+        if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
+            System.out.println("Username already exists: " + userDTO.getUsername());
+            throw new RuntimeException("Username already exists");
+        }
+
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());

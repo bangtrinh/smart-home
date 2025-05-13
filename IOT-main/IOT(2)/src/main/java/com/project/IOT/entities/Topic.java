@@ -26,7 +26,7 @@ public class Topic {
     @Column(nullable = false)
     private Boolean subscribe = true;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String latest_data;
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)

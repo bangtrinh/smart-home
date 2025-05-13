@@ -53,7 +53,7 @@ public class SubscribeServiceImpl implements SubscribeService {
     @Override
     public String subscribeToTopic(SubscribeDTO subscribeDTO) {
         Optional<Subscribe> existingSubscribe = subscribeRepository
-                                                .findByTopicIdAndUserId(
+                                                .findByUserIdAndTopicId(
                                                 subscribeDTO.getUserId(),
                                                 subscribeDTO.getTopicId());                                    
         Subscribe subscribe;
@@ -78,7 +78,7 @@ public class SubscribeServiceImpl implements SubscribeService {
     @Override
     public String unsubscribeTopic(SubscribeDTO subscribeDTO) {
         Subscribe existingSubscribe = subscribeRepository
-                .findByTopicIdAndUserId(subscribeDTO.getUserId(), subscribeDTO.getTopicId())
+                .findByUserIdAndTopicId(subscribeDTO.getUserId(), subscribeDTO.getTopicId())
                 .orElseThrow(() -> new RuntimeException("Subscription not found"));
         if (existingSubscribe != null) {
             subscribeRepository.delete(existingSubscribe);

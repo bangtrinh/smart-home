@@ -22,9 +22,6 @@ public class Topic {
 
     @Column(nullable = false)
     private String path;
-    
-    @Column(nullable = false)
-    private Boolean subscribe = true;
 
     @Column(nullable = true)
     private String latest_data;

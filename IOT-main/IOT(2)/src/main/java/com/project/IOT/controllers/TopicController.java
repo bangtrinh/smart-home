@@ -23,16 +23,16 @@ public class TopicController {
         return ResponseEntity.status(HttpStatus.OK).body(topicService.getAllTopic());
     }
     @PostMapping("/subscribeToTopic")
-    public ResponseEntity<String> subscribeToTopic(@RequestBody TopicDTO topicDTO) throws MqttException {
+    public ResponseEntity<String> subscribeToTopic(@RequestBody TopicDTO topicDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(topicService.subscribeToTopic(topicDTO));
     }
     @PostMapping("/unsubscribeToTopic")
-    public ResponseEntity<String> unsubscribeToTopic(@RequestBody TopicDTO topicDTO) throws MqttException {
+    public ResponseEntity<String> unsubscribeToTopic(@RequestBody TopicDTO topicDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(topicService.unsubscribeTopic(topicDTO));
     }
 
     @PutMapping("/updateTopic/{topicId}")
-    public ResponseEntity<String> updateTopic(@PathVariable int topicId, @RequestBody TopicDTO topicDTO) throws MqttException {
+    public ResponseEntity<String> updateTopic(@PathVariable int topicId, @RequestBody TopicDTO topicDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(topicService.updateTopic(topicId, topicDTO.getName(), topicDTO.getPath()));
     }
 }

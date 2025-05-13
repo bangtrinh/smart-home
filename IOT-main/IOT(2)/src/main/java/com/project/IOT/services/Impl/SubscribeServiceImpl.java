@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.stereotype.Service;
 
 import com.project.IOT.dtos.SubscribeDTO;
@@ -25,6 +27,7 @@ public class SubscribeServiceImpl implements SubscribeService {
     private final UserRepository userRepository;
     private final TopicRepository topicRepository;
     private final SubscribeRepository subscribeRepository;
+    private final MqttClient mqttClient;
 
     // Implement the methods from SubscribeService interface here
     @Override
@@ -51,7 +54,7 @@ public class SubscribeServiceImpl implements SubscribeService {
     }
 
     @Override
-    public String subscribeToTopic(SubscribeDTO subscribeDTO) {
+    public String subscribeToTopic(SubscribeDTO subscribeDTO) throws MqttException{
         Optional<Subscribe> existingSubscribe = subscribeRepository
                                                 .findByUserIdAndTopicId(
                                                 subscribeDTO.getUserId(),
@@ -70,17 +73,22 @@ public class SubscribeServiceImpl implements SubscribeService {
             subscribe = new Subscribe();
             subscribe.setUser(user);
             subscribe.setTopic(topic);
+            mqttClient.subscribe(topic.getPath());
         }
         subscribeRepository.save(subscribe);
         return "Subscribed to topic: " + subscribeDTO.getTopicId();       
     }
 
     @Override
-    public String unsubscribeTopic(SubscribeDTO subscribeDTO) {
+    public String unsubscribeTopic(SubscribeDTO subscribeDTO) throws MqttException{
         Subscribe existingSubscribe = subscribeRepository
                 .findByUserIdAndTopicId(subscribeDTO.getUserId(), subscribeDTO.getTopicId())
                 .orElseThrow(() -> new RuntimeException("Subscription not found"));
         if (existingSubscribe != null) {
+            Topic topic = existingSubscribe.getTopic();
+            if (topic != null) {
+                mqttClient.unsubscribe(topic.getPath());
+            }
             subscribeRepository.delete(existingSubscribe);
             return "Unsubscribed from topic: " + subscribeDTO.getTopicId();
         }

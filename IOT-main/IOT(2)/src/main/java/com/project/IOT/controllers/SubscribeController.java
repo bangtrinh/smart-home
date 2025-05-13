@@ -2,6 +2,7 @@ package com.project.IOT.controllers;
 
 import java.util.List;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,13 +32,13 @@ public class SubscribeController {
     }
 
     @PostMapping("/subscribeToTopic")
-    public ResponseEntity<String> subscribeToTopic(@RequestBody SubscribeDTO subscribeDTO) {
+    public ResponseEntity<String> subscribeToTopic(@RequestBody SubscribeDTO subscribeDTO) throws MqttException{
         String response = subscribeService.subscribeToTopic(subscribeDTO);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/unsubscribeToTopic")
-    public ResponseEntity<String> unsubscribeToTopic(@RequestBody SubscribeDTO subscribeDTO) {
+    public ResponseEntity<String> unsubscribeToTopic(@RequestBody SubscribeDTO subscribeDTO) throws MqttException{
         String response = subscribeService.unsubscribeTopic(subscribeDTO);
         return ResponseEntity.ok(response);
     }

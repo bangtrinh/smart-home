@@ -49,9 +49,9 @@ public class MqttServiceImpl implements MqttService {
                 .orElseThrow(() -> new EntityNotFoundException("Topic not found with id: " + mqttDTO.getIdTopic()));
         
         mqttClient.publish(existingTopic.getPath() , mqttMessage);
+        existingTopic.setLatest_data(mqttMessage.toString());
 
         TopicDTO topicDTO = topicMapper.toDTO(existingTopic);
-        topicDTO.setPath("NoData");
 
         messagingTemplate.convertAndSend("/topic/mqtt", topicDTO);
         mqttResponsitory.save(mqttMapper.toEntity(mqttDTO, existingTopic));

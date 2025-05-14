@@ -38,6 +38,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticat
             .requestMatchers("/api/mqtt/**").permitAll()
             .requestMatchers("/api/topic/**").permitAll()
             .requestMatchers("/api/subscribe/**").permitAll()
+            .requestMatchers("/api/forgot-password/**").permitAll()
             .requestMatchers("/api/admin/**").hasRole("ADMIN")
             .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
             .anyRequest().authenticated()

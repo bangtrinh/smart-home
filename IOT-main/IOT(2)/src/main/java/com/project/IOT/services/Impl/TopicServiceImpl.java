@@ -46,6 +46,7 @@ public class TopicServiceImpl implements TopicService {
             }
         } else {
             topic = topicMapper.toEntity(topicDTO);
+            topic.setLatest_data("*A: 0");
         }
         topicRepository.save(topic);
         return "Subscribed to topic: " + topicDTO.getPath();

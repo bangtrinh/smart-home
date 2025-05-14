@@ -16,11 +16,11 @@ public class Subscribe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", unique = true, nullable = false)
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "topic_id", unique = true, nullable = false)
     private Topic topic;
 }

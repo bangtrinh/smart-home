@@ -98,11 +98,11 @@ public class UserService implements UserDetailsService {
         user.setResetToken(token);
         userRepository.save(user);
 
-        String resetLink = "http://localhost:8080/api/auth/reset-password?token=" + token;
+        String resetLink = token;
         emailService.sendEmail(
             email,
             "Password Reset Request",
-            "Click here to reset your password: " + resetLink
+            "Use this token to reset your password: " + resetLink
         );
     }
 
@@ -113,6 +113,15 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setResetToken(null);
         userRepository.save(user);
+    }
+
+    public boolean isValidToken(String token) {
+        User user = userRepository.findByResetToken(token)
+            .orElseThrow(() -> new ResourceNotFoundException("Invalid reset token"));
+        if (user != null) {
+            return true;
+        }
+        return false;
     }
 
     public UserDTO createAdmin(UserDTO userDTO) {

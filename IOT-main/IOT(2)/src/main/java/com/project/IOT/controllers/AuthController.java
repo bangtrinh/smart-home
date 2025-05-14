@@ -1,12 +1,15 @@
 package com.project.IOT.controllers;
 
 import com.project.IOT.dtos.LoginRequest;
+import com.project.IOT.dtos.ResetPasswordRequest;
 import com.project.IOT.dtos.UserDTO;
 import com.project.IOT.entities.User;
 import com.project.IOT.responsitories.UserRepository;
 import com.project.IOT.Config.JwtUtil;
 import com.project.IOT.Exception.ResourceNotFoundException;
 import com.project.IOT.services.UserService; // Đảm bảo import
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -78,7 +81,78 @@ public class AuthController {
             throw e;
         }
     }
+   @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            System.out.println("Forgot password request for email: " + email);
+            
+            userService.sendResetPasswordEmail(email);
+            
+            // Trả về response thống nhất với các API khác
+            return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "message", "If this email exists, a reset link has been sent"
+            ));
+        } catch (ResourceNotFoundException e) {
+            // Vẫn trả về success nhưng không tiết lộ email có tồn tại hay không
+            return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "message", "If this email exists, a reset link has been sent"
+            ));
+        } catch (Exception e) {
+            System.out.println("Forgot password error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                    "status", "error",
+                    "message", "Error processing your request"
+                ));
+        }
+    }
 
+    @PostMapping("/confirm-token")
+    public ResponseEntity<String> showResetPage(@RequestBody Map<String, String> body) {
+        String token = body.get("token");
+        System.out.println("Token received: " + token);
+
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.badRequest().body("Token is required");
+        }
+
+        // Kiểm tra token hợp lệ
+        if (!userService.isValidToken(token)) {
+            return ResponseEntity.badRequest().body("Invalid token");
+        }
+
+        return ResponseEntity.ok("Token valid - Proceed to Flutter reset screen");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetRequest) {
+        try {
+            System.out.println("Reset password request with token: " + resetRequest.getToken());
+            
+            userService.resetPassword(resetRequest.getToken(), resetRequest.getNewPassword());
+            
+            return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "message", "Password has been reset successfully"
+            ));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                    "status", "error",
+                    "message", "Invalid or expired reset token"
+                ));
+        } catch (Exception e) {
+            System.out.println("Reset password error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                    "status", "error",
+                    "message", "Error resetting password"
+                ));
+        }
+    }
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());

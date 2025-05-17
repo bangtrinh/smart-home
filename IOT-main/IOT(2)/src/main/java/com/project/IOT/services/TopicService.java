@@ -1,7 +1,7 @@
 package com.project.IOT.services;
-import com.project.IOT.dtos.TopicDTO;
-
 import java.util.List;
+
+import com.project.IOT.DTOS.TopicDTO;
 
 public interface TopicService {
     List<TopicDTO> getAllTopic();

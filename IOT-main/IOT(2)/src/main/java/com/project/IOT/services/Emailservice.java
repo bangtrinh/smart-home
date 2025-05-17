@@ -5,10 +5,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
-public class Emailservice {
+public class EmailService {
     private final JavaMailSender mailSender;
 
-    public Emailservice(JavaMailSender mailSender) {
+    public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
@@ -19,5 +19,5 @@ public class Emailservice {
         message.setText(text);
         message.setFrom("quanlisvhs@gmail.com");
         mailSender.send(message);
-    }
+    }    
 }

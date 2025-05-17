@@ -1,13 +1,13 @@
 package com.project.IOT.listener;
 
+import com.project.IOT.DTOS.MqttDTO;
+import com.project.IOT.DTOS.TopicDTO;
+import com.project.IOT.Entities.Mqtt;
+import com.project.IOT.Entities.Topic;
 import com.project.IOT.Mapper.MqttMapper;
 import com.project.IOT.Mapper.TopicMapper;
-import com.project.IOT.dtos.MqttDTO;
-import com.project.IOT.dtos.TopicDTO;
-import com.project.IOT.entities.Mqtt;
-import com.project.IOT.entities.Topic;
-import com.project.IOT.responsitories.MqttResponsitory;
-import com.project.IOT.responsitories.TopicRepository;
+import com.project.IOT.Repositories.MqttResponsitory;
+import com.project.IOT.Repositories.TopicRepository;
 import com.project.IOT.services.MqttService;
 
 import com.project.IOT.services.TopicService;

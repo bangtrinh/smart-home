@@ -1,7 +1,8 @@
-package com.project.IOT.responsitories;
+package com.project.IOT.Repositories;
 
-import com.project.IOT.entities.Mqtt;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.project.IOT.Entities.Mqtt;
 
 public interface MqttResponsitory extends JpaRepository<Mqtt, Long> {
 

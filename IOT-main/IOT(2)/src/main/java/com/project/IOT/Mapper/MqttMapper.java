@@ -1,8 +1,9 @@
 package com.project.IOT.Mapper;
 
-import com.project.IOT.dtos.MqttDTO;
-import com.project.IOT.entities.Mqtt;
-import com.project.IOT.entities.Topic;
+import com.project.IOT.DTOS.MqttDTO;
+import com.project.IOT.Entities.Mqtt;
+import com.project.IOT.Entities.Topic;
+
 import org.springframework.stereotype.Component;
 
 @Component

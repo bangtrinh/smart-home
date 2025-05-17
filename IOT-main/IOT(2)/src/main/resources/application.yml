@@ -2,7 +2,7 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:sqlserver://DESKTOP-L285G29\\SQLEXPRESS:1433;databaseName=hethongiot;encrypt=true;trustServerCertificate=true
+    url: jdbc:sqlserver://DESKTOP-L285G29\\SQLEXPRESS:1433;databaseName=smarthome;encrypt=true;trustServerCertificate=true
     username: sa
     password: ABC123
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -26,3 +26,4 @@ spring:
 jwt:
   secret: mySuperSecretKeyForJWTWhichIsLongEnough123! # Thay đổi chuỗi bí mật
   expiration: 86400000
+

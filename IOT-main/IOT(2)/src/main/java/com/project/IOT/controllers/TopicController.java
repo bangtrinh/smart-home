@@ -1,6 +1,6 @@
 package com.project.IOT.controllers;
 
-import com.project.IOT.dtos.TopicDTO;
+import com.project.IOT.DTOS.TopicDTO;
 import com.project.IOT.services.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.paho.client.mqttv3.MqttException;

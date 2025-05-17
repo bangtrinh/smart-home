@@ -1,4 +1,4 @@
-package com.project.IOT.entities;
+package com.project.IOT.Entities;
 
 import jakarta.persistence.*;
 import lombok.*;

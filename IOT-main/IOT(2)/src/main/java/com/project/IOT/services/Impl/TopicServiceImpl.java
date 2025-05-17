@@ -1,9 +1,9 @@
 package com.project.IOT.services.Impl;
 
+import com.project.IOT.DTOS.TopicDTO;
+import com.project.IOT.Entities.Topic;
 import com.project.IOT.Mapper.TopicMapper;
-import com.project.IOT.dtos.TopicDTO;
-import com.project.IOT.entities.Topic;
-import com.project.IOT.responsitories.TopicRepository;
+import com.project.IOT.Repositories.TopicRepository;
 import com.project.IOT.services.TopicService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

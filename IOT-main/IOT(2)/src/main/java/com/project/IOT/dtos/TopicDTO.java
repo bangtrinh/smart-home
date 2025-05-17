@@ -1,8 +1,7 @@
-package com.project.IOT.dtos;
+package com.project.IOT.DTOS;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 
 @Getter
 @Setter

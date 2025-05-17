@@ -1,7 +1,8 @@
 package com.project.IOT.Mapper;
 
-import com.project.IOT.dtos.TopicDTO;
-import com.project.IOT.entities.Topic;
+import com.project.IOT.DTOS.TopicDTO;
+import com.project.IOT.Entities.Topic;
+
 import org.springframework.stereotype.Component;
 
 @Component

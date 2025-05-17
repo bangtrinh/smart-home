@@ -1,6 +1,6 @@
 package com.project.IOT.controllers;
 
-import com.project.IOT.dtos.TopicDTO;
+import com.project.IOT.DTOS.TopicDTO;
 import com.project.IOT.services.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -23,16 +23,16 @@ public class TopicController {
         return ResponseEntity.status(HttpStatus.OK).body(topicService.getAllTopic());
     }
     @PostMapping("/subscribeToTopic")
-    public ResponseEntity<String> subscribeToTopic(@RequestBody TopicDTO topicDTO) throws MqttException {
+    public ResponseEntity<String> subscribeToTopic(@RequestBody TopicDTO topicDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(topicService.subscribeToTopic(topicDTO));
     }
     @PostMapping("/unsubscribeToTopic")
-    public ResponseEntity<String> unsubscribeToTopic(@RequestBody TopicDTO topicDTO) throws MqttException {
+    public ResponseEntity<String> unsubscribeToTopic(@RequestBody TopicDTO topicDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(topicService.unsubscribeTopic(topicDTO));
     }
 
     @PutMapping("/updateTopic/{topicId}")
-    public ResponseEntity<String> updateTopic(@PathVariable int topicId, @RequestBody TopicDTO topicDTO) throws MqttException {
+    public ResponseEntity<String> updateTopic(@PathVariable int topicId, @RequestBody TopicDTO topicDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(topicService.updateTopic(topicId, topicDTO.getName(), topicDTO.getPath()));
     }
 }

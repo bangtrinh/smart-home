@@ -1,15 +1,11 @@
 package com.project.IOT.Config;
 
-import com.project.IOT.entities.Topic;
-import com.project.IOT.responsitories.TopicRepository;
-import lombok.RequiredArgsConstructor;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
 
 @Configuration
 public class MqttConfig {

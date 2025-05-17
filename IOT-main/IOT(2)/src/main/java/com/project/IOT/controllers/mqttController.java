@@ -2,7 +2,7 @@ package com.project.IOT.controllers;
 
 import java.util.List;
 
-import com.project.IOT.dtos.MqttDTO;
+import com.project.IOT.DTOS.MqttDTO;
 import com.project.IOT.services.MqttService;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.http.HttpStatus;

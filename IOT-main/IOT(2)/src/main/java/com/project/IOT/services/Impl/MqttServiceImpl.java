@@ -2,12 +2,12 @@ package com.project.IOT.services.Impl;
 
 import com.project.IOT.Mapper.MqttMapper;
 import com.project.IOT.Mapper.TopicMapper;
-import com.project.IOT.dtos.MqttDTO;
-import com.project.IOT.dtos.TopicDTO;
-import com.project.IOT.entities.Mqtt;
-import com.project.IOT.entities.Topic;
-import com.project.IOT.responsitories.MqttResponsitory;
-import com.project.IOT.responsitories.TopicRepository;
+import com.project.IOT.DTOS.MqttDTO;
+import com.project.IOT.DTOS.TopicDTO;
+import com.project.IOT.Entities.Mqtt;
+import com.project.IOT.Entities.Topic;
+import com.project.IOT.Repositories.MqttResponsitory;
+import com.project.IOT.Repositories.TopicRepository;
 import com.project.IOT.services.MqttService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -47,15 +47,14 @@ public class MqttServiceImpl implements MqttService {
         mqttMessage.setQos(1);
         Topic existingTopic = topicRepository.findById(mqttDTO.getIdTopic())
                 .orElseThrow(() -> new EntityNotFoundException("Topic not found with id: " + mqttDTO.getIdTopic()));
-        if(!existingTopic.getSubscribe()){
-            return "hiện chưa được đăng kí.";
-        }
+        
         mqttClient.publish(existingTopic.getPath() , mqttMessage);
 
         TopicDTO topicDTO = topicMapper.toDTO(existingTopic);
         topicDTO.setPath("NoData");
 
         messagingTemplate.convertAndSend("/topic/mqtt", topicDTO);
+        mqttResponsitory.save(mqttMapper.toEntity(mqttDTO, existingTopic));
 
         return "Đã publish: " + mqttDTO.getValue() + " tới topic: " + mqttDTO.getIdTopic();
     }

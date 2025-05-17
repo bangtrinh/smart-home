@@ -1,8 +1,9 @@
-package com.project.IOT.dtos;
+package com.project.IOT.DTOS;
 
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
 
 import java.util.Set;
 @Getter

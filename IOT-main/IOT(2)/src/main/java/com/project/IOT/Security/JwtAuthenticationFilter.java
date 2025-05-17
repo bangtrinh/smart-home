@@ -28,16 +28,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, 
-                                  HttpServletResponse response, 
-                                  FilterChain filterChain)
+                                HttpServletResponse response, 
+                                FilterChain filterChain)
             throws ServletException, IOException {
+        
+        logger.info("Processing request: " + request.getServletPath());
+            // Bỏ qua các endpoint không cần xác thực
+            if (request.getServletPath().startsWith("/api/auth")) {
+                logger.info("Bypassing JWT filter for: " + request.getServletPath());
+                filterChain.doFilter(request, response);
+                return;
+            }
+
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            username = jwtUtil.getUsernameFromToken(token);
+            try {
+                username = jwtUtil.getUsernameFromToken(token);
+            } catch (Exception e) {
+                logger.error("Error extracting username from token", e);
+            }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

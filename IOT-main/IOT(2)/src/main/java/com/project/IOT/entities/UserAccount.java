@@ -33,10 +33,6 @@ public class UserAccount {
     private String email;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private HomeOwner owner;
-
-    @ManyToOne
     @JoinColumn(name = "contract_id")
     private Contract contract;
 

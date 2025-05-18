@@ -3,8 +3,6 @@ package com.project.IOT.Entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "data")
 @Getter

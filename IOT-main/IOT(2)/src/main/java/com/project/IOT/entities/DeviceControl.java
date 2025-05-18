@@ -31,7 +31,4 @@ public class DeviceControl {
 
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
-
-    @Column(nullable = false)
-    private String status;
 }

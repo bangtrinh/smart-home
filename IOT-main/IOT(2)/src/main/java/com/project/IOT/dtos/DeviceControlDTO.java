@@ -23,5 +23,4 @@ public class DeviceControlDTO {
     private Long deviceId;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private String status;
 }

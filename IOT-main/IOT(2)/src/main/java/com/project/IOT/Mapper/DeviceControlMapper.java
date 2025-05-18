@@ -13,8 +13,7 @@ public class DeviceControlMapper {
                 entity.getUser().getId(),
                 entity.getDevice().getId(),
                 entity.getStartDate(),
-                entity.getEndDate(),
-                entity.getStatus()
+                entity.getEndDate()
         );
     }
 
@@ -25,7 +24,6 @@ public class DeviceControlMapper {
                 .device(device)
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
-                .status(dto.getStatus())
                 .build();
     }
 }

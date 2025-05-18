@@ -17,7 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserAccountServiceImpl implements UserAccountService {
@@ -50,7 +54,14 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new IllegalArgumentException("Password is required");
         }
         UserAccount user = UserAccountMapper.toEntity(dto);
-        user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
+        user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));  
+
+        if (dto.getRoles() == null) {
+            Role defaultRole = roleRepository.findByName("GUEST")
+                .orElseThrow(() -> new RuntimeException("Default role not found"));
+            user.setRoles(Set.of(defaultRole));
+        }
+        
         user = userAccountRepository.save(user);
         return UserAccountMapper.toDto(user);
     }
@@ -64,6 +75,14 @@ public class UserAccountServiceImpl implements UserAccountService {
         user.setEmail(dto.getEmail());
         if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
             user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
+        }
+        if (dto.getRoles() != null) {
+            Set<Role> roles = dto.getRoles().stream()
+                    .map(roleRepository::findByName)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());            
+            user.setRoles(roles);
         }
         user = userAccountRepository.save(user);
         return UserAccountMapper.toDto(user);
@@ -125,5 +144,27 @@ public class UserAccountServiceImpl implements UserAccountService {
         user.getRoles().add(role);
         user = userAccountRepository.save(user);
         return UserAccountMapper.toDto(user);
+    }
+
+    @Override
+    public UserAccountDTO getUserById(Long userId) {
+        UserAccount user = userAccountRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return UserAccountMapper.toDto(user);
+    }
+
+    @Override
+    public List<UserAccountDTO> getAllUsers() {
+        return userAccountRepository.findAll().stream()
+                .map(UserAccountMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void deleteUserAccount(Long userId) {
+        UserAccount user = userAccountRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        userAccountRepository.delete(user);
     }
 }

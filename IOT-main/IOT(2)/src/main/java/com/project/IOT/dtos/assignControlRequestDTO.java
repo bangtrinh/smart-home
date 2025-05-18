@@ -6,6 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Data
-public class ResetPasswordRequest {
-    private String email;
+public class assignControlRequestDTO {
+    String email;
+    Long deviceId;
+    Long userId;
+    String endDate;
 }

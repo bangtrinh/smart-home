@@ -2,19 +2,14 @@ package com.project.IOT.services.Impl;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
-import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.IOT.DTOS.OTPDTO;
 import com.project.IOT.Entities.HomeOwner;
 import com.project.IOT.Entities.OTP;
-import com.project.IOT.Entities.UserAccount;
 import com.project.IOT.Repositories.HomeOwnerRepository;
 import com.project.IOT.Repositories.OtpRepository;
-import com.project.IOT.Repositories.UserAccountRepository;
-import com.project.IOT.services.EmailService;
 import com.project.IOT.services.OtpService;
 import com.project.IOT.Mapper.*;
 
@@ -28,8 +23,6 @@ public class OtpServiceImpl implements OtpService {
     private OtpRepository otpRepository;
     @Autowired
     private HomeOwnerRepository homeOwnerRepository;
-    @Autowired
-    private EmailService emailService;
 
     @Override
     @Transactional
@@ -44,16 +37,18 @@ public class OtpServiceImpl implements OtpService {
         }
         OTP otp = new OTP();
         otp.setOtpCode(otpCode);
-        otp.setExpiresAt(LocalDateTime.now().plusMinutes(5));
+        otp.setOwner(owner);
+        otp.setExpiresAt(LocalDateTime.now().plusMinutes(10));
+        otp.setCreatedAt(LocalDateTime.now());
         otp.setUsed(false);
         otpRepository.save(otp);
-        emailService.sendEmail(owner.getEmail(), "Your OTP code is: ",otpCode);
         return OTPMapper.toDto(otp);
     }
 
     @Override
     public boolean verifyOtp(String otpCode, Long ownerId) {
-        OTP otp = otpRepository.findByOtpCodeAndOwnerId(otpCode, ownerId);
+        OTP otp = otpRepository.findTopByOwnerIdAndOtpCodeOrderByCreatedAtDesc(ownerId, otpCode)
+                .orElse(null);
         if (otp == null || otp.isUsed() || otp.getExpiresAt().isBefore(LocalDateTime.now())) {
             return false;
         }

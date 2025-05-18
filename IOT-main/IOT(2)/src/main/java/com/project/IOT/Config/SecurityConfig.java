@@ -61,6 +61,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return username -> {
             UserAccount user = userAccountService.findByUsername(username);
+            
             if (user == null) {
                 throw new UsernameNotFoundException("User not found: " + username);
             }

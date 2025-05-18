@@ -9,4 +9,5 @@ public interface OtpRepository extends JpaRepository<OTP, Long> {
     Optional<OTP> findByOtpCodeAndUsedFalse(String otpCode);
 
     OTP findByOtpCodeAndOwnerId(String otpCode, Long ownerId);
+    Optional<OTP> findTopByOwnerIdAndOtpCodeOrderByCreatedAtDesc(Long ownerId, String otpCode);
 }

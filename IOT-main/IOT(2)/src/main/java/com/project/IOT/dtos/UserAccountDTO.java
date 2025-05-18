@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserAccountDTO {
     private Long id;
+    private Long contractId;
     private String username;
     private String email;
     private String password;

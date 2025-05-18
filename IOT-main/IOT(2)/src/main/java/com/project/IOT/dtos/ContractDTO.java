@@ -2,7 +2,6 @@ package com.project.IOT.DTOS;
 
 import lombok.Data;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 import lombok.Getter;

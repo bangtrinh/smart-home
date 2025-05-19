@@ -1,13 +1,14 @@
 package com.project.IOT.services.Impl;
 
-import com.project.IOT.Mapper.MqttMapper;
-import com.project.IOT.Mapper.TopicMapper;
+import com.project.IOT.Mapper.DeviceControlHistoryMapper;
+import com.project.IOT.DTOS.DeviceControlHistoryDTO;
 import com.project.IOT.DTOS.MqttDTO;
-import com.project.IOT.DTOS.TopicDTO;
-import com.project.IOT.Entities.Mqtt;
-import com.project.IOT.Entities.Topic;
-import com.project.IOT.Repositories.MqttResponsitory;
-import com.project.IOT.Repositories.TopicRepository;
+import com.project.IOT.Entities.Contract;
+import com.project.IOT.Entities.Device;
+import com.project.IOT.Entities.DeviceControlHistory;
+import com.project.IOT.Entities.UserAccount;
+import com.project.IOT.Repositories.DeviceControlHistoryRepository;
+import com.project.IOT.Repositories.DeviceRepository;
 import com.project.IOT.services.MqttService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,45 +18,49 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class MqttServiceImpl implements MqttService {
 
-    private final MqttResponsitory mqttResponsitory;
-    private final TopicRepository topicRepository;
-    private final MqttMapper mqttMapper;
     private final MqttClient mqttClient;
     private final SimpMessagingTemplate messagingTemplate;
-    private final TopicMapper topicMapper;
+    private final DeviceControlHistoryRepository deviceControlHistoryRepository;
+    private final DeviceRepository deviceRepository;
+
 
     @Override
-    public List<MqttDTO> getAllData() {
-        List<Mqtt> mqtts = mqttResponsitory.findAll();
-        List<MqttDTO> mqttDTOS = new ArrayList<>();
-        for (Mqtt mqtt : mqtts) {
-            mqttDTOS.add(mqttMapper.toDTO(mqtt));
-        }
-        return mqttDTOS;
-    }
-
-    @Override
-    public String publishMessage(MqttDTO mqttDTO) throws MqttException {
+    public String publishMessage(MqttDTO mqttDTO, UserAccount userAccount) throws MqttException {
         MqttMessage mqttMessage = new MqttMessage(mqttDTO.getValue().getBytes());
         mqttMessage.setQos(1);
-        Topic existingTopic = topicRepository.findById(mqttDTO.getIdTopic())
-                .orElseThrow(() -> new EntityNotFoundException("Topic not found with id: " + mqttDTO.getIdTopic()));
-        
-        mqttClient.publish(existingTopic.getPath() , mqttMessage);
 
-        TopicDTO topicDTO = topicMapper.toDTO(existingTopic);
-        topicDTO.setPath("NoData");
+        //Tạo 1 path có dạng: /contract/{contractId}/device/{deviceId}/user/{userId}
+        String path = String.format("/contract/%d/device/%d", mqttDTO.getContractId(), mqttDTO.getDeviceId());
+        mqttClient.subscribe(path);
 
-        messagingTemplate.convertAndSend("/topic/mqtt", topicDTO);
-        mqttResponsitory.save(mqttMapper.toEntity(mqttDTO, existingTopic));
+        // Publish đến MQTT broker
+        mqttClient.publish(path, mqttMessage);
 
-        return "Đã publish: " + mqttDTO.getValue() + " tới topic: " + mqttDTO.getIdTopic();
+        // Gửi thông báo qua WebSocket tới client đang sub /topic/mqtt
+        messagingTemplate.convertAndSend("/topic/mqtt", mqttDTO);
+        // Lưu lịch sử điều khiển thiết bị
+        DeviceControlHistoryDTO historyDTO = new DeviceControlHistoryDTO();
+        historyDTO.setActionTimestamp(LocalDateTime.now());
+        historyDTO.setAction(mqttDTO.getValue());
+
+        // Tìm kiếm thiết bị theo ID
+        Device device = deviceRepository.findById(mqttDTO.getDeviceId())
+                .orElseThrow(() -> new EntityNotFoundException("Thiết bị không tồn tại"));
+        // Tìm kiếm hợp đồng theo ID
+        Contract contract = device.getContract();
+        if (contract == null) {
+            throw new EntityNotFoundException("Hợp đồng không tồn tại");
+        }
+        // Chuyển đổi DTO thành Entity
+        DeviceControlHistory history = DeviceControlHistoryMapper.toEntity(historyDTO, userAccount, device, contract);
+        // Lưu lịch sử vào cơ sở dữ liệu
+        deviceControlHistoryRepository.save(history);
+        return "Đã publish: " + mqttDTO.getValue() + " tới topic: " + path;
     }
 }

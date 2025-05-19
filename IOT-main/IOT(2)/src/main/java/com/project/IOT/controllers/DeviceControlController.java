@@ -52,7 +52,7 @@ public class DeviceControlController {
 
         DeviceControlDTO dto = new DeviceControlDTO();
         dto.setUserId(confirmDTO.getUserId());
-        dto.setDeviceId(confirmDTO.getDeviceId());
+        dto.setDeviceId(confirmDTO.getObjectId());
         dto.setEndDate(confirmDTO.getEndDate());
         DeviceControlDTO result = deviceControlService.assignControl(dto);
         return ResponseEntity.ok(result);

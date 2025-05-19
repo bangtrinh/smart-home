@@ -87,7 +87,7 @@ public class DeviceControlServiceImpl implements DeviceControlService {
         UserAccount user = userAccountRepository.findById(requestDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        String message = "User " + user.getUsername() + " requested access to device " + requestDTO.getDeviceId()
+        String message = "User " + user.getUsername() + " requested access to device " + requestDTO.getObjectId()
                 + " until " + requestDTO.getEndDate() + ".\n"
                 + "Please use the OTP code to confirm the request: " + otp.getOtpCode();
         emailService.sendEmail(homeOwner.getEmail(), "Verify Device Control Permission", message);

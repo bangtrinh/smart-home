@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class MqttDTO {
-    private long idTopic;
     private String value;
+    private Long deviceId;
+    private Long contractId;
 }

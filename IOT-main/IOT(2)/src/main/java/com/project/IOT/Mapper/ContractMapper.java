@@ -6,7 +6,7 @@ import com.project.IOT.Entities.HomeOwner;
 
 public class ContractMapper {
     // Convert Contract entity to ContractDTO
-    public ContractDTO toDto(Contract contract) {
+    public static ContractDTO toDto(Contract contract) {
         return ContractDTO.builder()
                 .contractId(contract.getId())
                 .contractCode(contract.getContractCode())
@@ -19,7 +19,7 @@ public class ContractMapper {
 
 
     // Convert ContractDTO to Contract entity
-    public Contract toEntity(ContractDTO dto, HomeOwner owner) {
+    public static Contract toEntity(ContractDTO dto, HomeOwner owner) {
         return Contract.builder()
                 .id(dto.getContractId())
                 .contractCode(dto.getContractCode())

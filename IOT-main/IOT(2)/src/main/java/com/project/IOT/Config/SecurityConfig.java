@@ -43,6 +43,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/device-control/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
                 .requestMatchers("/api/otp/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/homeowner/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
+                .requestMatchers("/api/contract/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

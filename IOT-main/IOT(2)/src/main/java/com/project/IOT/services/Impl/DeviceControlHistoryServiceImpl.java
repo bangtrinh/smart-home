@@ -53,7 +53,7 @@ public class DeviceControlHistoryServiceImpl implements DeviceControlHistoryServ
     public List<DeviceControlHistoryDTO> getHistoryByHomeOwner(String username) {
         UserAccount user = userAccountRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Contract contract = contractRepository.findByOwnerId(user.getId())
+        Contract contract = contractRepository.findById(user.getContract().getId())
                 .orElseThrow(() -> new RuntimeException("Contract not found"));
         List<DeviceControlHistory> history = new ArrayList<>(historyRepository.findByContractId(contract.getId()));
         if (history.isEmpty()) {
@@ -66,5 +66,26 @@ public class DeviceControlHistoryServiceImpl implements DeviceControlHistoryServ
             historyDTOs.add(dto);
         }
         return historyDTOs;
+    }
+
+    @Override
+    public List<DeviceControlHistoryDTO> getAllControlHistory() {
+        List<DeviceControlHistory> history = historyRepository.findAll();
+        List<DeviceControlHistoryDTO> historyDTOs = new ArrayList<>();
+        for (DeviceControlHistory h : history) {
+            DeviceControlHistoryDTO dto = DeviceControlHistoryMapper.toDto(h);
+            historyDTOs.add(dto);
+        }
+        return historyDTOs;
+    }
+
+    @Override
+    public DeviceControlHistoryDTO getControlHistoryById(Long id) {
+        DeviceControlHistory history = historyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Control history not found"));
+        if (history == null) {
+            throw new RuntimeException("Control history not found");
+        }
+        return DeviceControlHistoryMapper.toDto(history);
     }
 }

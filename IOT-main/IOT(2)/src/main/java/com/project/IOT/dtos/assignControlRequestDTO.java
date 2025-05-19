@@ -8,7 +8,8 @@ import lombok.Setter;
 @Data
 public class assignControlRequestDTO {
     String email;
-    Long deviceId;
+    Long objectId;
     Long userId;
+    String objectCode;
     String endDate;
 }

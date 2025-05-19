@@ -12,6 +12,7 @@ public class assignControlConfirmDTO {
     String homeOwnerEmail;
     String otpCode;
     Long userId;
-    Long deviceId;
+    Long objectId;
+    String objectCode;
     private LocalDateTime endDate;
 }

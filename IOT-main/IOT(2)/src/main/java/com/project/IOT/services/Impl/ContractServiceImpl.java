@@ -2,18 +2,22 @@ package com.project.IOT.services.Impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.IOT.DTOS.ContractDTO;
 import com.project.IOT.DTOS.OTPDTO;
+import com.project.IOT.DTOS.UserAccountDTO;
 import com.project.IOT.DTOS.assignControlConfirmDTO;
 import com.project.IOT.DTOS.assignControlRequestDTO;
 import com.project.IOT.Entities.Contract;
 import com.project.IOT.Entities.HomeOwner;
 import com.project.IOT.Entities.UserAccount;
 import com.project.IOT.Mapper.ContractMapper;
+import com.project.IOT.Mapper.UserAccountMapper;
 import com.project.IOT.Repositories.ContractRepository;
 import com.project.IOT.Repositories.HomeOwnerRepository;
 import com.project.IOT.Repositories.UserAccountRepository;
@@ -33,6 +37,8 @@ public class ContractServiceImpl implements ContractService {
     private OtpService otpService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     
     @Override
     public ContractDTO findById(Long contractId) {
@@ -68,6 +74,18 @@ public class ContractServiceImpl implements ContractService {
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
         Contract contract = ContractMapper.toEntity(dto, owner);
         contract = contractRepository.save(contract);
+
+        //Tạo userAccount cho homeOwner
+        UserAccountDTO userAccountDTO = new UserAccountDTO();
+        userAccountDTO.setUsername(owner.getEmail());
+        userAccountDTO.setPassword("defaultPassword");
+        userAccountDTO.setEmail(owner.getEmail());
+        userAccountDTO.setRoles(Set.of("OWNER"));
+        userAccountDTO.setContractId(contract.getId());
+
+        UserAccount userAccount = UserAccountMapper.toEntity(userAccountDTO);
+        userAccount.setPasswordHash(passwordEncoder.encode(userAccountDTO.getPassword()));
+        userAccountRepository.save(userAccount);
         return ContractMapper.toDto(contract);
     }
 

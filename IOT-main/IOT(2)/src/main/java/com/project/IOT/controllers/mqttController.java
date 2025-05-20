@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("api/mqtt")
 @RequiredArgsConstructor
 public class mqttController {

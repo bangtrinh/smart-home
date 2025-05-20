@@ -1,12 +1,12 @@
 package com.project.IOT.Config;
 
 import com.project.IOT.Entities.UserAccount;
+import com.project.IOT.Security.JwtAuthenticationFilter;
 import com.project.IOT.services.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,12 +24,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     private final UserAccountService userAccountService;
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
-    public SecurityConfig(UserAccountService userAccountService) {
+    public SecurityConfig(UserAccountService userAccountService, @Lazy JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.userAccountService = userAccountService;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
@@ -43,16 +45,12 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/homeowner/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
                 .requestMatchers("/api/contract/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
-                .requestMatchers("/api/device-control-history/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Bật session
-                .invalidSessionUrl("/api/auth/session-invalid") 
-                .maximumSessions(1) 
-                .expiredUrl("/api/auth/session-expired") 
-            );
-
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -75,10 +73,5 @@ public class SecurityConfig {
             return new org.springframework.security.core.userdetails.User(
                 user.getUsername(), user.getPasswordHash(), authorities);
         };
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
     }
 }

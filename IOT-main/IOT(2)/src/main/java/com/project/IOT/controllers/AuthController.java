@@ -10,6 +10,7 @@ import com.project.IOT.Entities.UserAccount;
 import com.project.IOT.Mapper.UserAccountMapper;
 import com.project.IOT.services.UserAccountService;
 
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,20 @@ public class AuthController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            System.out.println("Logged out token: " + token);
+            return ResponseEntity.ok("Logged out successfully");
+        } else {
+            return ResponseEntity.badRequest().body("No token provided");
+        }
+    }
+
 
     @PostMapping("/reset-password/request")
     public ResponseEntity<?> requestPasswordReset(@RequestBody ResetPasswordRequest request) {

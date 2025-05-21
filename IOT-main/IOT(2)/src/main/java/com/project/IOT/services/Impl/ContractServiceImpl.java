@@ -24,6 +24,8 @@ import com.project.IOT.Repositories.UserAccountRepository;
 import com.project.IOT.services.ContractService;
 import com.project.IOT.services.EmailService;
 import com.project.IOT.services.OtpService;
+import java.util.Optional;
+
 
 @Service
 public class ContractServiceImpl implements ContractService {
@@ -72,20 +74,31 @@ public class ContractServiceImpl implements ContractService {
     public ContractDTO createContract(ContractDTO dto) {
         HomeOwner owner = homeOwnerRepository.findById(dto.getOwnerId())
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
+        Optional<Contract> existingContractOpt = contractRepository.findByOwnerId(owner.getId());
+        if (existingContractOpt.isPresent()) {
+            throw new RuntimeException("Contract already exists for this owner");
+        }
         Contract contract = ContractMapper.toEntity(dto, owner);
         contract = contractRepository.save(contract);
-
+        UserAccount existingUser = userAccountRepository.findByEmail(owner.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (existingUser == null) {
         //Tạo userAccount cho homeOwner
-        UserAccountDTO userAccountDTO = new UserAccountDTO();
-        userAccountDTO.setUsername(owner.getEmail());
-        userAccountDTO.setPassword("defaultPassword");
-        userAccountDTO.setEmail(owner.getEmail());
-        userAccountDTO.setRoles(Set.of("OWNER"));
-        userAccountDTO.setContractId(contract.getId());
+            UserAccountDTO userAccountDTO = new UserAccountDTO();
+            userAccountDTO.setUsername(contract.getContractCode());
+            userAccountDTO.setPassword("defaultPassword");
+            userAccountDTO.setEmail(owner.getEmail());
+            userAccountDTO.setRoles(Set.of("OWNER"));
+            userAccountDTO.setContractId(contract.getId());
 
-        UserAccount userAccount = UserAccountMapper.toEntity(userAccountDTO);
-        userAccount.setPasswordHash(passwordEncoder.encode(userAccountDTO.getPassword()));
-        userAccountRepository.save(userAccount);
+            UserAccount userAccount = UserAccountMapper.toEntity(userAccountDTO);
+            userAccount.setPasswordHash(passwordEncoder.encode(userAccountDTO.getPassword()));
+            userAccountRepository.save(userAccount);
+        } else {
+            existingUser.setContract(contract);
+            userAccountRepository.save(existingUser);
+        }       
+ 
         return ContractMapper.toDto(contract);
     }
 
@@ -108,6 +121,13 @@ public class ContractServiceImpl implements ContractService {
     public void deleteContract(Long contractId) {
         Contract contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new RuntimeException("Contract not found"));
+        List<UserAccount> userAccounts = userAccountRepository.findByContractId(contract.getId());
+        if (userAccounts != null) {
+            userAccounts.forEach(userAccount -> {
+                userAccount.setContract(null);
+                userAccountRepository.save(userAccount);
+            });
+        }
         contractRepository.delete(contract);
         // Implementation here
     }

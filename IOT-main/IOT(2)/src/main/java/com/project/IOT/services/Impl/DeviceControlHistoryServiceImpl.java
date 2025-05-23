@@ -13,6 +13,7 @@ import com.project.IOT.Repositories.UserAccountRepository;
 import com.project.IOT.services.DeviceControlHistoryService;
 
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,9 +54,14 @@ public class DeviceControlHistoryServiceImpl implements DeviceControlHistoryServ
     public List<DeviceControlHistoryDTO> getHistoryByHomeOwner(String username) {
         UserAccount user = userAccountRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Contract contract = contractRepository.findById(user.getContract().getId())
-                .orElseThrow(() -> new RuntimeException("Contract not found"));
-        List<DeviceControlHistory> history = new ArrayList<>(historyRepository.findByContractId(contract.getId()));
+        Set<Contract> contracts = user.getContracts();
+        if (contracts.isEmpty()) {
+            throw new RuntimeException("No contracts found for user");
+        }
+        List<DeviceControlHistory> history = new ArrayList<>();
+        for (Contract c : contracts) {
+            history.addAll(historyRepository.findByContractId(c.getId()));
+        }
         if (history.isEmpty()) {
             throw new RuntimeException("No history found for this user");
         }

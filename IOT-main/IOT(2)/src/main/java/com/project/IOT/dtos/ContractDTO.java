@@ -3,6 +3,7 @@ package com.project.IOT.DTOS;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,4 +26,5 @@ public class ContractDTO {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String status;
+    private Set<Long> users; // Danh sách user liên kết với contract này
 }

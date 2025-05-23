@@ -12,6 +12,7 @@ import com.project.IOT.services.DeviceService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,14 +55,17 @@ public class DeviceServiceImpl implements DeviceService {
     public List<DeviceDTO> getDevicesByUser(Long userId) {
         UserAccount user = userAccountRepository.findById(userId)
         .orElseThrow(() -> new RuntimeException("User not found"));
-        List<Device> devices = deviceRepository.findByContractId(user.getContract().getId());
-        if (devices.isEmpty()) {
+        Set<Contract> contracts = user.getContracts();
+        if (contracts.isEmpty()) {
             return new ArrayList<>();
         }
         List<DeviceDTO> deviceDTOs = new ArrayList<>();
-        for (Device device : devices) {
-            DeviceDTO dto = DeviceMapper.toDto(device);
-            deviceDTOs.add(dto);
+        for (Contract contract : contracts) {
+            List<Device> devices = deviceRepository.findByContractId(contract.getId());
+            for (Device device : devices) {
+                DeviceDTO dto = DeviceMapper.toDto(device);
+                deviceDTOs.add(dto);
+            }
         }
         return deviceDTOs;
     }

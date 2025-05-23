@@ -65,40 +65,40 @@ public class ContractServiceImpl implements ContractService {
     public ContractDTO getContractsByUser(Long userId) {
         UserAccount userAccount = userAccountRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Contract contract = userAccount.getContract();
-        ContractDTO contractDTO = ContractMapper.toDto(contract);
-        return contractDTO;
+        Set<Contract> contracts = userAccount.getContracts();
+        return contracts.stream().map(ContractMapper::toDto).findFirst()
+                .orElseThrow(() -> new RuntimeException("No contract found for user"));
     }
 
     @Override
     public ContractDTO createContract(ContractDTO dto) {
         HomeOwner owner = homeOwnerRepository.findById(dto.getOwnerId())
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
-        Optional<Contract> existingContractOpt = contractRepository.findByOwnerId(owner.getId());
-        if (existingContractOpt.isPresent()) {
-            throw new RuntimeException("Contract already exists for this owner");
-        }
         Contract contract = ContractMapper.toEntity(dto, owner);
         contract = contractRepository.save(contract);
-        UserAccount existingUser = userAccountRepository.findByEmail(owner.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (existingUser == null) {
-        //Tạo userAccount cho homeOwner
+        Optional<UserAccount> existingUser = userAccountRepository.findByEmail(owner.getEmail());
+        if (!existingUser.isPresent()) {
+            //Tạo userAccount cho homeOwner
             UserAccountDTO userAccountDTO = new UserAccountDTO();
-            userAccountDTO.setUsername(contract.getContractCode());
+            userAccountDTO.setUsername(owner.getEmail());
             userAccountDTO.setPassword("defaultPassword");
             userAccountDTO.setEmail(owner.getEmail());
             userAccountDTO.setRoles(Set.of("OWNER"));
-            userAccountDTO.setContractId(contract.getId());
-
+            userAccountDTO.setContracts(Set.of(contract.getId()));
             UserAccount userAccount = UserAccountMapper.toEntity(userAccountDTO);
             userAccount.setPasswordHash(passwordEncoder.encode(userAccountDTO.getPassword()));
             userAccountRepository.save(userAccount);
         } else {
-            existingUser.setContract(contract);
-            userAccountRepository.save(existingUser);
-        }       
- 
+            // Nếu đã tồn tại userAccount, thêm contract vào danh sách contracts
+            Set<Contract> contracts = existingUser.get().getContracts();
+            if (contracts == null) {
+                contracts = Set.of(contract);
+            } else {
+                contracts.add(contract);
+            }
+            existingUser.get().setContracts(contracts);
+            userAccountRepository.save(existingUser.get());
+        }
         return ContractMapper.toDto(contract);
     }
 
@@ -121,10 +121,13 @@ public class ContractServiceImpl implements ContractService {
     public void deleteContract(Long contractId) {
         Contract contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new RuntimeException("Contract not found"));
-        List<UserAccount> userAccounts = userAccountRepository.findByContractId(contract.getId());
+        List<UserAccount> userAccounts = userAccountRepository.findByContracts_Id(contract.getId());
         if (userAccounts != null) {
             userAccounts.forEach(userAccount -> {
-                userAccount.setContract(null);
+                Set<Contract> contracts = userAccount.getContracts();
+                if (contracts != null) {
+                    contracts.remove(contract);
+                }
                 userAccountRepository.save(userAccount);
             });
         }
@@ -159,21 +162,41 @@ public class ContractServiceImpl implements ContractService {
     public void confirmLinkToContract(assignControlConfirmDTO confirmDTO) {
         // Implementation here
         // This is a placeholder for OTP verification logic
-        HomeOwner owner = homeOwnerRepository.findByEmail(confirmDTO.getHomeOwnerEmail())
-                .orElseThrow(() -> new RuntimeException("HomeOwner not found"));
-        boolean confirm = otpService.verifyOtp(confirmDTO.getOtpCode(), owner.getId());
+        Contract contract = contractRepository.findByContractCode(confirmDTO.getContractCode())
+                .orElseThrow(() -> new RuntimeException("Contract not found"));
+        boolean confirm = otpService.verifyOtp(confirmDTO.getOtpCode(), contract.getOwner().getId());
         if (!confirm) {
             throw new RuntimeException("Invalid OTP");
         }
         UserAccount user = userAccountRepository.findById(confirmDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Contract contract = contractRepository.findByContractCode(confirmDTO.getObjectCode())
-                .orElseThrow(() -> new RuntimeException("Contract not found"));
-        user.setContract(contract);
+        Set<Contract> contracts = user.getContracts();
+        if (contracts == null) {
+            contracts = Set.of(contract);
+        } else {
+            contracts.add(contract);
+        }
+        user.setContracts(contracts);
         userAccountRepository.save(user);
         String message = "User " + user.getUsername() + " has been linked to contract " 
-            + confirmDTO.getObjectCode() + ".";
+            + confirmDTO.getContractCode() + ".";
         emailService.sendEmail(user.getEmail(), "Link To Contract Confirmed", message);
-        emailService.sendEmail(owner.getEmail(), "Link To Contract Confirmed", message);
+        emailService.sendEmail(contract.getOwner().getEmail(), "Link To Contract Confirmed", message);
+    }
+
+    @Override
+    public boolean isUserLinkedToContract(Long userId, String contractCode) {
+        UserAccount user = userAccountRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Set<Contract> contracts = user.getContracts();
+        if (contracts == null || contracts.isEmpty()) {
+            return false;
+        }
+        for (Contract contract : contracts) {
+            if (contract.getContractCode().equals(contractCode)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

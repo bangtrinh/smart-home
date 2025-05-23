@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserAccountDTO {
     private Long id;
-    private Long contractId;
+    private Set<Long> contracts;
     private String username;
     private String email;
     private String password;

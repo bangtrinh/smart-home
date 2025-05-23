@@ -95,6 +95,10 @@ public class ContractController {
         if (linkRequest.getObjectCode() == null) {
             return ResponseEntity.badRequest().body("Object Code is required");
         }
+        //Nếu user đã liên kết với contract thì không cần gửi OTP
+        if (contractService.isUserLinkedToContract(linkRequest.getUserId(), linkRequest.getObjectCode())) {
+            return ResponseEntity.badRequest().body("User is already linked to this contract");
+        }
         try {
             contractService.requestLinkToContract(linkRequest);
             return ResponseEntity.ok("OTP sent to HomeOwner for confirmation");

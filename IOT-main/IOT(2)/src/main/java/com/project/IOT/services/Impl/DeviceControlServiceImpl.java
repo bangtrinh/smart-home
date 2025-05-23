@@ -74,12 +74,22 @@ public class DeviceControlServiceImpl implements DeviceControlService {
     @Override
     @Transactional
     public void assignControlRequest(assignControlRequestDTO requestDTO) {
-        // Tìm homeowner theo email
-        HomeOwner homeOwner = homeOwnerRepository.findByEmail(requestDTO.getEmail())
-                .orElseThrow(() -> new RuntimeException("HomeOwner not found"));
-
+        // Tìm device theo objectId
+        Device device = deviceRepository.getById(requestDTO.getObjectId());
+        if (device == null) {
+            throw new RuntimeException("Device not found");
+        }
+        // Tìm contract của device
+        Contract contract = contractRepository.findById(device.getContract().getId())
+                .orElseThrow(() -> new RuntimeException("Contract not found"));
+        //Kiểm tra xem người dùng đăng ký chưa
+        boolean isUserRegistered = deviceControlRepository.findByUserIdAndDeviceId(requestDTO.getUserId(), requestDTO.getObjectId())
+                .isPresent();
+        if(isUserRegistered){
+            throw new RuntimeException("User already registered for this device");
+        }
         // Tạo OTP cho user
-        OTPDTO otp = otpService.createOtp(homeOwner.getId());
+        OTPDTO otp = otpService.createOtp(contract.getOwner().getId());
         if (otp == null) {
             throw new RuntimeException("Failed to create OTP");
         }
@@ -90,12 +100,19 @@ public class DeviceControlServiceImpl implements DeviceControlService {
         String message = "User " + user.getUsername() + " requested access to device " + requestDTO.getObjectId()
                 + " until " + requestDTO.getEndDate() + ".\n"
                 + "Please use the OTP code to confirm the request: " + otp.getOtpCode();
-        emailService.sendEmail(homeOwner.getEmail(), "Verify Device Control Permission", message);
+        emailService.sendEmail(contract.getOwner().getEmail(), "Verify Device Control Permission", message);
     }
 
     @Override
     public boolean isControlActive(Long userId, Long deviceId) {
         return deviceControlRepository.findByUserIdAndDeviceId(userId, deviceId)
                 .stream().anyMatch(control -> control.getEndDate().isAfter(LocalDateTime.now()));
+    }
+
+    @Override
+    public void unassignControl(Long userId, Long deviceId) {
+        DeviceControl deviceControl = deviceControlRepository.findByUserIdAndDeviceId(userId, deviceId)
+                .orElseThrow(() -> new RuntimeException("Device control not found"));
+        deviceControlRepository.delete(deviceControl);
     }
 }

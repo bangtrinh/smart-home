@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "Contract") 
@@ -34,4 +36,7 @@ public class Contract {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private HomeOwner owner;
+
+    @ManyToMany(mappedBy = "contracts")
+    private Set<UserAccount> users = new HashSet<>();
 }

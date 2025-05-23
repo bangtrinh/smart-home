@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
 
@@ -32,9 +34,14 @@ public class UserAccount {
     @Column(name = "email")
     private String email;
 
-    @ManyToOne
-    @JoinColumn(name = "contract_id")
-    private Contract contract;
+    @ManyToMany
+    @JoinTable(
+        name = "user_account_contract",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "contract_id")
+    )
+    private Set<Contract> contracts = new HashSet<>();
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

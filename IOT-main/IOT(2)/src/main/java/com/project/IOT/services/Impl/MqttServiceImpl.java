@@ -52,6 +52,8 @@ public class MqttServiceImpl implements MqttService {
         // Tìm kiếm thiết bị theo ID
         Device device = deviceRepository.findById(mqttDTO.getDeviceId())
                 .orElseThrow(() -> new EntityNotFoundException("Thiết bị không tồn tại"));
+        
+        device.setStatus(mqttMessage.toString());
         // Tìm kiếm hợp đồng theo ID
         Contract contract = device.getContract();
         if (contract == null) {

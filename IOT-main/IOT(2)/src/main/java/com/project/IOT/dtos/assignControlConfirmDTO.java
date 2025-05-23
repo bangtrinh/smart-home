@@ -9,10 +9,9 @@ import lombok.Setter;
 @Setter
 @Data
 public class assignControlConfirmDTO {
-    String homeOwnerEmail;
+    String contractCode;
     String otpCode;
     Long userId;
     Long objectId;
-    String objectCode;
     private LocalDateTime endDate;
 }

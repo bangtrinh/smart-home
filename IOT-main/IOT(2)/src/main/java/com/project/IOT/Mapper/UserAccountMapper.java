@@ -36,6 +36,11 @@ public class UserAccountMapper {
                 .map(Role::getName)
                 .collect(Collectors.toSet())
             : new HashSet<>())
+        .contracts(entity.getContracts() != null
+            ? entity.getContracts().stream()
+                .map(Contract::getId)
+                .collect(Collectors.toSet())
+            : new HashSet<>())
         .build();
     }
 
@@ -54,10 +59,15 @@ public class UserAccountMapper {
                     .collect(Collectors.toSet());
             entity.setRoles(roles);
         }
-        if(dto.getContractId() != null) {
-            Contract contract = contractRepository.findById(dto.getContractId())
-                    .orElseThrow(() -> new RuntimeException("Contract not found"));
-            entity.setContract(contract);
+        if(dto.getContracts() != null) {
+            Set<Contract> contracts = dto.getContracts().stream()
+                    .map(contractRepository::findById)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());
+            entity.setContracts(contracts);
+        } else {
+            entity.setContracts(new HashSet<>());
         }
         return entity;
     }

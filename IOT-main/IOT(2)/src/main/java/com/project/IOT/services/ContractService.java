@@ -14,4 +14,5 @@ public interface ContractService {
     void deleteContract(Long contractId);
     void requestLinkToContract(assignControlRequestDTO requestDTO);
     void confirmLinkToContract(assignControlConfirmDTO confirmDTO);
+    boolean isUserLinkedToContract(Long userId, String contractCode);
 }

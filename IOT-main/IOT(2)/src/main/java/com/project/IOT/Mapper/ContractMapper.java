@@ -1,5 +1,7 @@
 package com.project.IOT.Mapper;
 
+import java.util.stream.Collectors;
+
 import com.project.IOT.DTOS.ContractDTO;
 import com.project.IOT.Entities.Contract;
 import com.project.IOT.Entities.HomeOwner;

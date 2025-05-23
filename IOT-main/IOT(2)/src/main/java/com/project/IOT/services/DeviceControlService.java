@@ -7,4 +7,5 @@ public interface DeviceControlService {
     void assignControlRequest(assignControlRequestDTO email);
     DeviceControlDTO assignControl(DeviceControlDTO dto);
     boolean isControlActive(Long userId, Long deviceId);
+    void unassignControl(Long userId, Long deviceId);
 }

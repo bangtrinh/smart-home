@@ -36,7 +36,11 @@ public class MqttListener {
                         deviceId,
                         contractId
                 );
-                messagingTemplate.convertAndSend("/topic/mqtt", mqttDTO);
+                messagingTemplate.convertAndSend(
+                String.format("/contract/%d/device/%d", contractId, deviceId),
+                mqttDTO
+                );
+                System.out.println("WebSocket message sent for contractId: " + contractId + ", deviceId: " + deviceId);
             }
 
             @Override

@@ -119,6 +119,17 @@ public class ContractController {
         }
     }
 
+    @PostMapping("/unlink/{userId}/{contractCode}")
+    @PreAuthorize("hasAnyRole('OWNER', 'MEMBER')")
+    public ResponseEntity<String> unlinkUserFromContract(@PathVariable Long userId, @PathVariable String contractCode) {
+        try {
+            contractService.unLinkToContract(userId, contractCode);
+            return ResponseEntity.ok("User unlinked from contract successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Failed to unlink user from contract: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/my-contracts")
     @PreAuthorize("hasAnyRole('OWNER', 'MEMBER')")
     public ResponseEntity<List<ContractDTO>> getMyContracts(@AuthenticationPrincipal UserDetails userDetails) {
@@ -133,6 +144,13 @@ public class ContractController {
     public ResponseEntity<List<UserAccountDTO>> getUsersByContract(@PathVariable Long id) {
         List<UserAccountDTO> users = contractService.getUsersByContract(id);
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/owner/{ownerId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<ContractDTO>> getContractsByHomeOwner(@PathVariable Long ownerId) {
+        List<ContractDTO> contracts = contractService.getContractsByHomeOwner(ownerId);
+        return ResponseEntity.ok(contracts);
     }
 }
 

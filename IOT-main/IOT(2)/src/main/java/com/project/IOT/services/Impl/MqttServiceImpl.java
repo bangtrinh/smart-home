@@ -43,7 +43,7 @@ public class MqttServiceImpl implements MqttService {
         mqttClient.publish(path, mqttMessage);
 
         // Gửi thông báo qua WebSocket tới client đang sub /topic/mqtt
-        messagingTemplate.convertAndSend("/topic/mqtt", mqttDTO);
+        messagingTemplate.convertAndSend(path, mqttDTO);
         // Lưu lịch sử điều khiển thiết bị
         DeviceControlHistoryDTO historyDTO = new DeviceControlHistoryDTO();
         historyDTO.setActionTimestamp(LocalDateTime.now());

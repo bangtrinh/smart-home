@@ -19,4 +19,6 @@ public interface ContractService {
     void confirmLinkToContract(assignControlConfirmDTO confirmDTO);
     boolean isUserLinkedToContract(Long userId, String contractCode); 
     List<UserAccountDTO> getUsersByContract(Long contractId);  
+    List<ContractDTO> getContractsByHomeOwner(Long ownerId);
+    void unLinkToContract(Long userId, String contractCode);
 }

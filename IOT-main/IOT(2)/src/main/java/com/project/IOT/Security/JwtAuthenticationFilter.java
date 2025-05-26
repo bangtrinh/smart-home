@@ -58,7 +58,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 logger.error("Error extracting username from token: {}", e.getMessage());
             }
         } else {
-            logger.warn("No Authorization header or invalid format in request to: {}", request.getServletPath());
+            // Thử lấy token từ query param
+            String tokenParam = request.getParameter("token");
+            if (tokenParam != null && !tokenParam.isEmpty()) {
+                token = tokenParam;
+                logger.info("Extracted JWT token from query parameter 'token'");
+            } else {
+                logger.warn("No Authorization header or token query parameter in request to: {}", request.getServletPath());
+            }        
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

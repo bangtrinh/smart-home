@@ -76,14 +76,9 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public List<DeviceDTO> getDevicesByUserAndContract(Long userId, Long contractId) {
-        UserAccount user = userAccountRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Contract contract = contractRepository.findById(contractId)  
-                .orElseThrow(() -> new RuntimeException("Contract not found"));      
-        if (!user.getContracts().contains(contract)) {
-            throw new RuntimeException("User does not have access to this contract");
-        }
+    public List<DeviceDTO> getDevicesByContract(Long contractId) {
+        Contract contract = contractRepository.findById(contractId)
+                .orElseThrow(() -> new RuntimeException("Contract not found"));
         List<Device> devices = deviceRepository.findByContractId(contractId);
         List<DeviceDTO> deviceDTOs = new ArrayList<>();
         for (Device device : devices) {

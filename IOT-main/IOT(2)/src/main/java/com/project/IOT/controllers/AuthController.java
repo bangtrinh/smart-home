@@ -1,6 +1,7 @@
 package com.project.IOT.controllers;
 
 import com.project.IOT.Config.JwtUtil;
+import com.project.IOT.DTOS.ChangePasswordRequest;
 import com.project.IOT.DTOS.LoginRequest;
 import com.project.IOT.DTOS.LoginResponseDTO;
 import com.project.IOT.DTOS.ResetPasswordConfirmDTO;
@@ -101,8 +102,7 @@ public class AuthController {
 
     @PutMapping("/change-password")
     public ResponseEntity<?> changePassword(@AuthenticationPrincipal UserDetails userDetails,
-                                            @RequestParam String oldPassword,
-                                            @RequestParam String newPassword) {
+                                            @RequestBody ChangePasswordRequest changePasswordRequest) {
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No authenticated user found");
         }
@@ -111,7 +111,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         try {
-            userAccountService.changePassword(user.getId(), oldPassword, newPassword);
+            userAccountService.changePassword(user.getId(), changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword());
             return ResponseEntity.ok("Password changed successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

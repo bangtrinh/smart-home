@@ -34,14 +34,14 @@ public class DeviceController {
         return ResponseEntity.ok(devices);
     }
 
-    @GetMapping("/your-devices")
+    @GetMapping("/your-devices/{contractId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'OWNER', 'MEMBER')")
-    public ResponseEntity<List<DeviceDTO>> getDevicesByUser(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<List<DeviceDTO>> getDevicesByUser(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long contractId) {
         UserAccount user = userAccountService.findByUsername(userDetails.getUsername());
         if (user == null) {
             return ResponseEntity.status(404).body(null);
         }
-        List<DeviceDTO> devices = deviceService.getDevicesByUser(user.getId());
+        List<DeviceDTO> devices = deviceService.getDevicesByUserAndContract(user.getId(), contractId);
         if (devices.isEmpty()) {
             return ResponseEntity.status(404).body(null);
         }

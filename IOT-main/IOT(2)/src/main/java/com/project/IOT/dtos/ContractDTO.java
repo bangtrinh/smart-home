@@ -26,5 +26,7 @@ public class ContractDTO {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String status;
-    private Set<Long> users; // Danh sách user liên kết với contract này
+    private Set<UserAccountDTO> users; // Danh sách user liên kết với contract này
+
+    HomeOwnerDTO owner; // Thông tin chủ sở hữu hợp đồng
 }

@@ -49,16 +49,7 @@ public class DeviceControlServiceImpl implements DeviceControlService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Device device = deviceRepository.findById(dto.getDeviceId())
                 .orElseThrow(() -> new RuntimeException("Device not found"));
-
-        // Tìm contract của device
-        Contract contract = contractRepository.findById(device.getContract().getId())
-                .orElseThrow(() -> new RuntimeException("Contract not found"));
-
         // Tìm HomeOwner liên quan đến contract
-        HomeOwner homeOwner = contract.getOwner();
-        if (homeOwner == null) {
-            throw new RuntimeException("HomeOwner not found for this contract");
-        }
 
         DeviceControl deviceControl = new DeviceControl();
         deviceControl.setUser(user);

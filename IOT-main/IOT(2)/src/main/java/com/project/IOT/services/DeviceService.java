@@ -11,4 +11,5 @@ public interface DeviceService {
     DeviceDTO createDevice(DeviceDTO dto);
     DeviceDTO updateDevice(Long deviceId, DeviceDTO dto);
     void deleteDevice(Long deviceId);
+    List<DeviceDTO> getDevicesByUserAndContract(Long userId, Long contractId);
 }

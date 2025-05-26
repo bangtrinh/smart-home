@@ -1,8 +1,10 @@
 package com.project.IOT.services.Impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,9 @@ import com.project.IOT.Repositories.UserAccountRepository;
 import com.project.IOT.services.ContractService;
 import com.project.IOT.services.EmailService;
 import com.project.IOT.services.OtpService;
+
+import io.jsonwebtoken.lang.Collections;
+
 import java.util.Optional;
 
 
@@ -62,43 +67,73 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public ContractDTO getContractsByUser(Long userId) {
+    public List<ContractDTO> getContractsByUser(Long userId) {
         UserAccount userAccount = userAccountRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Set<Contract> contracts = userAccount.getContracts();
-        return contracts.stream().map(ContractMapper::toDto).findFirst()
-                .orElseThrow(() -> new RuntimeException("No contract found for user"));
+        return contracts.stream().map(ContractMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserAccountDTO> getUsersByContract(Long contractId) {
+        Contract contract = contractRepository.findById(contractId)
+                .orElseThrow(() -> new RuntimeException("Contract not found"));
+        Set<UserAccount> users = contract.getUsers();
+        if (users == null || users.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return users.stream().map(UserAccountMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
     public ContractDTO createContract(ContractDTO dto) {
+        // Tìm chủ nhà
         HomeOwner owner = homeOwnerRepository.findById(dto.getOwnerId())
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
+        
+        // Tạo contract từ DTO
         Contract contract = ContractMapper.toEntity(dto, owner);
+        //Lưu contract
         contract = contractRepository.save(contract);
+        // Kiểm tra và xử lý user account
         Optional<UserAccount> existingUser = userAccountRepository.findByEmail(owner.getEmail());
+        UserAccount userAccount;
+        
         if (!existingUser.isPresent()) {
-            //Tạo userAccount cho homeOwner
+            // Tạo userAccount mới cho homeOwner
             UserAccountDTO userAccountDTO = new UserAccountDTO();
             userAccountDTO.setUsername(owner.getEmail());
             userAccountDTO.setPassword("defaultPassword");
             userAccountDTO.setEmail(owner.getEmail());
             userAccountDTO.setRoles(Set.of("OWNER"));
             userAccountDTO.setContracts(Set.of(contract.getId()));
-            UserAccount userAccount = UserAccountMapper.toEntity(userAccountDTO);
+            
+            userAccount = UserAccountMapper.toEntity(userAccountDTO);
             userAccount.setPasswordHash(passwordEncoder.encode(userAccountDTO.getPassword()));
-            userAccountRepository.save(userAccount);
         } else {
-            // Nếu đã tồn tại userAccount, thêm contract vào danh sách contracts
-            Set<Contract> contracts = existingUser.get().getContracts();
+            // Cập nhật userAccount hiện có
+            userAccount = existingUser.get();
+            Set<Contract> contracts = userAccount.getContracts();
             if (contracts == null) {
-                contracts = Set.of(contract);
-            } else {
-                contracts.add(contract);
+                contracts = new HashSet<>();
             }
-            existingUser.get().setContracts(contracts);
-            userAccountRepository.save(existingUser.get());
+            contracts.add(contract);
+            userAccount.setContracts(contracts);
         }
+        
+        // Lưu userAccount (mới hoặc cập nhật)
+        userAccount = userAccountRepository.save(userAccount);
+        // Cập nhật lại userAccount trong contract
+        Set<UserAccount> contractUsers = contract.getUsers();
+        if (contractUsers == null) {
+            contractUsers = new HashSet<>();
+        }
+        contractUsers.add(userAccount);
+        contract.setUsers(contractUsers);
+        
+        // Lưu contract
+        contract = contractRepository.save(contract);
+        
         return ContractMapper.toDto(contract);
     }
 
@@ -132,7 +167,6 @@ public class ContractServiceImpl implements ContractService {
             });
         }
         contractRepository.delete(contract);
-        // Implementation here
     }
 
     @Override
@@ -178,6 +212,13 @@ public class ContractServiceImpl implements ContractService {
         }
         user.setContracts(contracts);
         userAccountRepository.save(user);
+        // Add user to contract
+        Set<UserAccount> users = contract.getUsers();
+        if (users == null) {
+            users = Set.of(user);
+        } else {
+            users.add(user);
+        }
         String message = "User " + user.getUsername() + " has been linked to contract " 
             + confirmDTO.getContractCode() + ".";
         emailService.sendEmail(user.getEmail(), "Link To Contract Confirmed", message);
@@ -188,14 +229,12 @@ public class ContractServiceImpl implements ContractService {
     public boolean isUserLinkedToContract(Long userId, String contractCode) {
         UserAccount user = userAccountRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Set<Contract> contracts = user.getContracts();
-        if (contracts == null || contracts.isEmpty()) {
-            return false;
-        }
-        for (Contract contract : contracts) {
-            if (contract.getContractCode().equals(contractCode)) {
-                return true;
-            }
+        //Tìm xem trong danh sách users của contract có user này không
+        Contract contract = contractRepository.findByContractCode(contractCode)
+                .orElseThrow(() -> new RuntimeException("Contract not found"));
+        if (contract.getUsers() != null) {
+            return contract.getUsers().stream()
+                    .anyMatch(u -> u.getId().equals(userId));
         }
         return false;
     }

@@ -3,13 +3,16 @@ package com.project.IOT.services.Impl;
 import com.project.IOT.DTOS.DeviceDTO;
 import com.project.IOT.Entities.Contract;
 import com.project.IOT.Entities.Device;
+import com.project.IOT.Entities.DeviceControl;
 import com.project.IOT.Entities.UserAccount;
 import com.project.IOT.Mapper.DeviceMapper;
 import com.project.IOT.Repositories.ContractRepository;
+import com.project.IOT.Repositories.DeviceControlRepository;
 import com.project.IOT.Repositories.DeviceRepository;
 import com.project.IOT.Repositories.UserAccountRepository;
 import com.project.IOT.services.DeviceService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +30,8 @@ public class DeviceServiceImpl implements DeviceService {
     private ContractRepository contractRepository;
     @Autowired
     private UserAccountRepository userAccountRepository;
+    @Autowired
+    private DeviceControlRepository deviceControlRepository;
     
 
     @Override
@@ -70,6 +75,24 @@ public class DeviceServiceImpl implements DeviceService {
         return deviceDTOs;
     }
 
+    @Override
+    public List<DeviceDTO> getDevicesByUserAndContract(Long userId, Long contractId) {
+        UserAccount user = userAccountRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Contract contract = contractRepository.findById(contractId)  
+                .orElseThrow(() -> new RuntimeException("Contract not found"));      
+        if (!user.getContracts().contains(contract)) {
+            throw new RuntimeException("User does not have access to this contract");
+        }
+        List<Device> devices = deviceRepository.findByContractId(contractId);
+        List<DeviceDTO> deviceDTOs = new ArrayList<>();
+        for (Device device : devices) {
+            DeviceDTO dto = DeviceMapper.toDto(device);
+            deviceDTOs.add(dto);
+        }
+        return deviceDTOs;
+    }
+
 
     @Override
     @Transactional
@@ -81,7 +104,15 @@ public class DeviceServiceImpl implements DeviceService {
         }
         Device device = DeviceMapper.toEntity(dto, contract);
         device = deviceRepository.save(device);
-        return DeviceMapper.toDto(device);
+        UserAccount owner = userAccountRepository.findByEmail(contract.getOwner().getEmail())
+                .orElseThrow(() -> new RuntimeException("Owner not found"));
+        DeviceControl deviceControl = new DeviceControl();
+        deviceControl.setUser(owner);
+        deviceControl.setDevice(device);
+        deviceControl.setStartDate(LocalDateTime.now());
+        deviceControl.setEndDate(LocalDateTime.now().plusYears(1000)); 
+        deviceControl = deviceControlRepository.save(deviceControl);
+        return DeviceMapper.toDto(device);        
     }
 
     @Override

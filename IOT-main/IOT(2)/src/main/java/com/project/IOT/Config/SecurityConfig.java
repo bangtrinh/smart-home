@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/homeowner/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
                 .requestMatchers("/api/contract/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
+                .requestMatchers("/ws/**").permitAll()  // 🚨 cho phép kết nối tới WebSocket endpoint
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

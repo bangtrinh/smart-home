@@ -28,6 +28,7 @@ import com.project.IOT.services.EmailService;
 import com.project.IOT.services.OtpService;
 
 import io.jsonwebtoken.lang.Collections;
+import jakarta.transaction.Transactional;
 
 import java.util.Optional;
 
@@ -226,6 +227,26 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
+    public void unLinkToContract(Long userId, String contractCode) {
+        UserAccount user = userAccountRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Contract contract = contractRepository.findByContractCode(contractCode)
+                .orElseThrow(() -> new RuntimeException("Contract not found"));
+        Set<Contract> contracts = user.getContracts();
+        if (contracts != null) {
+            contracts.remove(contract);
+            user.setContracts(contracts);
+            userAccountRepository.save(user);
+        }
+        Set<UserAccount> users = contract.getUsers();
+        if (users != null) {
+            users.remove(user);
+            contract.setUsers(users);
+            contractRepository.save(contract);
+        }
+    }
+
+    @Override
     public boolean isUserLinkedToContract(Long userId, String contractCode) {
         UserAccount user = userAccountRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -238,4 +259,10 @@ public class ContractServiceImpl implements ContractService {
         }
         return false;
     }
+
+    @Override
+    public List<ContractDTO> getContractsByHomeOwner(Long homeOwnerId) {
+        List<Contract> contracts = contractRepository.findByOwnerId(homeOwnerId);
+        return contracts.stream().map(ContractMapper::toDto).collect(Collectors.toList());
+    }    
 }

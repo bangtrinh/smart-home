@@ -8,6 +8,7 @@ import com.project.IOT.DTOS.ResetPasswordRequest;
 import com.project.IOT.DTOS.UserAccountDTO;
 import com.project.IOT.Entities.UserAccount;
 import com.project.IOT.Mapper.UserAccountMapper;
+import com.project.IOT.Repositories.UserAccountRepository;
 import com.project.IOT.services.UserAccountService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +30,8 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private UserAccountRepository userAccountRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
@@ -84,5 +87,34 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         return ResponseEntity.ok(UserAccountMapper.toDto(user));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody UserAccountDTO userAccountDTO) {
+        if (userAccountDTO.getUsername() == null || userAccountDTO.getPassword() == null ||
+            userAccountDTO.getEmail() == null) {
+            return ResponseEntity.badRequest().body("Username, password, and email are required");
+        }
+        userAccountService.createUserAccount(userAccountDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userAccountDTO);
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@AuthenticationPrincipal UserDetails userDetails,
+                                            @RequestParam String oldPassword,
+                                            @RequestParam String newPassword) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No authenticated user found");
+        }
+        UserAccount user = userAccountService.findByUsername(userDetails.getUsername());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        try {
+            userAccountService.changePassword(user.getId(), oldPassword, newPassword);
+            return ResponseEntity.ok("Password changed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

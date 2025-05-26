@@ -168,4 +168,16 @@ public class UserAccountServiceImpl implements UserAccountService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         userAccountRepository.delete(user);
     }
+
+    @Override
+    @Transactional
+    public void changePassword(Long userId, String oldPassword, String newPassword) {
+        UserAccount user = userAccountRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userAccountRepository.save(user);
+    }
 }

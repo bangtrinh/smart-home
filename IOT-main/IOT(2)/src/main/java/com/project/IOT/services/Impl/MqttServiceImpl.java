@@ -48,7 +48,7 @@ public class MqttServiceImpl implements MqttService {
         DeviceControlHistoryDTO historyDTO = new DeviceControlHistoryDTO();
         historyDTO.setActionTimestamp(LocalDateTime.now());
         historyDTO.setAction(mqttDTO.getValue());
-
+        
         // Tìm kiếm thiết bị theo ID
         Device device = deviceRepository.findById(mqttDTO.getDeviceId())
                 .orElseThrow(() -> new EntityNotFoundException("Thiết bị không tồn tại"));
@@ -63,6 +63,9 @@ public class MqttServiceImpl implements MqttService {
         DeviceControlHistory history = DeviceControlHistoryMapper.toEntity(historyDTO, userAccount, device, contract);
         // Lưu lịch sử vào cơ sở dữ liệu
         deviceControlHistoryRepository.save(history);
+        //Đặt trạng thái của thiết bị
+        device.setStatus(mqttDTO.getValue());
+        deviceRepository.save(device);
         return "Đã publish: " + mqttDTO.getValue() + " tới topic: " + path;
     }
 }

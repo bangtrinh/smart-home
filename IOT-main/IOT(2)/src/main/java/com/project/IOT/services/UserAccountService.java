@@ -18,4 +18,5 @@ public interface UserAccountService {
     List<UserAccountDTO> getAllUsers();
     UserAccountDTO getUserById(Long userId);
     void deleteUserAccount(Long userId);
+    void changePassword(Long userId, String oldPassword, String newPassword);
 }

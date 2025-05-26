@@ -1,6 +1,7 @@
 package com.project.IOT.controllers;
 
 import com.project.IOT.DTOS.ContractDTO;
+import com.project.IOT.DTOS.UserAccountDTO;
 import com.project.IOT.DTOS.assignControlConfirmDTO;
 import com.project.IOT.DTOS.assignControlRequestDTO;
 import com.project.IOT.Entities.UserAccount;
@@ -116,6 +117,22 @@ public class ContractController {
         } catch (Exception e) {
             return ResponseEntity.status(400).body("Failed to link user to contract: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/my-contracts")
+    @PreAuthorize("hasAnyRole('OWNER', 'MEMBER')")
+    public ResponseEntity<List<ContractDTO>> getMyContracts(@AuthenticationPrincipal UserDetails userDetails) {
+        UserAccount user = userAccountRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        List<ContractDTO> contracts = contractService.getContractsByUser(user.getId());
+        return ResponseEntity.ok(contracts);
+    }
+
+    @GetMapping("/{id}/users")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    public ResponseEntity<List<UserAccountDTO>> getUsersByContract(@PathVariable Long id) {
+        List<UserAccountDTO> users = contractService.getUsersByContract(id);
+        return ResponseEntity.ok(users);
     }
 }
 

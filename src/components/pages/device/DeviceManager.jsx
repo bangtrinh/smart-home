@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getDevices, deleteDevice } from '../../../api/deviceApi';
+import DeviceCard from './DeviceCard';
 
 function DeviceManager() {
   const [devices, setDevices] = useState([]);
@@ -10,9 +11,16 @@ function DeviceManager() {
   }, []);
 
   const fetchDevices = async () => {
-    const data = await getDevices();
-    setDevices(data);
+    try {
+      const deviceList = await getDevices();
+      console.log("Device API response:", deviceList); // sẽ thấy mảng thiết bị ở đây
+      setDevices(deviceList);
+    } catch (err) {
+      console.error("Lỗi tải thiết bị:", err);
+      setDevices([]);
+    }
   };
+
 
   const handleDelete = async (id) => {
     if (window.confirm('Xóa thiết bị này?')) {
@@ -23,31 +31,20 @@ function DeviceManager() {
 
   return (
     <div>
-      <h2>Thiết bị</h2>
-      <Link to="/devices/add">+ Thêm thiết bị</Link>
-      <table border="1">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Tên thiết bị</th>
-            <th>Trạng thái</th>
-            <th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {devices.map(d => (
-            <tr key={d.id}>
-              <td>{d.id}</td>
-              <td>{d.deviceName}</td>
-              <td>{d.status}</td>
-              <td>
-                <Link to={`/devices/edit/${d.id}`}>Sửa</Link>
-                <button onClick={() => handleDelete(d.id)}>Xóa</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2>📱 Danh sách thiết bị</h2>
+        <Link className="link-button" to="/devices/add">+ Thêm thiết bị</Link>
+      </div>
+
+      <div className="card-list">
+        {devices.length > 0 ? (
+          devices.map(d => (
+            <DeviceCard key={d.id} device={d} onDelete={handleDelete} />
+          ))
+        ) : (
+          <p>Chưa có thiết bị nào.</p>
+        )}
+      </div>
     </div>
   );
 }

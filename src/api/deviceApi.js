@@ -11,3 +11,5 @@ export const getDeviceById = (id) => axios.get(`${API_URL}/${id}`, { headers: ge
 export const addDevice = (data) => axios.post(API_URL, data, { headers: getAuthHeaders() });
 export const updateDevice = (id, data) => axios.put(`${API_URL}/${id}`, data, { headers: getAuthHeaders() });
 export const deleteDevice = (id) => axios.delete(`${API_URL}/${id}`, { headers: getAuthHeaders() });
+export const getDevicesByContractId = (contractId) =>
+  axios.get(`${API_URL}/contract/${contractId}`, { headers: getAuthHeaders() });

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getHomeOwners, deleteHomeOwner } from '../../../api/homeOwnerApi';
 import { Link } from 'react-router-dom';
+import HomeOwnerCard from './HomeOwnerCard';
 
 function HomeOwnerManager() {
   const [owners, setOwners] = useState([]);
@@ -24,30 +25,17 @@ function HomeOwnerManager() {
   return (
     <div>
       <h2>Danh sách Chủ nhà</h2>
-      <Link to="/homeowners/add">+ Thêm chủ nhà</Link>
-      <table border="1">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Tên</th>
-            <th>Email</th>
-            <th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {owners.map(owner => (
-            <tr key={owner.ownerId}>
-              <td>{owner.ownerId}</td>
-              <td>{owner.fullName}</td>
-              <td>{owner.email}</td>
-              <td>
-                <Link to={`/homeowners/edit/${owner.ownerId}`}>Sửa</Link>
-                <button onClick={() => handleDelete(owner.ownerId)}>Xóa</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Link to="/homeowners/add" className="link-button">+ Thêm chủ nhà</Link>
+
+      <div className="card-list">
+        {owners.map(owner => (
+          <HomeOwnerCard
+            key={owner.ownerId}
+            owner={owner}
+            onDelete={handleDelete}
+          />
+        ))}
+      </div>
     </div>
   );
 }

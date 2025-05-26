@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { getUsers, deleteUser } from '../../../api/userApi';
 import UserCard from './UserCard';
+import { useNavigate } from 'react-router-dom';
 
 function UserManager() {
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
@@ -25,7 +27,13 @@ function UserManager() {
     <div>
       <h2>👤 Danh sách người dùng</h2>
       {users.map(user => (
-        <UserCard key={user.id} user={user} onDelete={handleDelete} />
+        <UserCard 
+          key={user.id}
+          user={user}
+          contractId={null}
+          onDelete={handleDelete}
+          showDeviceButton={false}
+        />
       ))}
     </div>
   );

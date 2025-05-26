@@ -1,8 +1,8 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './components/layout/AdminLayout';
 import UserManager from './components/pages/user/UserManager';
-import Dashboard from './components/pages/Dashboard'; // Thêm dòng này
+import Dashboard from './components/pages/Dashboard';
 import DeviceManager from './components/pages/device/DeviceManager';
 import DeviceForm from './components/pages/device/DeviceForm';
 import HomeOwnerManager from './components/pages/homeowner/HomeOwnerManager';
@@ -11,30 +11,224 @@ import ContractManager from './components/pages/contract/ContractManager';
 import ContractForm from './components/pages/contract/ContractForm';
 import ContractUsers from './components/pages/contract/ContractUsers';
 import ContractDetails from './components/pages/contract/ContractDetails';
+import Login from './components/LoginForm'; 
+import ChangePasswordForm from './components/ChangePasswordForm';
+import MyContracts from './components/pages/contract/MyContracts';
+import MyDevices from './components/pages/device/MyDevices';
+
+
 
 import './style/style.css';
+import HomeOwnerDetails from './components/pages/homeowner/HomeOwnerDetails';
 
+// Hàm kiểm tra đã đăng nhập chưa
+const isLoggedIn = () => {
+  return !!localStorage.getItem('token'); // nếu có token -> true
+};
 
+// Route bảo vệ
+const PrivateRoute = ({ children }) => {
+  return isLoggedIn() ? children : <Navigate to="/login" />;
+};
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>} />
-        <Route path="/device" element={<AdminLayout><DeviceManager /></AdminLayout>} />
-        <Route path="/contracts" element={<AdminLayout><ContractManager /></AdminLayout>} />
-        <Route path="/contracts/add" element={<AdminLayout><ContractForm /></AdminLayout>} />
-        <Route path="/contracts/edit/:id" element={<AdminLayout><ContractForm /></AdminLayout>} />
-        <Route path="/contracts/:id/users" element={<AdminLayout><ContractUsers /></AdminLayout>} />
-        <Route path="/contracts/:id" element={<AdminLayout><ContractDetails /></AdminLayout>} />
-        <Route path="/homeowners" element={<AdminLayout><HomeOwnerManager /></AdminLayout>} />
-        <Route path="/users" element={<AdminLayout><UserManager /></AdminLayout>} />
-        <Route path="/devices" element={<AdminLayout><DeviceManager /></AdminLayout>} />
-        <Route path="/devices/add" element={<AdminLayout><DeviceForm /></AdminLayout>} />
-        <Route path="/devices/edit/:id" element={<AdminLayout><DeviceForm /></AdminLayout>} />
-        <Route path="/homeowners" element={<AdminLayout><HomeOwnerManager /></AdminLayout>} />
-        <Route path="/homeowners/add" element={<AdminLayout><HomeOwnerForm /></AdminLayout>} />
-        <Route path="/homeowners/edit/:id" element={<AdminLayout><HomeOwnerForm /></AdminLayout>} />
+        {/* Route login */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Private routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <Dashboard />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/device"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <DeviceManager />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        {/* Các route khác tương tự */}
+        <Route
+          path="/devices"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <DeviceManager />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/my-devices"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <MyDevices />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/devices/add"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <DeviceForm />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/devices/edit/:id"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <DeviceForm />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Contract routes */}
+        <Route
+          path="/contracts"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <ContractManager />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/my-contracts"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <MyContracts />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/contracts/add"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <ContractForm />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/contracts/edit/:id"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <ContractForm />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/contracts/:id/users"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <ContractUsers />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/contracts/:id"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <ContractDetails />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Homeowners */}
+        <Route
+          path="/homeowners"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <HomeOwnerManager />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/homeowners/add"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <HomeOwnerForm />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/homeowners/edit/:id"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <HomeOwnerForm />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/homeowners/:ownerId"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <HomeOwnerDetails />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Users */}
+        <Route
+          path="/users"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <UserManager />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/change-password"
+          element={
+            <PrivateRoute>
+              <AdminLayout>
+                <ChangePasswordForm />
+              </AdminLayout>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Nếu route không đúng thì chuyển về login */}
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   );

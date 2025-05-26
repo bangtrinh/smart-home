@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getDeviceById, addDevice, updateDevice } from '../../../api/deviceApi';
+import { getContracts } from '../../../api/contractApi';
 
 function DeviceForm() {
   const { id } = useParams();
-  const [device, setDevice] = useState({ name: '', status: 'OFF' });
+  const [device, setDevice] = useState({
+    deviceName: '',
+    status: '*A: 0',  // mặc định luôn là *A: 0
+    contractId: ''
+  });
+  const [contracts, setContracts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
+    fetchContracts();
     if (id) {
       fetchDevice();
     }
@@ -16,6 +23,11 @@ function DeviceForm() {
   const fetchDevice = async () => {
     const data = await getDeviceById(id);
     setDevice(data);
+  };
+
+  const fetchContracts = async () => {
+    const data = await getContracts();
+    setContracts(data);
   };
 
   const handleSubmit = async (e) => {
@@ -35,17 +47,24 @@ function DeviceForm() {
         <input
           type="text"
           placeholder="Tên thiết bị"
-          value={device.name}
-          onChange={(e) => setDevice({ ...device, name: e.target.value })}
+          value={device.deviceName}
+          onChange={(e) => setDevice({ ...device, deviceName: e.target.value })}
           required
         />
+
         <select
-          value={device.status}
-          onChange={(e) => setDevice({ ...device, status: e.target.value })}
+          value={device.contractId}
+          onChange={(e) => setDevice({ ...device, contractId: e.target.value })}
+          required
         >
-          <option value="ON">ON</option>
-          <option value="OFF">OFF</option>
+          <option value="">-- Chọn hợp đồng --</option>
+          {contracts.map(c => (
+            <option key={c.contractId} value={c.contractId}>
+              {c.contractCode} - {c.contractName}
+            </option>
+          ))}
         </select>
+
         <button type="submit">Lưu</button>
         <button type="button" onClick={() => navigate('/devices')}>Hủy</button>
       </form>

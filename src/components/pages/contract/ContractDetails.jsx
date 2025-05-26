@@ -2,10 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getContractById } from '../../../api/contractApi';
 import UserCard from '../user/UserCard';
+import { useNavigate } from 'react-router-dom';
+import UserDevicesControlList from '../device/UserDevicesControlList';
 
 function ContractDetails() {
   const { id } = useParams();
   const [contract, setContract] = useState(null);
+  const navigate = useNavigate();
+  const [selectedUser, setSelectedUser] = useState(null);
+
 
   useEffect(() => {
     fetchContract();
@@ -15,6 +20,15 @@ function ContractDetails() {
     const data = await getContractById(id);
     setContract(data);
   };
+
+  const handleToggleDevices = (user) => {
+    if (selectedUser && selectedUser.id === user.id) {
+      setSelectedUser(null); // nếu đang mở thì tắt
+    } else {
+      setSelectedUser(user);
+    }
+  };
+
 
   if (!contract) return <div>Đang tải dữ liệu...</div>;
 
@@ -36,11 +50,19 @@ function ContractDetails() {
 
       <h3>👥 Danh sách người dùng liên kết:</h3>
         {contract.users?.length > 0 ? (
-            contract.users.map(u => (
-                <UserCard key={u.id} user={u} />
-            ))
+          contract.users.map(u => (
+            <div key={u.id}>
+              <UserCard
+                user={u}
+                contractId={contract.contractId}
+                onToggleDevices={() => handleToggleDevices(u)}
+                showDeleteButton={false}
+                showToggleButton={true}
+              />
+            </div>
+          ))
         ) : (
-        <p style={{ textAlign: 'center' }}>Không có user nào liên kết.</p>
+          <p style={{ textAlign: 'center' }}>Không có user nào liên kết.</p>
         )}
     </div>
   );

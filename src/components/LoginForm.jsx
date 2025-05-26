@@ -10,7 +10,12 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await login(username, password);
+      const credentials = {
+        username: username,
+        password: password
+      };
+
+      const result = await login(credentials);
 
       localStorage.setItem('token', result.token);
       localStorage.setItem('user', JSON.stringify(result.user));

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
   const [userInfo, setUserInfo] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const user = localStorage.getItem('user');
@@ -10,10 +12,9 @@ function Dashboard() {
     }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/';
+
+  const handleChangePassword = () => {
+    navigate('/change-password');
   };
 
   return (
@@ -25,7 +26,7 @@ function Dashboard() {
           <p><strong>Username:</strong> {userInfo.username}</p>
           <p><strong>Email:</strong> {userInfo.email}</p>
           <p><strong>Roles:</strong> {userInfo.roles.join(', ')}</p>
-          <button onClick={handleLogout}>Đăng xuất</button>
+          <button onClick={handleChangePassword}>Đổi mật khẩu</button>
         </div>
       ) : (
         <p>Đang tải thông tin...</p>

@@ -23,9 +23,6 @@ function ContractManager() {
     }
   };
 
-  const handleViewUsers = (id) => {
-    navigate(`/contracts/${id}/users`);
-  };
 
   return (
     <div>
@@ -39,7 +36,6 @@ function ContractManager() {
           key={contract.contractId}
           contract={contract}
           onDelete={handleDelete}
-          onViewUsers={handleViewUsers}
         />
       ))}
     </div>

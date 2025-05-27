@@ -24,40 +24,38 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
 
   return (
     <div
-      className="contract-card border p-4 rounded shadow hover:shadow-lg transition cursor-pointer"
-      onClick={handleCardClick}
-    >
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-lg font-semibold">{contract.contractCode}</h3>
-        <span className={`px-2 py-1 rounded text-sm ${
-          contract.status === 'ACTIVE'
-            ? 'bg-green-100 text-green-700'
-            : 'bg-gray-200 text-gray-600'
-        }`}>
-          {contract.status}
-        </span>
-      </div>
-
-      <div className="text-sm text-gray-600 space-y-1 mb-3">
-        <p><strong>Chủ nhà:</strong> {contract.owner?.fullName}</p>
-        <p><strong>Bắt đầu:</strong> {contract.startDate?.replace('T', ' ').slice(0, 16)}</p>
-        <p><strong>Kết thúc:</strong> {contract.endDate?.replace('T', ' ').slice(0, 16)}</p>
-      </div>
-
-      {isMyContract && (
-        <div
-          className="flex justify-end"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button
-            onClick={handleUnlink}
-            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
-          >
-            ❌ Hủy liên kết
-          </button>
-        </div>
-      )}
+    className="contract-card border p-4 rounded-2xl shadow-md hover:shadow-lg transition cursor-pointer bg-white"
+    onClick={handleCardClick}
+  >
+    <div className="flex justify-between items-center mb-2">
+      <h3 className="text-lg font-bold text-blue-600">📄 {contract.contractCode}</h3>
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+        contract.status === 'Active'
+          ? 'bg-green-100 text-green-700'
+          : 'bg-yellow-100 text-yellow-700'
+      }`}>
+        {contract.status}
+      </span>
     </div>
+
+    <div className="text-sm text-gray-600 space-y-1 mb-3">
+      <p>👤 <strong>Chủ nhà:</strong> {contract.owner?.fullName}</p>
+      <p>📅 <strong>Bắt đầu:</strong> {contract.startDate?.replace('T', ' ').slice(0, 16)}</p>
+      <p>⏳ <strong>Kết thúc:</strong> {contract.endDate?.replace('T', ' ').slice(0, 16)}</p>
+    </div>
+
+    {isMyContract && (
+      <div className="flex justify-end">
+        <button
+          onClick={handleUnlink}
+          className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+        >
+          ❌ Hủy liên kết
+        </button>
+      </div>
+    )}
+  </div>
+
   );
 }
 

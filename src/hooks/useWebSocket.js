@@ -10,7 +10,7 @@ export const useWebSocket = (token) => {
     const socket = new SockJS("http://localhost:8080/ws");
     const client = new Client({
       webSocketFactory: () => socket,
-      debug: (str) => console.log(str),
+      debug: (str) => console.log("[WS Debug]", str),
       connectHeaders: {
         Authorization: `Bearer ${token}`,
       },
@@ -22,6 +22,9 @@ export const useWebSocket = (token) => {
         console.log("❌ WebSocket disconnected");
         setConnected(false);
       },
+      onWebSocketError: (evt) => {
+        console.error('❌ WS Error:', evt);
+      },
     });
 
     client.activate();
@@ -32,11 +35,12 @@ export const useWebSocket = (token) => {
     };
   }, [token]);
 
+  // subscribeToTopic callback nhận message raw, không parse JSON
   const subscribeToTopic = useCallback((topic, callback) => {
     if (clientRef.current && connected) {
       const sub = clientRef.current.subscribe(topic, (message) => {
-        const payload = JSON.parse(message.body);
-        callback(payload);
+        // message.body là string raw, không parse JSON
+        callback(message.body, message.headers.destination);
       });
       return sub.id;
     }

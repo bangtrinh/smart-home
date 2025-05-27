@@ -13,20 +13,30 @@ function MyDevices() {
   const [devices, setDevices] = useState([]);
   const [subscriptions, setSubscriptions] = useState({});
   const [controlStatuses, setControlStatuses] = useState({});
+  const [deviceStatuses, setDeviceStatuses] = useState({});
 
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user'));
-  console.log('User ID:', user.id);
   const { connected, subscribeToTopic, unsubscribeFromTopic } = useWebSocket(token);
 
-  const handleWebSocketMessage = useCallback((payload) => {
-    setDevices(prevDevices =>
-      prevDevices.map(device =>
-        device.id === payload.deviceId
-          ? { ...device, status: payload.status }
-          : device
-      )
-    );
+  const handleWebSocketMessage = useCallback((rawMessage, topic) => {
+    const parts = topic.split('/');
+    const deviceId = parts[parts.length - 1];
+    let status = null;
+    try {
+      const parsed = JSON.parse(rawMessage);
+      status = parsed.value; // lấy trường value từ object JSON
+    } catch (error) {
+      console.error('Failed to parse WS message:', error);
+      status = rawMessage; // fallback nếu không parse được
+    }
+
+    console.log('Received WS message:', { deviceId, status });
+
+    setDeviceStatuses(prev => ({
+      ...prev,
+      [deviceId]: status
+    }));
   }, []);
 
   const fetchContracts = async () => {
@@ -43,7 +53,6 @@ function MyDevices() {
     await Promise.all(
       devices.map(async (device) => {
         const isActive = await checkControlActive(user.id, device.id);
-        console.log(`Device ${device.id} active status:`, isActive);
         statusMap[device.id] = isActive;
       })
     );
@@ -56,12 +65,7 @@ function MyDevices() {
     try {
       const res = await getDevicesByContractId(contractId);
       setDevices(res.data);
-
-      Object.values(subscriptions).forEach(subId => unsubscribeFromTopic(subId));
-      setSubscriptions({});
-
       await fetchControlStatuses(res.data);
-
     } catch (error) {
       console.error('Error fetching devices:', error);
     }
@@ -73,51 +77,51 @@ function MyDevices() {
   };
 
   const handleDeviceClick = async (device) => {
+    const currentStatus = deviceStatuses[device.id] || '*A: 0';
     const payload = {
-      value: device.status === '*A: 1' ? '*A: 0' : '*A: 1',
+      value: currentStatus === '*A: 1' ? '*A: 0' : '*A: 1',
       deviceId: device.id,
       contractId: selectedContractId
     };
 
     try {
       await publishMqttMessage(payload);
-      setDevices(prevDevices =>
-        prevDevices.map(d =>
-          d.id === device.id
-            ? { ...d, status: payload.value }
-            : d
-        )
-      );
+      setDeviceStatuses(prev => ({
+        ...prev,
+        [device.id]: payload.value
+      }));
     } catch (error) {
       console.error('Failed to send MQTT command:', error);
       alert('Không thể gửi lệnh tới thiết bị.');
     }
   };
 
-  const handleSubscribe = (device) => {
-    const topic = `/contract/${selectedContractId}/device/${device.id}`;
-    const subId = subscribeToTopic(topic, handleWebSocketMessage);
-    if (subId) {
-      setSubscriptions(prev => ({ ...prev, [topic]: subId }));
-    }
-  };
-
-  const handleUnsubscribe = (device) => {
-    const topic = `/contract/${selectedContractId}/device/${device.id}`;
-    const subId = subscriptions[topic];
-    if (subId) {
-      unsubscribeFromTopic(subId);
-      setSubscriptions(prev => {
-        const newSubs = { ...prev };
-        delete newSubs[topic];
-        return newSubs;
-      });
-    }
-  };
-
   useEffect(() => {
     fetchContracts();
   }, []);
+
+  useEffect(() => {
+    if (!connected || devices.length === 0 || !selectedContractId) return;
+
+    // Unsubscribe old
+    Object.values(subscriptions).forEach(subId => unsubscribeFromTopic(subId));
+    setSubscriptions({});
+
+    const newSubs = {};
+    devices.forEach(device => {
+      const topic = `/contract/${selectedContractId}/device/${device.id}`;
+      const subId = subscribeToTopic(topic, handleWebSocketMessage);
+      if (subId) {
+        newSubs[device.id] = subId;
+      }
+    });
+
+    setSubscriptions(newSubs);
+
+    return () => {
+      Object.values(newSubs).forEach(subId => unsubscribeFromTopic(subId));
+    };
+  }, [connected, devices, selectedContractId, subscribeToTopic, unsubscribeFromTopic, handleWebSocketMessage]);
 
   useEffect(() => {
     return () => {
@@ -145,22 +149,15 @@ function MyDevices() {
 
       {devices.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {devices.map(device => {
-            const topic = `/contract/${selectedContractId}/device/${device.id}`;
-            const isSubscribed = controlStatuses[device.id];
-
-            return (
-              <DeviceCard
-                key={device.id}
-                device={device}
-                onClick={() => handleDeviceClick(device)}
-                isSubscribed={isSubscribed}
-                onSubscribe={handleSubscribe}
-                onUnsubscribe={handleUnsubscribe}
-                userId={user.id} // nếu cần kiểm tra quyền bằng token hoặc userId thực tế
+          {devices.map(device => (
+            <DeviceCard
+              key={device.id}
+              device={{ ...device, status: deviceStatuses[device.id] || '*A: 0' }}
+              onClick={() => handleDeviceClick(device)}
+              userId={user.id}
+              schedule={true}
             />
-            );
-          })}
+          ))}
         </div>
       ) : (
         selectedContractId && (

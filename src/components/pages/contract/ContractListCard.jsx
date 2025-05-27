@@ -55,7 +55,6 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
       </div>
     )}
   </div>
-
   );
 }
 

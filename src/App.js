@@ -12,6 +12,9 @@ import ContractForm from './components/pages/contract/ContractForm';
 import ContractUsers from './components/pages/contract/ContractUsers';
 import ContractDetails from './components/pages/contract/ContractDetails';
 import Login from './components/LoginForm'; 
+import RegisterForm from './components/pages/auth/RegisterForm';
+import ForgotPassWord from './components/pages/auth/ForgotPassWord';
+import ConfirmResetPassword from './components/pages/auth/ConfirmResetPassword';
 import ChangePasswordForm from './components/ChangePasswordForm';
 import MyContracts from './components/pages/contract/MyContracts';
 import MyDevices from './components/pages/device/MyDevices';
@@ -37,7 +40,9 @@ function App() {
       <Routes>
         {/* Route login */}
         <Route path="/login" element={<Login />} />
-
+        <Route path="/Register" element={<RegisterForm />} />
+        <Route path ="/forgotPassword" element={<ForgotPassWord />} />
+        <Route path="/confirmResetPassword" element={<ConfirmResetPassword />} />
         {/* Private routes */}
         <Route
           path="/dashboard"

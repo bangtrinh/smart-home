@@ -6,7 +6,6 @@ import DeviceScheduleForm from './DeviceScheduleForm';
 
 function DeviceCard({ device, onDelete, onClick, userId, schedule }) {
   const [showScheduler, setShowScheduler] = useState(false); 
-
   return (
     <div
       className={`contract-card ${onClick ? 'cursor-pointer hover:shadow-lg' : ''}`}
@@ -49,7 +48,6 @@ function DeviceCard({ device, onDelete, onClick, userId, schedule }) {
             <DeviceControlActions userId={userId} device={device} />
           </div>
         )}
-
         <div onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowScheduler(!showScheduler)}

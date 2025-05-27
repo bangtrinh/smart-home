@@ -1,6 +1,6 @@
-import './pages/Css/LoginForm.css';
+import '../../css/auth/LoginForm.css';
 import React, { useState } from 'react';
-import { login } from '../api/authApi';
+import { login } from '../../../api/authApi';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
@@ -26,10 +26,12 @@ function LoginForm() {
       alert('Đăng nhập thành công!');
       navigate('/dashboard');
     } catch (error) {
-      alert('Đăng nhập thất bại!');    }
+      alert('Đăng nhập thất bại!');
+    }
   };
 
   return (
+    <div className="login-page">
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>
         <h2 className="login-title">Chào mừng bạn</h2>
@@ -84,6 +86,7 @@ function LoginForm() {
           <Link to="/register" className="register-link">Đăng ký</Link>
         </div>
       </form>
+    </div>
     </div>
   );
 }

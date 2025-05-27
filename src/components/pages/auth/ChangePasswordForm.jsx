@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { changePassword } from '../api/authApi';
+import { changePassword } from '../../../api/authApi';
 import { useNavigate } from 'react-router-dom';
 
 function ChangePasswordForm() {

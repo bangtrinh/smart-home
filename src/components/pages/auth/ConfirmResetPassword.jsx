@@ -2,16 +2,26 @@ import React, { useState } from 'react';
 import { confirmResetPassword } from '../../../api/authApi';
 import { useNavigate } from 'react-router-dom';
 import { FaKey, FaLock } from 'react-icons/fa'; // icon cho token và password
-import '../Css/ForgotPassword.css';
+import '../../css/auth/ForgotPassword.css';
+
 function ConfirmResetPassword() {
   const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState(''); // thêm state cho ô nhập lại mật khẩu
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Kiểm tra 2 mật khẩu có giống nhau
+    if (newPassword !== confirmPassword) {
+      setError('Mật khẩu nhập lại không khớp.');
+      setMessage('');
+      return;
+    }
+
     try {
       await confirmResetPassword({ token, newPassword });
       setMessage('Mật khẩu đã được cập nhật thành công. Bạn có thể đăng nhập lại.');
@@ -58,11 +68,23 @@ function ConfirmResetPassword() {
           />
         </div>
 
+        {/* Ô nhập lại mật khẩu mới */}
+        <div className="input-group">
+          <FaLock className="input-icon" />
+          <input
+            type="password"
+            className="input-field"
+            placeholder="Nhập lại mật khẩu mới"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </div>
+
         <button type="submit" className="register-button">Xác nhận</button>
 
         <div className="register-links">
-          <span>Quay lại </span>
-          <a href="/login" className="login-link">Đăng nhập</a>
+          <a href="/login" className="login-link">Quay lại đăng nhập</a>
         </div>
       </form>
     </div>

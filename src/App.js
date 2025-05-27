@@ -11,28 +11,26 @@ import ContractManager from './components/pages/contract/ContractManager';
 import ContractForm from './components/pages/contract/ContractForm';
 import ContractUsers from './components/pages/contract/ContractUsers';
 import ContractDetails from './components/pages/contract/ContractDetails';
-import Login from './components/LoginForm'; 
+import Login from './components/pages/auth/LoginForm'; 
 import RegisterForm from './components/pages/auth/RegisterForm';
 import ForgotPassWord from './components/pages/auth/ForgotPassWord';
 import ConfirmResetPassword from './components/pages/auth/ConfirmResetPassword';
-import ChangePasswordForm from './components/ChangePasswordForm';
+import ChangePasswordForm from './components/pages/auth/ChangePasswordForm';
 import MyContracts from './components/pages/contract/MyContracts';
 import MyDevices from './components/pages/device/MyDevices';
-
-
-
-import './style/style.css';
 import HomeOwnerDetails from './components/pages/homeowner/HomeOwnerDetails';
+import './App.css'; // Import your global styles
 
 // Hàm kiểm tra đã đăng nhập chưa
 const isLoggedIn = () => {
-  return !!localStorage.getItem('token'); // nếu có token -> true
+  return !!(localStorage.getItem('token') || sessionStorage.getItem('token'));
 };
 
 // Route bảo vệ
 const PrivateRoute = ({ children }) => {
   return isLoggedIn() ? children : <Navigate to="/login" />;
 };
+
 
 function App() {
   return (

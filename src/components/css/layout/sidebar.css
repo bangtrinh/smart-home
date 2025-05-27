@@ -1,0 +1,131 @@
+/* Sidebar Container */
+.sidebar {
+  height: calc(100% - 16px); /* Thay đổi từ 100vh thành 100% */
+  justify-content: space-between;
+  background: linear-gradient(180deg, #7c3aed 0%, #6b21a8 100%);
+  border-radius: 24px 24px 24px 24px;
+  padding: 24px 16px;
+  position: fixed;
+  margin-left: 8px; /* tạo khoảng cách 16px bên trái */
+  margin-top: 8px;  /* khoảng cách trên */
+  margin-bottom: 8px; /* khoảng cách dưới */
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: width 0.3s ease;
+  overflow-x: hidden;
+  box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng đến chiều rộng */
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.sidebar.expanded {
+  width: 160px;
+  align-items: flex-start;
+}
+
+/* Home Icon */
+.home-icon {
+  background: none;
+  border: none;
+  padding: 4px;   /* hoặc 0 */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white; /* kế thừa màu icon */
+}
+.home-icon:hover {
+  color: #555; /* màu hover nhẹ */
+}
+
+
+/* Nav */
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Link Style */
+.nav-link {
+  width: 100%;
+  height: 48px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  gap: 10px;
+  position: relative;
+  overflow: visible;
+}
+
+.nav-link:hover {
+  background-color: rgba(139, 92, 246, 0.2);
+}
+
+.nav-link.active {
+  background-color: white;
+  color: #7c3aed; /* Màu chữ khi active */
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 24px 24px 24px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Label for expanded sidebar */
+.link-label {
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.nav-link, .toggle-button {
+  display: flex;
+  align-items: center;
+  height: 40px;        /* Chiều cao giống nhau */
+  padding: 0 16px;     /* Padding trái phải */
+  cursor: pointer;
+  color: white; /* Màu chữ trắng */
+  gap: 8px;            /* Khoảng cách icon và label */
+  width: 100%;         /* Chiếm hết chiều ngang */
+  background: none;
+  border: none;
+  outline: none;
+  text-align: left;
+  user-select: none;
+}
+
+
+.logout-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 14px;
+  width: 100%;
+  margin-bottom: 10px; /* thêm khoảng cách dưới nút logout nếu muốn */
+
+}
+
+.logout-button:hover {
+  background-color: #f0f0f0;
+}
+
+.logout-button .link-label {
+  margin-left: 12px;
+}
+
+
+

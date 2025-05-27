@@ -1,9 +1,14 @@
 import axios from 'axios';
 
 const API_URL = 'http://localhost:8080/api/device-control';
-const getAuthHeaders = () => ({
-  Authorization: `Bearer ${localStorage.getItem('token')}`
-});
+
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  return {
+    Authorization: token ? `Bearer ${token}` : '',
+  };
+};
+
 // Gửi yêu cầu cấp quyền điều khiển (Gửi OTP)
 export const assignControlRequest = (data) => {
   return axios.post(`${API_URL}/assign/request`, data, { headers: getAuthHeaders() });

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { forgotPassword } from '../../../api/authApi';
 import { useNavigate } from 'react-router-dom';
 import { FaEnvelope } from 'react-icons/fa'; // icon email
-import '../Css/ForgotPassword.css'; // file css giống register.css (nhớ đặt đúng đường dẫn)
+import '../../css/auth/ForgotPassword.css'; 
 
 function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -49,8 +49,7 @@ function ForgotPassword() {
         <button type="submit" className="register-button">Gửi</button>
 
         <div className="register-links">
-          <span>Quay lại </span>
-          <a href="/login" className="login-link">Đăng nhập</a>
+          <a href="/login" className="login-link">Quay lại đăng nhập</a>
         </div>
       </form>
     </div>

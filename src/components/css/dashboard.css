@@ -1,0 +1,502 @@
+/* Global Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Main Container */
+/* DashboardContent.css */
+.content-wrapper {
+  padding-left: 220px; /* Độ rộng sidebar + khoảng cách */
+  padding-top: 80px; /* Chiều cao header + khoảng cách */
+  padding-right: 20px;
+  padding-bottom: 20px;
+  transition: padding-left 0.3s ease;
+}
+
+.main-content-card {
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Khi sidebar collapsed */
+.dashboard-container.collapsed .content-wrapper {
+  padding-left: 100px; /* Độ rộng sidebar collapsed + khoảng cách */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .dashboard-container.collapsed .content-wrapper {
+    padding-left: 20px;
+  }
+}
+
+.dashboard-container {
+  min-height: 100vh;
+  
+  background-color: #ffffff; /* Đổi từ tím sang trắng */
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow-x: hidden; /* Ngăn tràn ngang */
+}
+
+/* Grid Layout */
+.main-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  gap: 24px;
+  align-items: start;
+  transition: grid-template-columns 0.3s ease;
+  padding: 16px;
+}
+
+.main-grid.collapsed {
+  grid-template-columns: 80px 1fr 300px;
+}
+
+.main-grid:not(.collapsed) {
+  grid-template-columns: 200px 1fr 300px;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 16px; /* Thêm padding để tránh dính sát mép */
+}
+
+/* Welcome Card */
+.welcome-card {
+  background: linear-gradient(90deg, #fef3c7 0%, #fed7aa 100%);
+  border-radius: 24px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.welcome-text {
+  color: #374151;
+  margin-bottom: 16px;
+}
+
+.weather-info {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.weather-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4b5563;
+}
+
+.weather-item span:first-of-type {
+  font-weight: 600;
+}
+
+/* Home Control */
+.home-control-card {
+  background-color: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.home-control-header {
+  margin-bottom: 24px;
+}
+
+.home-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.home-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.stat-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #fbbf24;
+  border-radius: 50%;
+}
+
+/* Device Grid - Responsive */
+.device-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.device-card {
+  padding: 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.device-card.active {
+  background-color: #f3e8ff;
+  border: 2px solid #a855f7;
+}
+
+.device-card.inactive {
+  background-color: #f9fafb;
+  border: 2px solid transparent;
+}
+
+.device-card.primary {
+  background-color: #7c3aed;
+  color: white;
+}
+
+.device-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.device-name {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.device-status {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.device-card.inactive .device-name,
+.device-card.inactive .device-status {
+  color: #6b7280;
+}
+
+/* Temperature Control */
+.temperature-control {
+  background-color: #f9fafb;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.temp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.temp-title {
+  font-weight: 600;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.temp-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.temp-toggle span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.toggle-switch {
+  width: 40px;
+  height: 24px;
+  background-color: #7c3aed;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+}
+
+.toggle-ball {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.temp-display {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.temp-circle {
+  width: 160px;
+  height: 160px;
+  border: 8px solid #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.temp-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.temp-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.temp-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.temp-button.minus {
+  background-color: #d1d5db;
+}
+
+.temp-button.plus {
+  background-color: #7c3aed;
+  color: white;
+}
+
+.temp-controls span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Sidebar Right */
+.right-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sidebar-card {
+  background-color: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.card-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-header-controls span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.device-grid-sidebar {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.device-card-sidebar {
+  border-radius: 12px;
+  padding: 16px;
+  color: white;
+}
+
+.device-card-sidebar.purple {
+  background-color: #7c3aed;
+}
+
+.device-card-sidebar.yellow {
+  background-color: #fbbf24;
+}
+
+.device-card-sidebar.orange {
+  background-color: #f97316;
+}
+
+.device-card-sidebar.cyan {
+  background-color: #06b6d4;
+}
+
+.device-card-sidebar svg {
+  margin-bottom: 8px;
+}
+
+.device-card-sidebar div:first-of-type {
+  font-size: 12px;
+}
+
+.device-card-sidebar div:last-of-type {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Member Section */
+.members-grid {
+  display: flex;
+  gap: 12px;
+}
+
+.member-card {
+  text-align: center;
+}
+
+.member-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.member-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.member-role {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Power Chart Section */
+.power-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.power-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.power-dot {
+  width: 12px;
+  height: 12px;
+  background-color: #fb923c;
+  border-radius: 50%;
+}
+
+.power-legend span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.power-spending {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.chart-container {
+  height: 128px;
+  background: linear-gradient(to top, #fed7aa 0%, #fef3c7 100%);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+.chart-bar-1,
+.chart-bar-2,
+.chart-bar-3 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-radius: 12px;
+}
+
+.chart-bar-1 {
+  width: 100%;
+  height: 80px;
+  background: linear-gradient(to top, #fb923c 0%, #fed7aa 100%);
+}
+
+.chart-bar-2 {
+  width: 75%;
+  height: 64px;
+  background: linear-gradient(to top, #f97316 0%, #fb923c 100%);
+}
+
+.chart-bar-3 {
+  width: 50%;
+  height: 48px;
+  background: linear-gradient(to top, #ea580c 0%, #f97316 100%);
+}
+
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 8px;
+}

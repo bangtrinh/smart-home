@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { register } from '../../../api/authApi';
-import '../Css/RegisterForm.css';
+import '../../css/auth/RegisterForm.css';
 import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
 
 function RegisterForm() {

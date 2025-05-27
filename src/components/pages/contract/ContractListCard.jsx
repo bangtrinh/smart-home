@@ -3,7 +3,7 @@ import { unLinkFromContract } from '../../../api/contractApi';
 
 function ContractListCard({ contract, isMyContract, onDelete }) {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
 
   const handleCardClick = () => {
     navigate(`/contracts/${contract.contractId}`);

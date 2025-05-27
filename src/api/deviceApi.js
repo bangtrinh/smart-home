@@ -2,9 +2,12 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8080/api/device';
 
-const getAuthHeaders = () => ({
-  Authorization: `Bearer ${localStorage.getItem('token')}`
-});
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  return {
+    Authorization: token ? `Bearer ${token}` : '',
+  };
+};
 
 export const getDevices = () => axios.get(API_URL, { headers: getAuthHeaders() }).then(res => res.data);
 export const getDeviceById = (id) => axios.get(`${API_URL}/${id}`, { headers: getAuthHeaders() }).then(res => res.data);

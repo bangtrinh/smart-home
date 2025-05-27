@@ -66,6 +66,6 @@ public class MqttServiceImpl implements MqttService {
         //Đặt trạng thái của thiết bị
         device.setStatus(mqttDTO.getValue());
         deviceRepository.save(device);
-        return "Đã publish: " + mqttDTO.getValue() + " tới topic: " + path;
+        return "Published message: " + mqttDTO.getValue() + " to: " + path;
     }
 }

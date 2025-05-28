@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { forgotPassword } from '../../../api/authApi';
 import { useNavigate } from 'react-router-dom';
 import { FaEnvelope } from 'react-icons/fa'; // icon email
@@ -24,6 +25,13 @@ function ForgotPassword() {
       setMessage('');
     }
   };
+
+  useEffect(() => {
+    document.body.className = 'register-page';
+    return () => {
+      document.body.className = '';
+    };
+  }, []);
 
   return (
     <div className="register-container">

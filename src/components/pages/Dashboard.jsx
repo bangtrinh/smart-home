@@ -14,7 +14,6 @@ import {
 
 // Import CSS
 import '../css/dashboard.css';
-import RightSidebar from '../layout/RightSidebar'; // Sửa đường dẫn import
 
 function Dashboard() {
   const [temperature, setTemperature] = useState(25);

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getMyContract, getMyContracts } from '../../api/contractApi';
 import { Search, Settings, Bell, ChevronDown, User, LogOut } from 'lucide-react';
 import '../css/layout/header.css';
 
-function Header({ collapsed, setCollapsed }) {
+function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContractId }) {
   const navigate = useNavigate();
+  const [contracts, setContracts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,6 +16,18 @@ function Header({ collapsed, setCollapsed }) {
     if (user) {
       setCurrentUser(JSON.parse(user));
     }
+
+    const fetchContracts = async () => {
+      try {
+        const data = await getMyContracts();
+        setContracts(data);
+        if (data.length > 0) setSelectedContractId(data[0].contractId);
+      } catch (error) {
+        console.error('Failed to load contracts', error);
+      }
+    };
+
+    fetchContracts();
   }, []);
 
   const handleLogout = () => {
@@ -31,19 +45,26 @@ function Header({ collapsed, setCollapsed }) {
     <header className={`dashboard-header ${collapsed ? 'collapsed' : ''}`}>
       <div className="header-content">
         {/* Empty left space */}
-        <div className="header-left"></div>
-
-        {/* Center - Search Bar */}
-        <div className="search-container">
-          <Search className="search-icon" />
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
+        <div className="header-left">
+          <div className="contract-select-container">
+            <select
+              value={selectedContractId}
+              onChange={(e) => {
+                setSelectedContractId(e.target.value);
+                console.log(e.target.value);  // đây sẽ log ra contract.id
+              }}
+              className="contract-select"
+            >
+              <option value="">Select a Contract</option>
+              {contracts.map((contract) => (
+                <option key={contract.contractId} value={contract.contractId}>
+                  {contract.contractCode}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+
 
         {/* Right Section - Settings, Bell and User */}
         <div className="header-actions">

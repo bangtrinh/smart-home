@@ -15,8 +15,8 @@ function MyDevices() {
   const [controlStatuses, setControlStatuses] = useState({});
   const [deviceStatuses, setDeviceStatuses] = useState({});
 
-  const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user')) || {};
   const { connected, subscribeToTopic, unsubscribeFromTopic } = useWebSocket(token);
 
   const handleWebSocketMessage = useCallback((rawMessage, topic) => {

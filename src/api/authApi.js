@@ -9,9 +9,9 @@ export const login = (credentials) =>
   }).then(res => res.data);
 
 export const getCurrentUser = () =>
-  axios.get(`${API_URL}/current-user`, {
+  axios.get(`${API_URL}/me`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`
+      Authorization: `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
     }
   }).then(res => res.data);
 

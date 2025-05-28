@@ -10,14 +10,16 @@
 /* Main Container */
 /* DashboardContent.css */
 .content-wrapper {
-  padding-left: 220px; /* Độ rộng sidebar + khoảng cách */
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
   padding-top: 80px; /* Chiều cao header + khoảng cách */
-  padding-right: 20px;
   padding-bottom: 20px;
   transition: padding-left 0.3s ease;
 }
 
 .main-content-card {
+  flex: 1;
   background-color: #ffffff;
   border-radius: 24px;
   padding: 24px;
@@ -51,7 +53,7 @@
 
 /* Grid Layout */
 .main-grid {
-  max-width: 1400px;
+  max-width: calc(100% - 160px); /* Giảm bớt khoảng cách bên trái */
   margin: 0 auto;
   display: grid;
   gap: 24px;
@@ -77,6 +79,7 @@
 
 /* Welcome Card */
 .welcome-card {
+  display: flex;
   background: linear-gradient(90deg, #fef3c7 0%, #fed7aa 100%);
   border-radius: 24px;
   padding: 24px;
@@ -84,16 +87,32 @@
   overflow: hidden;
 }
 
+.welcome-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .welcome-title {
   font-size: 24px;
   font-weight: 700;
-  color: #1f2937;
+  color: #8b5e3c;
+  font-family: 'Georgia', 'Times New Roman', serif;
   margin-bottom: 8px;
 }
 
 .welcome-text {
-  color: #374151;
+  color: #8b5e3c;
   margin-bottom: 16px;
+}
+
+.welcome-right {
+  flex-shrink: 0;
+}
+
+.welcome-image {
+  height: 200px;
+  object-fit: contain;
 }
 
 .weather-info {
@@ -107,6 +126,7 @@
   align-items: center;
   gap: 8px;
   color: #4b5563;
+  font-weight: bold;
 }
 
 .weather-item span:first-of-type {
@@ -242,20 +262,30 @@
 .toggle-switch {
   width: 40px;
   height: 24px;
-  background-color: #7c3aed;
+  background-color: #7c3aed; /* Màu tím khi bật */
   border-radius: 12px;
   position: relative;
   cursor: pointer;
+  transition: background-color 0.3s; /* Thêm hiệu ứng chuyển màu mượt */
 }
 
 .toggle-ball {
   position: absolute;
-  right: 4px;
-  top: 4px;
   width: 16px;
   height: 16px;
   background-color: white;
   border-radius: 50%;
+  top: 4px;
+  left: 20px; /* Vị trí khi ON (bên phải) */
+  transition: left 0.3s ease; /* Hiệu ứng di chuyển mượt */
+}
+
+.toggle-switch.off {
+  background-color: gray; /* Màu xám khi tắt */
+}
+
+.toggle-switch.off .toggle-ball {
+  left: 4px; /* Vị trí khi OFF (bên trái) */
 }
 
 .temp-display {
@@ -318,7 +348,7 @@
 .right-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 10px;
 }
 
 .sidebar-card {
@@ -499,4 +529,96 @@
   font-size: 12px;
   color: #6b7280;
   margin-top: 8px;
+}
+
+.right-sidebar {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.my-devices-card .device-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.device-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 12px;
+}
+
+.switch {
+  width: 30px;
+  height: 16px;
+  border-radius: 10px;
+  background: #ddd;
+  position: relative;
+}
+
+.switch.on {
+  background: #4ade80;
+}
+
+.members-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.member-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.power-card .power-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.power-percentage {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.chart-placeholder {
+  background: #f3f4f6;
+  height: 100px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
 }

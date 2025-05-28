@@ -26,7 +26,7 @@ import HomeOwnerDetails from './components/pages/homeowner/HomeOwnerDetails';
 
 // Hàm kiểm tra đã đăng nhập chưa
 const isLoggedIn = () => {
-  return !!localStorage.getItem('token'); // nếu có token -> true
+  return !!localStorage.getItem('token') || !!sessionStorage.getItem('token'); // nếu có token -> true
 };
 
 // Route bảo vệ

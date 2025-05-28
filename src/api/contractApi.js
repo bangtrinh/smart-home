@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8080/api/contract';
 
 const getAuthHeaders = () => ({
-  Authorization: `Bearer ${localStorage.getItem('token')}`
+  Authorization: `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`,
 });
 
 export const getContracts = () => axios.get(API_URL, { headers: getAuthHeaders() }).then(res => res.data);

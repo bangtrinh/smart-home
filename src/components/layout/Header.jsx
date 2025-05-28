@@ -6,7 +6,7 @@ function Header({ collapsed, setCollapsed }) {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
+    const user = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (user) {
       setCurrentUser(JSON.parse(user));
     }
@@ -15,6 +15,8 @@ function Header({ collapsed, setCollapsed }) {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     navigate('/');
   };
 

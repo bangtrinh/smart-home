@@ -10,7 +10,7 @@ function MyContracts() {
   const [contractCode, setContractCode] = useState('');
   const [otp, setOtp] = useState('');
   const [showOtpInput, setShowOtpInput] = useState(false);
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user')) || {};
 
   useEffect(() => {
     fetchContracts();

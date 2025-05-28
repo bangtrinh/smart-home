@@ -6,7 +6,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
+    const user = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (user) {
       setUserInfo(JSON.parse(user));
     }

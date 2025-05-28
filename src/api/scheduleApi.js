@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8080/api/schedules';
 
 const getAuthHeaders = () => ({
-  Authorization: `Bearer ${localStorage.getItem('token')}`
+  Authorization: `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`,
 });
 
 export const createSchedule = async (scheduleDTO) => {

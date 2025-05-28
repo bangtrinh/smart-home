@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Home, Server, FileText, Users, User } from 'lucide-react';
 
 function Sidebar({ collapsed }) {
-  const roles = JSON.parse(localStorage.getItem('roles') || '[]'); // parse về mảng
+  const roles = JSON.parse(localStorage.getItem('roles') || sessionStorage.getItem('roles') || '[]'); // parse về mảng
 
   return (
     <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>

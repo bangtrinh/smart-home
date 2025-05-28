@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { confirmResetPassword } from '../../../api/authApi';
 import { useNavigate } from 'react-router-dom';
-import { FaKey, FaLock } from 'react-icons/fa'; // icon cho token và password
+import { FaKey, FaLock } from 'react-icons/fa';
 import '../../css/auth/ForgotPassword.css';
 
 function ConfirmResetPassword() {
   const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); // thêm state cho ô nhập lại mật khẩu
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  // Thêm class 'register-page' cho body khi component mount
+  useEffect(() => {
+    document.body.classList.add('register-page');
+
+    // Xóa class khi component unmount để tránh ảnh hưởng trang khác
+    return () => {
+      document.body.classList.remove('register-page');
+    };
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra 2 mật khẩu có giống nhau
     if (newPassword !== confirmPassword) {
       setError('Mật khẩu nhập lại không khớp.');
       setMessage('');
@@ -68,7 +77,6 @@ function ConfirmResetPassword() {
           />
         </div>
 
-        {/* Ô nhập lại mật khẩu mới */}
         <div className="input-group">
           <FaLock className="input-icon" />
           <input

@@ -1,14 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { forgotPassword } from '../../../api/authApi';
 import { useNavigate } from 'react-router-dom';
-import { FaEnvelope } from 'react-icons/fa'; // icon email
-import '../../css/auth/ForgotPassword.css'; 
+import { FaEnvelope } from 'react-icons/fa';
+import '../../css/auth/ForgotPassword.css';
 
 function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  // Thêm class 'register-page' cho body khi component mount
+  useEffect(() => {
+    document.body.classList.add('register-page');
+
+    // Xóa class khi component unmount để tránh ảnh hưởng trang khác
+    return () => {
+      document.body.classList.remove('register-page');
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

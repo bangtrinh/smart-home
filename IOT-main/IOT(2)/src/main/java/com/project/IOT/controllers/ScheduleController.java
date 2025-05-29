@@ -3,6 +3,8 @@ package com.project.IOT.controllers;
 import com.project.IOT.DTOS.ScheduleDTO;
 import com.project.IOT.services.ScheduleService;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,5 +47,11 @@ public class ScheduleController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         scheduleService.cancelSchedule(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/device/{id}")
+    public ResponseEntity<List<ScheduleDTO>> getSchedulesByDevice(@PathVariable Long id) {
+        List<ScheduleDTO> scheduleDTOs = scheduleService.getSchedules(id);
+        return ResponseEntity.ok(scheduleDTOs);
     }
 }

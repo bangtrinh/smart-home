@@ -119,11 +119,11 @@ public class ContractController {
         }
     }
 
-    @PostMapping("/unlink/{userId}/{contractCode}")
+    @PostMapping("/unlink/{userId}/{contractId}")
     @PreAuthorize("hasAnyRole('OWNER', 'MEMBER')")
-    public ResponseEntity<String> unlinkUserFromContract(@PathVariable Long userId, @PathVariable String contractCode) {
+    public ResponseEntity<String> unlinkUserFromContract(@PathVariable Long userId, @PathVariable Long contractId) {
         try {
-            contractService.unLinkToContract(userId, contractCode);
+            contractService.unLinkToContract(userId, contractId);
             return ResponseEntity.ok("User unlinked from contract successfully");
         } catch (Exception e) {
             return ResponseEntity.status(400).body("Failed to unlink user from contract: " + e.getMessage());

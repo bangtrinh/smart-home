@@ -38,9 +38,6 @@ public class DeviceController {
     @PreAuthorize("hasAnyRole('ADMIN', 'OWNER', 'MEMBER')")
     public ResponseEntity<List<DeviceDTO>> getDevicesByContract(@PathVariable Long contractId) {
         List<DeviceDTO> devices = deviceService.getDevicesByContract(contractId);
-        if (devices.isEmpty()) {
-            return ResponseEntity.status(404).body(null);
-        }
         return ResponseEntity.ok(devices);
     }
 

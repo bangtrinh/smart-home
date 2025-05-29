@@ -11,12 +11,10 @@ import { getHomeOwnerById } from '../../api/homeOwnerApi';
 import { getDevicesByContractId } from '../../api/deviceApi';
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { publishMqttMessage } from "../../api/mqttApi";
-import { checkControlActive } from "../../api/deviceControlApi"
-
-import {
-  ChevronDown
-} from 'lucide-react';
-
+import { checkControlActive } from "../../api/deviceControlApi";
+import { createSchedule, getSchedulesByDevice, cancelSchedule } from '../../api/scheduleApi';
+import { unLinkFromContract } from '../../api/contractApi';
+import { ChevronDown, Trash2, LogOut } from 'lucide-react';
 import '../css/dashboard.css';
 
 function Dashboard({ selectedContractId }) {
@@ -29,21 +27,30 @@ function Dashboard({ selectedContractId }) {
   const [members, setMembers] = useState([]);
   const [devices, setDevices] = useState([]);
   const [myDevices, setMyDevices] = useState([]);
-  const [selectedDevice, setSelectedDevice] = useState(null);
+  const [selectedDevice, setSelectedDevice] = useState(() => {
+    const savedDevice = localStorage.getItem(`selectedDevice_${selectedContractId}`);
+    return savedDevice ? JSON.parse(savedDevice) : null;
+  });
+  const [scheduleTime, setScheduleTime] = useState('');
+  const [timerAction, setTimerAction] = useState('');
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [schedules, setSchedules] = useState([]);
+  const [currentSchedule, setCurrentSchedule] = useState(null);
+  const [timeLeft, setTimeLeft] = useState('');
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
 
   const { connected, subscribeToTopic, unsubscribeFromTopic } = useWebSocket(token);
 
   const handleWebSocketMessage = useCallback((rawMessage, topic) => {
     if (!rawMessage) {
-    console.warn("Received empty WebSocket message for topic:", topic);
-    return;
+      console.warn("Received empty WebSocket message for topic:", topic);
+      return;
     }
     try {
       const payload = JSON.parse(rawMessage);
-      const topicParts = topic.split('/');
-      const deviceId = topicParts[topicParts.length - 1];
+      console.log('WebSocket payload:', payload);
+      const deviceId = payload.deviceId;
       const newStatus = payload.value;
-      console.log("Payload: ", payload.value);
 
       setDevices(prev =>
         prev.map(device =>
@@ -52,11 +59,62 @@ function Dashboard({ selectedContractId }) {
             : device
         )
       );
+
+      setSelectedDevice(prev =>
+        prev && prev.id === deviceId
+          ? { ...prev, status: newStatus }
+          : prev
+      );
     } catch (err) {
       console.error("Error parsing WebSocket message:", err);
     }
   }, []);
 
+  const fetchSchedules = useCallback(async (deviceId) => {
+    try {
+      const response = await getSchedulesByDevice(deviceId);
+      console.log(`Schedules for device ${deviceId}:`, response);
+      
+      // Store schedules for the device
+      setSchedules(prev => ({
+        ...prev,
+        [deviceId]: response
+      }));
+
+      // Only update currentSchedule if fetching for the selected device
+      if (deviceId === selectedDevice?.id) {
+        const now = new Date();
+        const upcoming = response
+          .filter(s => {
+            const scheduleDate = new Date(s.scheduleTime);
+            const isValid = !isNaN(scheduleDate) && scheduleDate > now;
+            console.log(`Schedule ${s.id}:`, { scheduleTime: s.scheduleTime, isValid });
+            return isValid;
+          })
+          .sort((a, b) => new Date(a.scheduleTime) - new Date(b.scheduleTime))[0];
+
+        console.log(`Upcoming schedule for device ${deviceId}:`, upcoming);
+        setCurrentSchedule(upcoming || null);
+      }
+    } catch (err) {
+      console.error(`Error fetching schedules for device ${deviceId}:`, err);
+    }
+  }, [selectedDevice?.id]);
+
+  const CancelSchedule = async (scheduleId) => {
+    try {
+      await cancelSchedule(scheduleId);
+      if (selectedDevice) {
+        await fetchSchedules(selectedDevice.id);
+      }
+      alert("Đã hủy lịch hẹn thành công");
+    } catch (error) {
+      console.error("Lỗi khi hủy lịch hẹn:", error);
+      alert("Không thể hủy lịch. Vui lòng thử lại.");
+    }
+  };
+
+  // Main data fetching effect
   useEffect(() => {
     if (!selectedContractId) return;
 
@@ -83,8 +141,6 @@ function Dashboard({ selectedContractId }) {
           const devicesData = await getDevicesByContractId(selectedContractId);
           setDevices(devicesData.data);
 
-          
-
           if (connected && devicesData.data.length > 0) {
             subscriptions = devicesData.data.map((device) => {
               const topic = `/contract/${selectedContractId}/device/${device.id}`;
@@ -96,15 +152,33 @@ function Dashboard({ selectedContractId }) {
 
           const controllable = [];
           for (const device of devicesData.data) {
-            const isActive = await checkControlActive(
-              user.id, 
-              device.id
-            );
+            const isActive = await checkControlActive(user.id, device.id);
             if (isActive) {
               controllable.push(device);
             }
+            // Fetch schedules for all devices but don't override currentSchedule
+            await fetchSchedules(device.id);
           }
           setMyDevices(controllable);
+
+          // Restore or set default selectedDevice
+          if (!selectedDevice && devicesData.data.length > 0) {
+            const defaultDevice = devicesData.data[0];
+            setSelectedDevice(defaultDevice);
+            localStorage.setItem(`selectedDevice_${selectedContractId}`, JSON.stringify(defaultDevice));
+            await fetchSchedules(defaultDevice.id);
+          } else if (selectedDevice) {
+            // Validate selectedDevice exists in devices list
+            const deviceExists = devicesData.data.some(d => d.id === selectedDevice.id);
+            if (!deviceExists) {
+              const defaultDevice = devicesData.data[0];
+              setSelectedDevice(defaultDevice);
+              localStorage.setItem(`selectedDevice_${selectedContractId}`, JSON.stringify(defaultDevice));
+              await fetchSchedules(defaultDevice.id);
+            } else {
+              await fetchSchedules(selectedDevice.id);
+            }
+          }
         }
       } catch (err) {
         console.error("Error fetching Dashboard data:", err);
@@ -116,7 +190,57 @@ function Dashboard({ selectedContractId }) {
     return () => {
       subscriptions.forEach(unsubscribeFromTopic);
     };
-  }, [selectedContractId, connected]);
+  }, [selectedContractId, connected, handleWebSocketMessage, fetchSchedules, selectedDevice]);
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (!currentSchedule || !selectedDevice) {
+      setTimeLeft('');
+      return;
+    }
+
+    const updateCountdown = () => {
+      const now = new Date();
+      const scheduleTime = new Date(currentSchedule.scheduleTime);
+      const timeDiff = scheduleTime - now;
+
+      if (timeDiff <= 0) {
+        console.log(`Schedule ${currentSchedule.id} expired`);
+        setTimeLeft('Expired');
+        setCurrentSchedule(null);
+        fetchSchedules(selectedDevice.id);
+        return;
+      }
+
+      const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+      setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, [currentSchedule, selectedDevice?.id, fetchSchedules]);
+
+  // Persist selectedDevice to localStorage
+  useEffect(() => {
+    if (selectedDevice) {
+      localStorage.setItem(`selectedDevice_${selectedContractId}`, JSON.stringify(selectedDevice));
+    }
+  }, [selectedDevice, selectedContractId]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.member-item')) {
+        setOpenDropdownIndex(null);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+  
 
   const getAqiLabel = (aqi) => {
     const labels = {
@@ -149,25 +273,82 @@ function Dashboard({ selectedContractId }) {
   const handleToggleDevice = async (device) => {
     const newStatus = device.status === '*A: 1' ? '*A: 0' : '*A: 1';
     const payload = {
-      value: device.status === '*A: 1' ? '*A: 0' : '*A: 1',
+      value: newStatus,
       deviceId: device.id,
       contractId: selectedContractId
     };
     try {
       await publishMqttMessage(payload);
-
       setDevices(prev =>
         prev.map(d =>
           d.id === device.id ? { ...d, status: newStatus } : d
         )
       );
-
-    setSelectedDevice(prev => 
-      prev && prev.id === device.id ? { ...prev, status: newStatus } : prev
-    );
+      setSelectedDevice(prev =>
+        prev && prev.id === device.id ? { ...prev, status: newStatus } : prev
+      );
     } catch (err) {
       console.error("Failed to publish MQTT message:", err);
     }
+  };
+
+  const handleSetTimer = async (device, scheduleTimeInput, action) => {
+    if (!scheduleTimeInput || !action) {
+      alert("Vui lòng chọn thời gian và hành động.");
+      return;
+    }
+
+    const scheduledTime = new Date(scheduleTimeInput);
+    const now = new Date();
+
+    if (scheduledTime <= now) {
+      alert("Thời gian phải nằm trong tương lai.");
+      return;
+    }
+
+    const formatDateTimeWithT = (date) => {
+      const pad = (n) => n.toString().padStart(2, '0');
+      const year = date.getFullYear();
+      const month = pad(date.getMonth() + 1);
+      const day = pad(date.getDate());
+      const hours = pad(date.getHours());
+      const minutes = pad(date.getMinutes());
+      const seconds = pad(date.getSeconds());
+      return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    };
+
+    const scheduleDTO = {
+      deviceId: device.id,
+      userId: user.id,
+      action,
+      scheduleTime: formatDateTimeWithT(scheduledTime),
+    };
+
+    try {
+      await createSchedule(scheduleDTO);
+      await fetchSchedules(device.id);
+      alert(`Đã đặt lịch ${action === '*A: 1' ? 'bật' : 'tắt'} thiết bị vào lúc ${scheduleTimeInput}`);
+    } catch (error) {
+      console.error("Lỗi khi tạo lịch hẹn giờ:", error);
+      alert("Không thể tạo lịch. Vui lòng thử lại.");
+    }
+  };
+
+  const handleKickUser = async (userId) => {
+    try {
+      await unLinkFromContract(userId, selectedContractId);
+      alert('User removed successfully!');
+      const usersData = await getUsersByContractId(selectedContractId);
+          setMembers(usersData.data);
+      setOpenDropdownIndex(null);
+    } catch (err) {
+      console.error('Error unlinking user:', err);
+      alert('Failed to remove user.');
+    }
+  };
+
+  const toggleDropdown = (index) => {
+    setOpenDropdownIndex(openDropdownIndex === index ? null : index);
   };
 
   const getColorFromString = (str) => {
@@ -190,11 +371,10 @@ function Dashboard({ selectedContractId }) {
               <p className="welcome-text">
                 Welcome Home! {airQuality ? getAqiLabel(airQuality.list[0].main.aqi) : "--"}
               </p>
-
               <div className="weather-info">
                 <div className="weather-item">
                   <span>{weather ? `${weather.main.temp}°C` : "--°C"}</span>
-                  <span>Outdoor temperature</span>
+                  <span>Outdoor Temperature</span>
                 </div>
                 <div className="weather-item">
                   <span>{weather ? getWeatherIcon(weather.weather[0].main) : "No data"}</span>
@@ -206,12 +386,10 @@ function Dashboard({ selectedContractId }) {
                 </div>
               </div>
             </div>
-
             <div className="welcome-right">
               <img src="/images/welcome.png" alt="Welcome" className="welcome-image" />
             </div>
           </div>
-
           <div className="home-control-card">
             <div className="home-control-header">
               <h2 className="home-title">{homeOwner?.fullName || 'Unknown'}'s Home</h2>
@@ -224,64 +402,141 @@ function Dashboard({ selectedContractId }) {
               </div>
             </div>
             <div className="device-grid">
-            {devices.length > 0 ? (
-              devices.map((device) => (
-                <div
-                  key={device.id}
-                  className={`device-card ${device.id === selectedDevice?.id ? 'active' : 'inactive'}`}
-                  onClick={() => setSelectedDevice(device)}
-                >
-                  <div className="device-info">
-                    <span className="device-name">{device.deviceName}</span>
-                    <span className="device-status">{device.status === '*A: 1' ? 'ON' : 'OFF'}</span>
+              {devices.length > 0 ? (
+                devices.map((device) => (
+                  <div
+                    key={device.id}
+                    className={`device-card ${device.id === selectedDevice?.id ? 'active' : 'inactive'}`}
+                    onClick={() => setSelectedDevice(device)}
+                  >
+                    <div className="device-info">
+                      <span className="device-name">{device.deviceName}</span>
+                      <span className="device-status">{device.status === '*A: 1' ? 'ON' : 'OFF'}</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>No devices found.</p>
+              )}
+            </div>
+          </div>
+          <div className="temperature-control">
+            <div className="temp-header">
+              <h3 className="temp-title">
+                {selectedDevice ? selectedDevice.deviceName : 'Select a device'}
+              </h3>
+              <div className="temp-toggle">
+                <span>POWER</span>
+                {selectedDevice && (
+                  <>
+                    <div
+                      className={`toggle-switch ${selectedDevice.status === '*A: 0' ? 'off' : ''}`}
+                      onClick={() => handleToggleDevice(selectedDevice)}
+                    >
+                      <div className="toggle-ball"></div>
+                    </div>
+                    <span>{selectedDevice.status === '*A: 1' ? 'ON' : 'OFF'}</span>
+                  </>
+                )}
+              </div>
+            </div>
+            {selectedDevice && (
+              <div className="schedule-container">
+                {currentSchedule ? (
+                <div className="countdown-wrapper"
+                  style={{ backgroundImage: "url('/images/timer-background.jpg')" }}>
+                  <div className="countdown-display">
+                    <div className="action-display">
+                      {selectedDevice.deviceName + " sẽ được " + 
+                      (currentSchedule.action === '*A: 1' ? 'bật' : 'tắt') + " sau"}
+                    </div>
+                    {/* Đồng hồ đếm ngược */}
+                    <div className="time-numbers">
+                      {timeLeft ? timeLeft.split(':').map((item, index) => (
+                        <span key={index}>{item}</span>
+                      )) : ['00', '00', '00'].map((item, index) => (
+                        <span key={index}>{item}</span>
+                      ))}
+                    </div>
+
+                    {/* Thông tin lịch hẹn */}
+                    <div className="schedule-info">
+                      <div className="info-row">
+                        <span className="info-value">
+                          {new Date(currentSchedule.scheduleTime).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Nút hủy */}
+                    <button
+                      className="cancel-button"
+                      onClick={() => CancelSchedule(currentSchedule.id)}
+                    >
+                      Hủy lịch
+                    </button>
+
                   </div>
                 </div>
-              ))
-            ) : (
-              <p>No devices found.</p>
+
+                ) : (
+                  <div className="schedule-form">
+                    <div className="schedule-inputs">
+                      <div className="date-picker">
+                        <label htmlFor="schedule-date">Chọn ngày:</label>
+                        <input
+                          type="date"
+                          id="schedule-date"
+                          value={scheduleDate}
+                          onChange={(e) => setScheduleDate(e.target.value)}
+                          min={new Date().toISOString().split('T')[0]}
+                        />
+                      </div>
+                      <div className="time-picker">
+                        <label htmlFor="schedule-time">Chọn giờ:</label>
+                        <input
+                          type="time"
+                          id="schedule-time"
+                          value={scheduleTime}
+                          onChange={(e) => setScheduleTime(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="action-selection">
+                      <label>Hành động:</label>
+                      <div className="action-buttons">
+                        <button
+                          className={`action-btn ${timerAction === '*A: 1' ? 'active' : ''}`}
+                          onClick={() => setTimerAction('*A: 1')}
+                        >
+                          Bật
+                        </button>
+                        <button
+                          className={`action-btn ${timerAction === '*A: 0' ? 'active' : ''}`}
+                          onClick={() => setTimerAction('*A: 0')}
+                        >
+                          Tắt
+                        </button>
+                      </div>
+                    </div>
+                    <button
+                      className="schedule-submit"
+                      onClick={() => {
+                        if (scheduleDate && scheduleTime && timerAction) {
+                          const dateTime = `${scheduleDate}T${scheduleTime}`;
+                          handleSetTimer(selectedDevice, dateTime, timerAction);
+                        }
+                      }}
+                    >
+                      Đặt hẹn giờ
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
-
-
-        {/* Temperature Control */}
-        <div className="temperature-control">
-          <div className="temp-header">
-            <h3 className="temp-title">
-              {selectedDevice ? selectedDevice.deviceName : 'Select a device'}
-            </h3>
-            <div className="temp-toggle">
-              <span>15°C</span>
-              {selectedDevice && (
-              <>
-                <div 
-                  className={`toggle-switch ${selectedDevice.status === '*A: 0' ? 'off' : ''}`}
-                  onClick={() => handleToggleDevice(selectedDevice)}>
-                  <div className="toggle-ball"></div>
-                </div>
-                <span>{selectedDevice.status === '*A: 1' ? 'ON' : 'OFF'}</span>
-              </>
-            )}
-            </div>
-          </div>
-
-          <div className="temp-display">
-            <div className="temp-circle">
-              <span className="temp-value">15°C</span>
-            </div>
-          </div>
-
-          <div className="temp-controls">
-            <span>05°C</span>
-            <button className="temp-button minus">-</button>
-            <button className="temp-button plus">+</button>
-            <span>25°C</span>
-          </div>
-        </div>
-      </div>
-
         <div className="right-sidebar">
-          {/* My Devices */}
           <div className="card my-devices-card">
             <div className="card-header">
               <h3>My Devices</h3>
@@ -295,7 +550,7 @@ function Dashboard({ selectedContractId }) {
                   <div
                     key={device.id}
                     className="device-item"
-                    style={{ background: getColorFromString(device.deviceName) }} // nếu device có color thì dùng, không thì màu default
+                    style={{ background: getColorFromString(device.deviceName) }}
                   >
                     <span>{device.deviceName}</span>
                     <div
@@ -307,26 +562,40 @@ function Dashboard({ selectedContractId }) {
               )}
             </div>
           </div>
-
           <div className="card members-card">
             <div className="card-header">
               <h3>Members</h3>
             </div>
             <div className="members-list">
-                {members.length > 0 ? (
+              {members.length > 0 ? (
                 members.map((member, index) => (
                   <div className="member-item" key={index}>
-                    <div className="avatar" style={{ background: getColorFromString(member.username) }}>
+                    <div className="avatar" style={{ background: getColorFromString(member.username) }}
+                    onClick={() => toggleDropdown(index)}>
                       {member.username?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <span className="member-name">
-                      {member.username.length > 10 
-                        ? `${member.username.substring(0, 10)}...` 
+                      {member.username.length > 10
+                        ? `${member.username.substring(0, 10)}...`
                         : member.username}
                     </span>
                     <span className="member-role">
                       {member.roles[0].toLowerCase() || 'Inactive'}
                     </span>
+
+                    {/* Dropdown */}
+                    {openDropdownIndex === index && (
+                      <div className="dropdown-menu">
+                        <button
+                          className="dropdown-item"
+                          onClick={() => handleKickUser(member.id)}
+                          style={{fontWeight: 'bold', fontSize: 12}}
+                        >
+                            Kick
+                          <LogOut size={14} style={{color: '#cc0000'}} />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))
               ) : (
@@ -334,7 +603,6 @@ function Dashboard({ selectedContractId }) {
               )}
             </div>
           </div>
-
           <div className="card power-card">
             <div className="card-header">
               <h3>Power Consumed</h3>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getMyContract, getMyContracts } from '../../api/contractApi';
-import { Search, Settings, Bell, ChevronDown, User, LogOut } from 'lucide-react';
+import { getMyContracts, requestLinkToContract, confirmLinkToContract } from '../../api/contractApi';
+import { Settings, Bell, ChevronDown, User, LogOut } from 'lucide-react';
 import '../css/layout/header.css';
 
 function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContractId }) {
@@ -9,26 +9,34 @@ function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContra
   const [contracts, setContracts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [showLinkContractForm, setShowLinkContractForm] = useState(false);
+  const [newContractCode, setNewContractCode] = useState('');
+  const [otp, setOtp] = useState('');
+  const [requestId, setRequestId] = useState(null);
+  const [isWaitingOtp, setIsWaitingOtp] = useState(false);
 
   useEffect(() => {
     const user = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (user) {
       setCurrentUser(JSON.parse(user));
     }
-
-    const fetchContracts = async () => {
-      try {
-        const data = await getMyContracts();
-        setContracts(data);
-        if (data.length > 0) setSelectedContractId(data[0].contractId);
-      } catch (error) {
-        console.error('Failed to load contracts', error);
-      }
-    };
-
-    fetchContracts();
   }, []);
+
+  const fetchContracts = async () => {
+    try {
+      const data = await getMyContracts();
+      setContracts(data);
+      if (data.length > 0 && !selectedContractId) {
+        setSelectedContractId(data[0].contractId);
+      }
+    } catch (error) {
+      console.error('Failed to load contracts', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchContracts();
+  }, [selectedContractId]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -41,32 +49,71 @@ function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContra
     setShowDropdown(false);
   };
 
+  const handleRequestLinkContract = async () => {
+    try {
+      const request = {
+        objectCode: newContractCode,
+        userId: currentUser.id
+      }
+      const res = await requestLinkToContract(request);
+      setRequestId(res.data.requestId);
+      setIsWaitingOtp(true);
+      alert('Mã OTP đã được gửi!');
+    } catch (error) {
+      console.error('Request link contract failed', error);
+      alert('Liên kết hợp đồng thất bại!');
+    }
+  };
+
+  const handleConfirmLinkContract = async () => {
+    try {
+      const confirm = {
+        contractCode: newContractCode,
+        otpCode: otp,
+        userId: currentUser.id
+      };
+      await confirmLinkToContract(confirm);
+      await fetchContracts();
+      setShowLinkContractForm(false);
+      setNewContractCode('');
+      setOtp('');
+      setIsWaitingOtp(false);
+      setRequestId(null);
+      alert('Liên kết hợp đồng thành công!');
+    } catch (error) {
+      console.error('Confirm link contract failed', error);
+      alert('Xác thực OTP thất bại!');
+    }
+  };
+
   return (
     <header className={`dashboard-header ${collapsed ? 'collapsed' : ''}`}>
       <div className="header-content">
-        {/* Empty left space */}
+        {/* Left section: contract selector */}
         <div className="header-left">
           <div className="contract-select-container">
             <select
               value={selectedContractId}
               onChange={(e) => {
-                setSelectedContractId(e.target.value);
-                console.log(e.target.value);  // đây sẽ log ra contract.id
+                if (e.target.value === 'add') {
+                  setShowLinkContractForm(true);
+                } else {
+                  setSelectedContractId(e.target.value);
+                }
               }}
               className="contract-select"
             >
-              <option value="">Select a Contract</option>
               {contracts.map((contract) => (
                 <option key={contract.contractId} value={contract.contractId}>
                   {contract.contractCode}
                 </option>
               ))}
+              <option value="add">Thêm...</option>
             </select>
           </div>
         </div>
 
-
-        {/* Right Section - Settings, Bell and User */}
+        {/* Right section: actions */}
         <div className="header-actions">
           <button className="icon-button">
             <Settings className="icon" />
@@ -85,12 +132,10 @@ function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContra
                 className="user-button"
               >
                 <div className="user-avatar">
-                  <span>
-                    {currentUser.username?.charAt(0).toUpperCase() || 'S'}
-                  </span>
+                  <span>{currentUser.username?.charAt(0).toUpperCase() || 'U'}</span>
                 </div>
                 <div className="user-info">
-                  <div className="user-name">{currentUser.username || 'Scarlett'}</div>
+                  <div className="user-name">{currentUser.username || 'User'}</div>
                 </div>
                 <ChevronDown className={`dropdown-arrow ${showDropdown ? 'rotated' : ''}`} />
               </button>
@@ -103,8 +148,8 @@ function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContra
                   ></div>
                   <div className="dropdown-menu">
                     <div className="dropdown-header">
-                      <div className="user-name">{currentUser.username || 'Scarlett'}</div>
-                      <div className="user-email">{currentUser.email || 'admin@smarthome.com'}</div>
+                      <div className="user-name">{currentUser.username}</div>
+                      <div className="user-email">{currentUser.email}</div>
                     </div>
 
                     <button onClick={handleProfile} className="dropdown-item">
@@ -136,6 +181,46 @@ function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContra
           )}
         </div>
       </div>
+
+      {/* Link Contract Modal */}
+      {showLinkContractForm && (
+        <>
+          <div className="modal-backdrop" onClick={() => setShowLinkContractForm(false)}></div>
+          <div className="modal">
+            <h3>{isWaitingOtp ? 'Nhập OTP xác thực' : 'Nhập mã hợp đồng để liên kết'}</h3>
+
+            {!isWaitingOtp ? (
+              <>
+                <input
+                  type="text"
+                  value={newContractCode}
+                  onChange={(e) => setNewContractCode(e.target.value)}
+                  placeholder="Nhập mã hợp đồng..."
+                  className="modal-input"
+                />
+                <div className="modal-actions">
+                  <button onClick={handleRequestLinkContract} className="modal-confirm-btn">Gửi yêu cầu</button>
+                  <button onClick={() => setShowLinkContractForm(false)} className="modal-cancel-btn">Hủy</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="Nhập mã OTP..."
+                  className="modal-input"
+                />
+                <div className="modal-actions">
+                  <button onClick={handleConfirmLinkContract} className="modal-confirm-btn">Xác nhận</button>
+                  <button onClick={() => setShowLinkContractForm(false)} className="modal-cancel-btn">Hủy</button>
+                </div>
+              </>
+            )}
+          </div>
+        </>
+      )}
     </header>
   );
 }

@@ -227,10 +227,10 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public void unLinkToContract(Long userId, String contractCode) {
+    public void unLinkToContract(Long userId, Long contractId) {
         UserAccount user = userAccountRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Contract contract = contractRepository.findByContractCode(contractCode)
+        Contract contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new RuntimeException("Contract not found"));
         Set<Contract> contracts = user.getContracts();
         if (contracts != null) {

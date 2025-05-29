@@ -46,6 +46,7 @@ function ToggleSwitch({ checked, onChange }) {
         input:checked + .slider:before {
           transform: translateX(24px);
         }
+          
       `}</style>
     </label>
   );

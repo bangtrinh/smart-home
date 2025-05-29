@@ -1,0 +1,199 @@
+/* Giao diện gọn nhẹ, profile-style */
+
+.container {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 28px 24px;
+  background-color: #ffffff; /* Giữ màu trắng nền */
+  border: 1px solid #ede9fe; /* Viền tím nhạt */
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(107, 70, 193, 0.1); /* Bóng đổ tím nhạt */
+  font-family: 'Segoe UI', sans-serif;
+  animation: bounceIn 0.6s ease-out forwards; /* Hiệu ứng bounce vào một lần khi tải */
+  position: relative;
+  overflow: hidden; /* Đảm bảo các hiệu ứng không tràn ra ngoài */
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #4c2c7d; /* Tím đậm cho tiêu đề */
+  margin-bottom: 20px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.3s ease; /* Chuyển động nhẹ khi hover */
+}
+
+/* Hiệu ứng ngôi sao nhỏ khi hover */
+.title:hover::after {
+  content: '✨';
+  position: absolute;
+  font-size: 1rem;
+  color: #9f7aea; /* Tím sáng */
+  top: -10px;
+  right: -20px;
+  animation: sparkle 1s ease-out forwards;
+}
+
+.infoBox {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f5f3ff; /* Nền tím nhạt */
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd6fe; /* Viền tím nhạt hơn */
+  font-size: 15px;
+  color: #4c2c7d; /* Tím đậm cho nội dung */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: slideIn 0.5s ease-out forwards; /* Hiệu ứng trượt vào một lần */
+}
+
+/* Hiệu ứng khi hover vào row */
+.row:hover {
+  transform: scale(1.02); /* Phóng to nhẹ nhàng */
+  box-shadow: 0 4px 10px rgba(107, 70, 193, 0.2); /* Bóng đổ tím */
+}
+
+.row label {
+  font-weight: 600;
+  color: #6b46c1; /* Tím nổi bật cho nhãn */
+  margin-right: 10px;
+  position: relative;
+}
+
+/* Hiệu ứng nhấp nháy khi hover */
+.row:hover label::before {
+  content: '🌟';
+  position: absolute;
+  left: -20px;
+  font-size: 1rem;
+  color: #9f7aea; /* Tím sáng */
+  animation: twinkle 1s ease-out forwards;
+}
+
+.row span {
+  color: #4c2c7d; /* Tím đậm cho văn bản */
+  text-align: left; /* Thay đổi từ right sang left để căn trái */
+  flex: 1;
+}
+
+.button {
+  margin-top: 24px;
+  background: #7c3aed; /* Nút tím nhạt */
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.25s ease;
+  position: relative;
+}
+
+/* Hiệu ứng khi hover vào nút */
+.button:hover {
+  background: #6b46c1; /* Tím đậm hơn khi hover */
+  transform: scale(1.05); /* Phóng to nhẹ nhàng */
+}
+
+/* Hiệu ứng bong bóng khi nhấn nút */
+.button:active {
+  transform: scale(0.95);
+}
+
+.button:active::after {
+  content: '💥';
+  position: absolute;
+  font-size: 1.5rem;
+  color: #9f7aea; /* Tím sáng */
+  top: -20px;
+  right: -20px;
+  animation: pop 0.5s ease-out forwards;
+}
+
+/* Các hiệu ứng animation */
+
+/* Bounce In cho container (một lần khi tải) */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Slide In cho các row (một lần khi tải) */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Sparkle cho ngôi sao khi hover */
+@keyframes sparkle {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Twinkle cho nhãn khi hover */
+@keyframes twinkle {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Pop cho hiệu ứng bong bóng khi nhấn nút */
+@keyframes pop {
+  0% {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .container {
+    padding: 20px 16px;
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .row span {
+    text-align: left; /* Đảm bảo căn trái trên màn hình nhỏ */
+  }
+}

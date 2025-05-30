@@ -2,11 +2,17 @@ import api from './api';
 import axios from 'axios';
 const API_URL = 'http://localhost:8080/api/auth';
 
-
+// ✅ Sửa: Lưu token vào localStorage ngay sau khi login
 export const login = (credentials) =>
   axios.post(`${API_URL}/login`, credentials, {
     headers: { 'Content-Type': 'application/json' },
-  }).then(res => res.data);
+  }).then(res => {
+    const { token } = res.data;
+    if (token) {
+      localStorage.setItem('token', token);
+    }
+    return res.data;
+  });
 
 export const getCurrentUser = () =>
   axios.get(`${API_URL}/current-user`, {
@@ -26,7 +32,7 @@ export const register = async (userData) => {
   }
 };
 
-export const forgotPassword = async ({email}) => {
+export const forgotPassword = async ({ email }) => {
   try {
     const response = await axios.post(`${API_URL}/reset-password/request`, { email }, {
       headers: { 'Content-Type': 'application/json' },
@@ -36,6 +42,7 @@ export const forgotPassword = async ({email}) => {
     throw new Error(error.response?.data || 'Gửi email khôi phục mật khẩu thất bại');
   }
 };
+
 export const confirmResetPassword = async ({ token, newPassword }) => {
   try {
     const response = await axios.post(`${API_URL}/reset-password/confirm`, { token, newPassword }, {
@@ -47,11 +54,20 @@ export const confirmResetPassword = async ({ token, newPassword }) => {
   }
 };
 
+// ✅ Sửa: Kiểm tra token trước khi gọi API đổi mật khẩu
+export const changePassword = async (changePasswordData) => {
+  const token = localStorage.getItem('token');
 
-export const changePassword = (changePassword) => {
-  return axios.put(`${API_URL}/change-password`, changePassword, {
+  if (!token) {
+    throw new Error('Không tìm thấy token. Vui lòng đăng nhập lại.');
+  }
+
+  const response = await axios.put(`${API_URL}/change-password`, changePasswordData, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`
-    }
-  }).then(res => res.data);
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return response.data;
 };

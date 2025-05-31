@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/device/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
                 .requestMatchers("/api/device-control/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
                 .requestMatchers("/api/otp/**").permitAll()
-                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
+                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "OWNER", "MEMBER", "GUEST")
                 .requestMatchers("/api/homeowner/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
                 .requestMatchers("/api/contract/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
                 .requestMatchers("/ws/**").permitAll()  // 🚨 cho phép kết nối tới WebSocket endpoint

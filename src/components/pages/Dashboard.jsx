@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useContract } from '../../context/ContractContext';
+import { useNavigate } from "react-router-dom";
 import {
   getWeatherData,
   getAirQualityData
@@ -9,17 +11,20 @@ import {
 } from '../../api/contractApi';
 import { getHomeOwnerById } from '../../api/homeOwnerApi';
 import { getDevicesByContractId } from '../../api/deviceApi';
-import { useWebSocket } from "../../hooks/useWebSocket";
+import { useWS } from "../../context/WebSocketContext";
 import { publishMqttMessage } from "../../api/mqttApi";
 import { checkControlActive } from "../../api/deviceControlApi";
 import { createSchedule, getSchedulesByDevice, cancelSchedule } from '../../api/scheduleApi';
 import { unLinkFromContract } from '../../api/contractApi';
-import { ChevronDown, Trash2, LogOut } from 'lucide-react';
+import { ChevronDown, ChevronRight, LogOut } from 'lucide-react';
 import '../css/dashboard.css';
 
-function Dashboard({ selectedContractId }) {
+
+function Dashboard() {
+  const { selectedContractId } = useContract();
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+  const navigate = useNavigate();
 
   const [weather, setWeather] = useState(null);
   const [airQuality, setAirQuality] = useState(null);
@@ -39,7 +44,7 @@ function Dashboard({ selectedContractId }) {
   const [timeLeft, setTimeLeft] = useState('');
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
 
-  const { connected, subscribeToTopic, unsubscribeFromTopic } = useWebSocket(token);
+  const { connected, subscribeToTopic, unsubscribeFromTopic } = useWS();
 
   const handleWebSocketMessage = useCallback((rawMessage, topic) => {
     if (!rawMessage) {
@@ -112,6 +117,10 @@ function Dashboard({ selectedContractId }) {
       console.error("Lỗi khi hủy lịch hẹn:", error);
       alert("Không thể hủy lịch. Vui lòng thử lại.");
     }
+  };
+
+  const handleNavigateToMyDevices = () => {
+  navigate(`/my-devices`);
   };
 
   // Main data fetching effect
@@ -540,7 +549,12 @@ function Dashboard({ selectedContractId }) {
           <div className="card my-devices-card">
             <div className="card-header">
               <h3>My Devices</h3>
-              <ChevronDown size={16} />
+              <div 
+                className="chevron-wrapper"
+                onClick={() => handleNavigateToMyDevices ()}
+              >
+                <ChevronRight size={16} />
+              </div>            
             </div>
             <div className="device-list">
               {myDevices.length === 0 ? (
@@ -553,10 +567,6 @@ function Dashboard({ selectedContractId }) {
                     style={{ background: getColorFromString(device.deviceName) }}
                   >
                     <span>{device.deviceName}</span>
-                    <div
-                      className={`switch ${device.status === "*A: 1" ? "on" : "off"}`}
-                      onClick={() => handleToggleDevice(device)}
-                    ></div>
                   </div>
                 ))
               )}

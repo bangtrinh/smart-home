@@ -51,7 +51,7 @@ export const confirmResetPassword = async ({ token, newPassword }) => {
 export const changePassword = (changePassword) => {
   return axios.put(`${API_URL}/change-password`, changePassword, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`
+      Authorization: `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
     }
   }).then(res => res.data);
 };

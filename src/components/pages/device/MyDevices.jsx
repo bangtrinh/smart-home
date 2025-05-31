@@ -2,14 +2,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useWebSocket } from '../../../hooks/useWebSocket';
 import { getDevicesByContractId } from '../../../api/deviceApi';
 import { checkControlActive } from '../../../api/deviceControlApi';
-import { getMyContracts } from '../../../api/contractApi';
 import { publishMqttMessage } from '../../../api/mqttApi';
 import DeviceCard from './DeviceCard';
-import { Select, SelectItem } from '../../ui/Select';
+import { useContract } from '../../../context/ContractContext';
+import '../../css/MyDevices.css'
 
 function MyDevices() {
-  const [contracts, setContracts] = useState([]);
-  const [selectedContractId, setSelectedContractId] = useState('');
+  const { selectedContractId } = useContract();
   const [devices, setDevices] = useState([]);
   const [subscriptions, setSubscriptions] = useState({});
   const [controlStatuses, setControlStatuses] = useState({});
@@ -25,28 +24,16 @@ function MyDevices() {
     let status = null;
     try {
       const parsed = JSON.parse(rawMessage);
-      status = parsed.value; // lấy trường value từ object JSON
+      status = parsed.value;
     } catch (error) {
       console.error('Failed to parse WS message:', error);
-      status = rawMessage; // fallback nếu không parse được
+      status = rawMessage;
     }
-
-    console.log('Received WS message:', { deviceId, status });
-
     setDeviceStatuses(prev => ({
       ...prev,
       [deviceId]: status
     }));
   }, []);
-
-  const fetchContracts = async () => {
-    try {
-      const data = await getMyContracts();
-      setContracts(data);
-    } catch (error) {
-      console.error('Error fetching contracts:', error);
-    }
-  };
 
   const fetchControlStatuses = async (devices) => {
     const statusMap = {};
@@ -61,7 +48,6 @@ function MyDevices() {
 
   const fetchDevices = async (contractId) => {
     if (!contractId) return;
-
     try {
       const res = await getDevicesByContractId(contractId);
       setDevices(res.data);
@@ -69,11 +55,6 @@ function MyDevices() {
     } catch (error) {
       console.error('Error fetching devices:', error);
     }
-  };
-
-  const handleContractChange = (value) => {
-    setSelectedContractId(value);
-    fetchDevices(value);
   };
 
   const handleDeviceClick = async (device) => {
@@ -97,13 +78,21 @@ function MyDevices() {
   };
 
   useEffect(() => {
-    fetchContracts();
-  }, []);
+    if (selectedContractId) {
+      if (user.contracts && user.contracts.includes(selectedContractId)) {
+        fetchDevices(selectedContractId);
+      } else {
+        console.error("404 Not Found");
+        // Hoặc navigate về trang 404 nếu có:
+        // navigate('/not-found');
+      }
+    }
+  }, [selectedContractId]);
+
 
   useEffect(() => {
     if (!connected || devices.length === 0 || !selectedContractId) return;
 
-    // Unsubscribe old
     Object.values(subscriptions).forEach(subId => unsubscribeFromTopic(subId));
     setSubscriptions({});
 
@@ -130,40 +119,37 @@ function MyDevices() {
   }, [subscriptions, unsubscribeFromTopic]);
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Thiết bị của tôi</h2>
-
-      <div className="mb-6">
-        <Select
-          value={selectedContractId}
-          onValueChange={handleContractChange}
-          placeholder="Chọn hợp đồng"
-        >
-          {contracts.map(contract => (
-            <SelectItem key={contract.contractId} value={contract.contractId}>
-              {contract.contractCode}
-            </SelectItem>
-          ))}
-        </Select>
+    <div className="my-devices-page">
+      <div className="page-header">
+        <h1 className="page-title">Thiết bị của tôi</h1>
+        <p className="page-subtitle">Quản lý và điều khiển các thiết bị smart home</p>
       </div>
 
-      {devices.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {devices.map(device => (
-            <DeviceCard
-              key={device.id}
-              device={{ ...device, status: deviceStatuses[device.id] || '*A: 0' }}
-              onClick={() => handleDeviceClick(device)}
-              userId={user.id}
-              schedule={true}
-            />
-          ))}
-        </div>
-      ) : (
-        selectedContractId && (
-          <p className="mt-4 text-gray-500">Không có thiết bị nào trong hợp đồng này.</p>
-        )
-      )}
+      <div className="devices-container">
+        {devices.length > 0 ? (
+          <div className="devices-grid">
+            {devices.map(device => (
+              <DeviceCard
+                key={device.id}
+                device={{
+                  ...device,
+                  status: deviceStatuses[device.id] || '*A: 0',
+                  controllable: controlStatuses[device.id] || false
+                }}
+                onClick={() => handleDeviceClick(device)}
+                userId={user.id}
+                schedule={true}
+              />
+            ))}
+          </div>
+        ) : (
+          selectedContractId && (
+            <div className="no-devices-message">
+              <p>Không có thiết bị nào trong hợp đồng này.</p>
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 }

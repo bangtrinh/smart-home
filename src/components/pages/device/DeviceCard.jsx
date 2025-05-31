@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import DeviceControlActions from './DeviceControlActions';
-import DeviceScheduleForm from './DeviceScheduleForm';
+
 
 function DeviceCard({ device, onDelete, onClick, userId, schedule }) {
   const [showScheduler, setShowScheduler] = useState(false); 
@@ -46,20 +46,6 @@ function DeviceCard({ device, onDelete, onClick, userId, schedule }) {
         {userId && (
           <div onClick={(e) => e.stopPropagation()}>
             <DeviceControlActions userId={userId} device={device} />
-          </div>
-        )}
-        <div onClick={(e) => e.stopPropagation()}>
-          <button
-            onClick={() => setShowScheduler(!showScheduler)}
-            className="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600"
-          >
-            ⏰ {showScheduler ? 'Đóng hẹn giờ' : 'Hẹn giờ'}
-          </button>
-        </div>
-
-        {schedule && showScheduler && (
-          <div onClick={(e) => e.stopPropagation()}>
-            <DeviceScheduleForm deviceId={device.id} userId={userId} />
           </div>
         )}
       </div>

@@ -3,8 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { getMyContracts, requestLinkToContract, confirmLinkToContract } from '../../api/contractApi';
 import { Settings, Bell, ChevronDown, User, LogOut } from 'lucide-react';
 import '../css/layout/header.css';
+import { useContract } from '../../context/ContractContext';
+import { useWS } from '../../context/WebSocketContext'; 
 
-function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContractId }) {
+function Header({ collapsed, setCollapsed }) {
+  const [notifications, setNotifications] = useState([]);
+  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const navigate = useNavigate();
   const [contracts, setContracts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
@@ -14,11 +18,22 @@ function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContra
   const [otp, setOtp] = useState('');
   const [requestId, setRequestId] = useState(null);
   const [isWaitingOtp, setIsWaitingOtp] = useState(false);
+  const [roles, setRoles] = useState([]);
+
+  const { selectedContractId, setSelectedContractId } = useContract();
+  const { connected, subscribeToTopic, unsubscribeFromTopic } = useWS(); // <- lấy websocket API từ context
 
   useEffect(() => {
     const user = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (user) {
       setCurrentUser(JSON.parse(user));
+      const roles = JSON.parse(localStorage.getItem('roles') || sessionStorage.getItem('roles'));
+      setRoles(roles);
+      console.log(roles);
+    }
+    const savedNoti = localStorage.getItem('notifications');
+    if (savedNoti) {
+      setNotifications(JSON.parse(savedNoti));
     }
   }, []);
 
@@ -36,11 +51,31 @@ function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContra
 
   useEffect(() => {
     fetchContracts();
-  }, [selectedContractId]);
+  }, []);
+
+  useEffect(() => {
+    if (!selectedContractId || !connected) return;
+
+    const topic = `/contract/${selectedContractId}/notifications`;
+    const subId = subscribeToTopic(topic, (rawMessage) => {
+      const notification = JSON.parse(rawMessage);
+      setNotifications((prev) => {
+        const updated = [notification, ...prev];
+        localStorage.setItem('notifications', JSON.stringify(updated));
+        return updated;
+      });
+    });
+
+    return () => {
+      if (subId) unsubscribeFromTopic(subId);
+    };
+  }, [selectedContractId, connected, subscribeToTopic, unsubscribeFromTopic]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('token');
     navigate('/login');
   };
 
@@ -54,7 +89,7 @@ function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContra
       const request = {
         objectCode: newContractCode,
         userId: currentUser.id
-      }
+      };
       const res = await requestLinkToContract(request);
       setRequestId(res.data.requestId);
       setIsWaitingOtp(true);
@@ -119,12 +154,40 @@ function Header({ collapsed, setCollapsed, selectedContractId, setSelectedContra
             <Settings className="icon" />
           </button>
 
-          <button className="icon-button notification-btn">
+          <button className="icon-button notification-btn" onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}>
             <Bell className="icon" />
-            <span className="notification-badge"></span>
+            {notifications.length > 0 && (
+              <span className="notification-badge">{notifications.length}</span>
+            )}
           </button>
 
-          {/* User Dropdown */}
+          {showNotificationDropdown && (
+          <div className="notification-dropdown">
+            {notifications.length === 0 ? (
+              <div className="notification-item empty">Không có thông báo mới</div>
+            ) : (
+              notifications.map((noti, idx) => (
+                <div key={idx} className="notification-item">
+                  <span className="time">{new Date(noti.timestamp).toLocaleTimeString()}</span>
+                  <p>{noti.message}</p>
+                </div>
+              ))
+            )}
+            {roles.includes('OWNER') && (
+              <button
+                onClick={() => {
+                  setNotifications([]);
+                  localStorage.removeItem('notifications');
+                }}
+                className="clear-button"
+              >
+                Xóa tất cả
+              </button>
+            )}
+          </div>
+        )}
+
+
           {currentUser && (
             <div className="user-dropdown-container">
               <button

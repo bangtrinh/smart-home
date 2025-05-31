@@ -86,7 +86,7 @@ function DeviceControlActions({ userId, device, isSubscribed, onSubscribe, onUns
           onClick={handleUnassignControl}
           className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
         >
-          ❌ Huỷ điều khiển
+        Huỷ đăng ký
         </button>
       ) : (
         !showOtpInput && (
@@ -94,7 +94,7 @@ function DeviceControlActions({ userId, device, isSubscribed, onSubscribe, onUns
             onClick={handleRequestControl}
             className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            📲 Đăng ký điều khiển
+          Đăng ký
           </button>
         )
       )}
@@ -117,24 +117,6 @@ function DeviceControlActions({ userId, device, isSubscribed, onSubscribe, onUns
           </button>
         </div>
       )}
-
-      {/* Nút Subscribe MQTT */}
-      {onSubscribe && onUnsubscribe && (
-        <div style={{ marginTop: 8 }}>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              isSubscribed ? onUnsubscribe(device) : onSubscribe(device);
-            }}
-            className={`px-3 py-1 rounded text-white ${
-              isSubscribed ? 'bg-orange-500 hover:bg-orange-600' : 'bg-teal-500 hover:bg-teal-600'
-            }`}
-          >
-            {isSubscribed ? '📴 Huỷ đăng ký MQTT' : '📡 Đăng ký MQTT'}
-          </button>
-        </div>
-      )}
-
     </div>
   );
 }

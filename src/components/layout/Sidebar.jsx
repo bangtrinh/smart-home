@@ -9,6 +9,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  Clock
 } from 'lucide-react';
 import '../css/layout/sidebar.css';
 
@@ -40,7 +41,7 @@ function Sidebar({ collapsed, setCollapsed }) {
         </Link>
 
         <Link
-          to={roles.includes('admin') ? '/devices' : '/my-devices'}
+          to={roles.includes('ADMIN') ? '/devices' : '/my-devices'}
           className={`nav-link ${isActive('/devices') || isActive('/my-devices') ? 'active' : ''}`}
         >
           <Server size={20} />
@@ -48,21 +49,27 @@ function Sidebar({ collapsed, setCollapsed }) {
         </Link>
 
         <Link
-          to={roles.includes('admin') ? '/contracts' : '/my-contracts'}
+          to={roles.includes('ADMIN') ? '/contracts' : '/my-contracts'}
           className={`nav-link ${isActive('/contracts') || isActive('/my-contracts') ? 'active' : ''}`}
         >
           <Bell size={20} />
           {!collapsed && <span className="link-label">Hợp đồng</span>}
         </Link>
+        {(roles.includes('OWNER') || roles.includes('MEMBER')) && (
+          <Link to="/devices/history" className={`nav-link ${isActive('/devices/history') ? 'active' : ''}`}>
+            <Clock size={20} />
+            {!collapsed && <span className="link-label">Lịch sử</span>}
+          </Link>
+        )}
 
-        {roles.includes('admin') && (
+        {roles.includes('ADMIN') && (
           <Link to="/homeowners" className={`nav-link ${isActive('/homeowners') ? 'active' : ''}`}>
             <Shield size={20} />
             {!collapsed && <span className="link-label">Chủ nhà</span>}
           </Link>
         )}
 
-        {roles.includes('admin') && (
+        {roles.includes('ADMIN') && (
           <Link to="/users" className={`nav-link ${isActive('/users') ? 'active' : ''}`}>
             <MapPin size={20} />
             {!collapsed && <span className="link-label">Người dùng</span>}

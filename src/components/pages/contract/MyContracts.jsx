@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getMyContracts, requestLinkToContract, confirmLinkToContract } from '../../../api/contractApi';
 import ContractCard from './ContractListCard';
 import { Link } from 'react-router-dom';
+import '../../css/Contract.css'
 
 function MyContracts() {
   const [contracts, setContracts] = useState([]);
@@ -68,71 +69,24 @@ function MyContracts() {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">📑 Hợp đồng của tôi</h2>
+    <div className="page-container">
 
       {loading ? (
-        <p className="text-gray-600">Đang tải hợp đồng của bạn...</p>
+        <p className="loading-text">Đang tải hợp đồng của bạn...</p>
       ) : contracts.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="contract-grid">
           {contracts.map(contract => (
             <ContractCard
-                key={contract.contractId}
-                contract={contract}
-                isMyContract={true}
-                onDelete={fetchContracts}
+              key={contract.contractId}
+              contract={contract}
+              isMyContract={true}
+              onDelete={fetchContracts}
             />
           ))}
         </div>
       ) : (
-        <p className="text-gray-500">Bạn chưa có hợp đồng nào.</p>
+        <p className="empty-text">Bạn chưa có hợp đồng nào.</p>
       )}
-
-      <div className="mt-8 p-4 border rounded-lg bg-gray-50">
-        <h3 className="text-lg font-semibold mb-2">🔗 Liên kết hợp đồng mới</h3>
-        <div className="flex flex-col md:flex-row items-center gap-2">
-          <input
-            type="text"
-            placeholder="Nhập mã hợp đồng"
-            value={contractCode}
-            onChange={(e) => setContractCode(e.target.value)}
-            className="border p-2 rounded w-full md:w-64"
-          />
-          <button
-            onClick={handleRequestLink}
-            className="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            📩 Gửi yêu cầu
-          </button>
-        </div>
-
-        {showOtpInput && (
-          <div className="flex flex-col md:flex-row items-center gap-2 mt-4">
-            <input
-              type="text"
-              placeholder="Nhập OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              className="border p-2 rounded w-full md:w-64"
-            />
-            <button
-              onClick={handleConfirmLink}
-              className="px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              ✅ Xác nhận
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div className="mt-6">
-        <Link
-          to="/dashboard"
-          className="text-blue-500 hover:underline inline-flex items-center"
-        >
-          ⬅️ Quay lại Dashboard
-        </Link>
-      </div>
     </div>
   );
 }

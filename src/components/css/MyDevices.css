@@ -1,0 +1,288 @@
+/* MyDevices.css - Modern Smart Home Dashboard Style */
+
+.my-devices-page {
+  padding: 24px;
+  background: #ffff;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.page-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+  margin: 0;
+}
+
+.devices-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.devices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 0;
+}
+
+/* Device Card Styling */
+.contract-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.contract-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 20px 20px 0 0;
+}
+
+.contract-card.cursor-pointer:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 1);
+}
+
+.contract-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.contract-card-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.status {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.status.on {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.status.off {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.contract-card-body {
+  margin-bottom: 24px;
+}
+
+.contract-card-body p {
+  margin: 8px 0;
+  font-size: 0.95rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.contract-card-body p strong {
+  color: #374151;
+  font-weight: 600;
+}
+
+.contract-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contract-card-actions > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Button Styles */
+.contract-card-actions button,
+.contract-card-actions a {
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.contract-card-actions button:hover,
+.contract-card-actions a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+/* Specific button colors */
+.contract-card-actions a[href*="edit"] {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.contract-card-actions a[href*="edit"]:hover {
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+.contract-card-actions button:has([innerHTML*="Xoá"]) {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.contract-card-actions button:has([innerHTML*="Xoá"]):hover {
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Schedule Form Styling */
+.contract-card-actions > div:last-child {
+  background: rgba(249, 250, 251, 0.8);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* No devices message */
+.no-devices-message {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.no-devices-message p {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .my-devices-page {
+    padding: 16px;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .devices-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .contract-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.75rem;
+  }
+  
+  .page-subtitle {
+    font-size: 1rem;
+  }
+  
+  .contract-card {
+    padding: 16px;
+  }
+  
+  .contract-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .contract-card-actions > div {
+    flex-direction: column;
+  }
+}
+
+/* Animation for card appearance */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contract-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.contract-card:nth-child(2) { animation-delay: 0.1s; }
+.contract-card:nth-child(3) { animation-delay: 0.2s; }
+.contract-card:nth-child(4) { animation-delay: 0.3s; }
+.contract-card:nth-child(5) { animation-delay: 0.4s; }
+
+/* Color variations for different device types */
+.contract-card[data-device-type="light"] .status.on {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+}
+
+.contract-card[data-device-type="thermostat"] .status.on {
+  background: linear-gradient(135deg, #ec4899, #be185d);
+  box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+}
+
+.contract-card[data-device-type="fan"] .status.on {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+}

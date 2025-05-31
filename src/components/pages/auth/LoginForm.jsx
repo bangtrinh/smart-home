@@ -24,9 +24,12 @@ function LoginForm() {
       if (rememberMe) {
         localStorage.setItem('token', result.token);
         localStorage.setItem('user', JSON.stringify(result.user));
+        localStorage.setItem('roles', JSON.stringify(result.user.roles));
+        
       } else {
         sessionStorage.setItem('token', result.token);
         sessionStorage.setItem('user', JSON.stringify(result.user));
+        sessionStorage.setItem('roles', JSON.stringify(result.user.roles));
       }
       alert('Đăng nhập thành công!');
       navigate('/dashboard');

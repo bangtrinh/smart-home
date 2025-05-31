@@ -54,11 +54,11 @@ public class MqttServiceImpl implements MqttService {
         notification.setUserId(userAccount.getId());
         notification.setDeviceId(mqttDTO.getDeviceId());
         notification.setValue(mqttDTO.getValue());
-        notification.setMessage("Người dùng " + userAccount.getUsername() 
-            + (mqttDTO.getValue().equals("*A: 1") ? " bật " : " tắt ") 
-            + " thiết bị " + device.getDeviceName());
+        notification.setMessage(userAccount.getUsername() 
+            + (mqttDTO.getValue().equals("*A: 1") ? " đã bật " : " đã tắt ") 
+            + device.getDeviceName());
         notification.setTimestamp(LocalDateTime.now());
-        
+
         messagingTemplate.convertAndSend(
             "/contract/" + mqttDTO.getContractId() + "/notifications", 
             notification

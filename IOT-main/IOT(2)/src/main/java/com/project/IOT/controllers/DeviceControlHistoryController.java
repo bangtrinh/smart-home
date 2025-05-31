@@ -1,7 +1,6 @@
 package com.project.IOT.controllers;
 
 import com.project.IOT.DTOS.DeviceControlHistoryDTO;
-import com.project.IOT.Entities.DeviceControlHistory;
 import com.project.IOT.services.DeviceControlHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

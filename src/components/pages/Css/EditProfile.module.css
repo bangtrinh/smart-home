@@ -1,0 +1,103 @@
+/* EditProfile.module.css */
+
+.container {
+  max-width: 420px;
+  margin: auto;
+  padding: 40px 35px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(91, 46, 255, 0.25);
+  backdrop-filter: blur(10px);
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+}
+
+.formGroup {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #666;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  background: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus {
+  border-color: #7e3ff2;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(123, 71, 255, 0.1);
+  outline: none;
+}
+
+.button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(90deg, #7e3ff2, #a855f7);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background: linear-gradient(90deg, #5b2eff, #9333ea);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(91, 46, 255, 0.3);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .container {
+    padding: 30px 20px;
+    max-width: 90%;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .formGroup input {
+    padding: 12px 16px;
+  }
+}

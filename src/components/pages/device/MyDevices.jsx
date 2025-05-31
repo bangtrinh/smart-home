@@ -158,7 +158,6 @@ function MyDevices() {
   return (
     <div className="p-4 bg-gray-50 min-h-screen">
       <h2 className="text-3xl font-bold mb-6 text-green-600 text-center">Thiết bị của tôi</h2>
-      <WeatherAndTime />
       <div className="mb-8 max-w-md mx-auto">
         <Select
           value={selectedContractId}

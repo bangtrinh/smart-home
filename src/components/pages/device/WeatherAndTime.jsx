@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../Css/WeatherAndTime.css';
-
+// cái này là component hiển thị thời gian và thời tiết
+// sử dụng API Open Meteo để lấy dữ liệu thời tiết 
+// xem được thì bỏ vô ko thì thôi =))
 const cities = [
   { name: 'Hà Nội', lat: 21.0285, lon: 105.8542 },
   { name: 'Đà Nẵng', lat: 16.0544, lon: 108.2022 },

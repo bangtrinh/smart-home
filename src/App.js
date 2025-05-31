@@ -18,7 +18,7 @@ import ConfirmResetPassword from './components/pages/auth/ConfirmResetPassword';
 import ChangePasswordForm from './components/ChangePasswordForm';
 import MyContracts from './components/pages/contract/MyContracts';
 import MyDevices from './components/pages/device/MyDevices';
-
+import EditProfile from './components/EditProfile';
 
 
 import './style/style.css';
@@ -43,6 +43,7 @@ function App() {
         <Route path="/Register" element={<RegisterForm />} />
         <Route path ="/forgotPassword" element={<ForgotPassWord />} />
         <Route path="/confirmResetPassword" element={<ConfirmResetPassword />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
         {/* Private routes */}
         <Route
           path="/dashboard"

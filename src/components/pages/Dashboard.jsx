@@ -17,6 +17,10 @@ function Dashboard() {
     navigate('/change-password');
   };
 
+  const handleEditProfile = () => {
+    navigate('/edit-profile');
+  };
+
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Thông tin người dùng</h2>
@@ -38,6 +42,9 @@ function Dashboard() {
             <label>Roles:</label>
             <span>{userInfo.roles.join(', ')}</span>
           </div>
+          <button className={styles.button} onClick={handleEditProfile}>
+            Chỉnh sửa thông tin
+          </button>
           <button className={styles.button} onClick={handleChangePassword}>
             Đổi mật khẩu
           </button>

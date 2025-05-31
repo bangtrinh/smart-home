@@ -1,4 +1,5 @@
 import React from 'react';
+// Cái ToggleSwitch này là một component đơn giản để hiển thị một công tắc bật/tắt.
 
 function ToggleSwitch({ checked, onChange }) {
   return (

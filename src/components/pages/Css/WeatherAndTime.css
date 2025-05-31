@@ -1,4 +1,5 @@
 /* src/pages/css/WeatherAndTime.css */
+/* Cái này css bỏ qua cũng được  */
 .weather-time-container {
   display: flex;
   justify-content: space-between;
@@ -176,7 +177,7 @@
   content: '❄️';
   position: absolute;
   font-size: 1rem;
-  color: #f5f3ff; /* Tím nhạt cho tuyết */
+  color: #f5f3ff;  /* Tím nhạt cho tuyết */
   animation: snowFall 3s infinite linear 1s;
 }
 

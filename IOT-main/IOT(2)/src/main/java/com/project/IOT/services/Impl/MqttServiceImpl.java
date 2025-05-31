@@ -3,6 +3,7 @@ package com.project.IOT.services.Impl;
 import com.project.IOT.Mapper.DeviceControlHistoryMapper;
 import com.project.IOT.DTOS.DeviceControlHistoryDTO;
 import com.project.IOT.DTOS.MqttDTO;
+import com.project.IOT.DTOS.NotificationMessage;
 import com.project.IOT.Entities.Contract;
 import com.project.IOT.Entities.Device;
 import com.project.IOT.Entities.DeviceControlHistory;
@@ -44,14 +45,32 @@ public class MqttServiceImpl implements MqttService {
 
         // Gửi thông báo qua WebSocket tới client đang sub /topic/mqtt
         messagingTemplate.convertAndSend(path, mqttDTO);
+
+        // Tìm kiếm thiết bị theo ID
+        Device device = deviceRepository.findById(mqttDTO.getDeviceId())
+                .orElseThrow(() -> new EntityNotFoundException("Thiết bị không tồn tại"));
+        NotificationMessage notification = new NotificationMessage();
+        notification.setContractId(mqttDTO.getContractId());
+        notification.setUserId(userAccount.getId());
+        notification.setDeviceId(mqttDTO.getDeviceId());
+        notification.setValue(mqttDTO.getValue());
+        notification.setMessage("Người dùng " + userAccount.getUsername() 
+            + (mqttDTO.getValue().equals("*A: 1") ? " bật " : " tắt ") 
+            + " thiết bị " + device.getDeviceName());
+        notification.setTimestamp(LocalDateTime.now());
+        
+        messagingTemplate.convertAndSend(
+            "/contract/" + mqttDTO.getContractId() + "/notifications", 
+            notification
+        );
+
+
         // Lưu lịch sử điều khiển thiết bị
         DeviceControlHistoryDTO historyDTO = new DeviceControlHistoryDTO();
         historyDTO.setActionTimestamp(LocalDateTime.now());
         historyDTO.setAction(mqttDTO.getValue());
         
-        // Tìm kiếm thiết bị theo ID
-        Device device = deviceRepository.findById(mqttDTO.getDeviceId())
-                .orElseThrow(() -> new EntityNotFoundException("Thiết bị không tồn tại"));
+        
         
         device.setStatus(mqttMessage.toString());
         // Tìm kiếm hợp đồng theo ID

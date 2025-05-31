@@ -45,7 +45,7 @@ public class AdminController {
     }
 
     @PutMapping("/users/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','OWNER', 'MEMBER')")
     public ResponseEntity<UserAccountDTO> updateUser(@PathVariable Long id, @RequestBody UserAccountDTO user) {
         UserAccountDTO existingUser = userAccountService.getUserById(id);
         if (existingUser == null) {

@@ -1,0 +1,86 @@
+.device-form-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.device-form-card {
+  margin-top: 40px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 1000px;
+  width: 100%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.device-form-card h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.device-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-weight: 500;
+}
+
+.device-form input,
+.device-form select {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.save-btn {
+  background: linear-gradient(to right, #34d399, #10b981);
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  flex: 1;
+  transition: 0.2s;
+}
+
+.save-btn:hover {
+  background: linear-gradient(to right, #10b981, #059669);
+}
+
+.cancel-btn {
+  background: #ef4444;
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  flex: 1;
+  transition: 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #dc2626;
+}

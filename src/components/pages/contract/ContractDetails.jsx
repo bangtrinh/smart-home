@@ -4,6 +4,7 @@ import { getContractById } from '../../../api/contractApi';
 import UserCard from '../user/UserCard';
 import { useNavigate } from 'react-router-dom';
 import UserDevicesControlList from '../device/UserDevicesControlList';
+import '../../css/ContractDetails.css';
 
 function ContractDetails() {
   const { id } = useParams();
@@ -29,41 +30,70 @@ function ContractDetails() {
     }
   };
 
+  const handleUserClick = (user) => {
+    if (selectedUser && selectedUser.id === user.id) {
+      setSelectedUser(null);
+    } else {
+      setSelectedUser(user);
+    }
+  };
+
+  const getAvatarColor = (role) => {
+    switch (role) {
+      case 'owner':
+        return '#fb923c'; // orange
+      case 'member':
+        return '#facc15'; // yellow
+      default:
+        return '#a3a3a3'; // gray
+    }
+  };
+
 
   if (!contract) return <div>Đang tải dữ liệu...</div>;
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>📃 Chi tiết hợp đồng: {contract.contractCode}</h2>
-        <Link className="link-button" to="/contracts">← Quay lại</Link>
+    <div className="contract-details-container">
+      <div className="contract-details-header">
+        <h2>{contract.contractCode}</h2>
       </div>
 
-      <div style={{ margin: '20px 0' }}>
+      <div className="contract-info">
         <p><strong>ID:</strong> {contract.contractId}</p>
         <p><strong>Chủ nhà:</strong> {contract.owner?.fullName}</p>
         <p><strong>Ngày bắt đầu:</strong> {contract.startDate?.replace('T', ' ').slice(0, 16)}</p>
         <p><strong>Ngày kết thúc:</strong> {contract.endDate?.replace('T', ' ').slice(0, 16)}</p>
-        <p><strong>Trạng thái:</strong> {contract.status}</p>
         <p><strong>Số lượng user liên kết:</strong> {contract.users?.length || 0}</p>
       </div>
 
-      <h3>👥 Danh sách người dùng liên kết:</h3>
-        {contract.users?.length > 0 ? (
-          contract.users.map(u => (
-            <div key={u.id}>
-              <UserCard
-                user={u}
-                contractId={contract.contractId}
-                onToggleDevices={() => handleToggleDevices(u)}
-                showDeleteButton={false}
-                showToggleButton={true}
-              />
-            </div>
-          ))
-        ) : (
-          <p style={{ textAlign: 'center' }}>Không có user nào liên kết.</p>
+      <div className="users-section">
+        <div className="members-list">
+          {contract.users?.length > 0 ? (
+            contract.users.map(u => (
+              <div key={u.id} className="member-item" onClick={() => handleUserClick(u)}>
+                <div
+                  className="member-avatar"
+                  style={{ backgroundColor: getAvatarColor(u.roles[0]) }}
+                >
+                  {u.username[0]?.toUpperCase()}
+                </div>
+                <div className="member-name">{u.username}</div>
+                <div className="member-role">{u.roles[0]}</div>
+              </div>
+            ))
+          ) : (
+            <p className="no-users-message">Không có user nào liên kết.</p>
+          )}
+        </div>
+
+        {/* Danh sách thiết bị điều khiển của user */}
+        {selectedUser && (
+          <div className="user-devices-section">
+            <h4>Thiết bị của {selectedUser.username}:</h4>
+            <UserDevicesControlList userId={selectedUser.id} contractId={contract.contractId} />
+          </div>
         )}
+      </div>
     </div>
   );
 }

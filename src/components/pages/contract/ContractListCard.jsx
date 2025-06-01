@@ -4,6 +4,7 @@ import { unLinkFromContract } from '../../../api/contractApi';
 function ContractListCard({ contract, isMyContract, onDelete }) {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+  
 
   const handleCardClick = () => {
     navigate(`/contracts/${contract.contractId}`);
@@ -28,14 +29,7 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
     onClick={handleCardClick}
   >
     <div className="flex justify-between items-center mb-2">
-      <h3 className="text-lg font-bold text-blue-600">📄 {contract.contractCode}</h3>
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-        contract.status === 'Active'
-          ? 'bg-green-100 text-green-700'
-          : 'bg-yellow-100 text-yellow-700'
-      }`}>
-        {contract.status}
-      </span>
+      <h3 className="text-lg font-bold text-blue-600">{contract.contractCode}</h3>
     </div>
 
     <div className="text-sm text-gray-600 space-y-1 mb-3">

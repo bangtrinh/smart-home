@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useContract } from '../../context/ContractContext';
 import { useNavigate } from "react-router-dom";
 import {
@@ -43,6 +43,9 @@ function Dashboard() {
   const [currentSchedule, setCurrentSchedule] = useState(null);
   const [timeLeft, setTimeLeft] = useState('');
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const isMyDevice = useMemo(() => {
+    return myDevices.some(device => device.id === selectedDevice?.id);
+  }, [myDevices, selectedDevice]);
 
   const { connected, subscribeToTopic, unsubscribeFromTopic } = useWS();
 
@@ -162,7 +165,8 @@ function Dashboard() {
           const controllable = [];
           for (const device of devicesData.data) {
             const isActive = await checkControlActive(user.id, device.id);
-            if (isActive) {
+            console.log("Check: " + isActive.data);
+            if (isActive.data) {
               controllable.push(device);
             }
             // Fetch schedules for all devices but don't override currentSchedule
@@ -449,101 +453,110 @@ function Dashboard() {
                 )}
               </div>
             </div>
+
             {selectedDevice && (
-              <div className="schedule-container">
-                {currentSchedule ? (
-                <div className="countdown-wrapper"
-                  style={{ backgroundImage: "url('/images/timer-background.jpg')" }}>
-                  <div className="countdown-display">
-                    <div className="action-display">
-                      {selectedDevice.deviceName + " sẽ được " + 
-                      (currentSchedule.action === '*A: 1' ? 'bật' : 'tắt') + " sau"}
-                    </div>
-                    {/* Đồng hồ đếm ngược */}
-                    <div className="time-numbers">
-                      {timeLeft ? timeLeft.split(':').map((item, index) => (
-                        <span key={index}>{item}</span>
-                      )) : ['00', '00', '00'].map((item, index) => (
-                        <span key={index}>{item}</span>
-                      ))}
-                    </div>
-
-                    {/* Thông tin lịch hẹn */}
-                    <div className="schedule-info">
-                      <div className="info-row">
-                        <span className="info-value">
-                          {new Date(currentSchedule.scheduleTime).toLocaleString()}
-                        </span>
+              isMyDevice ? (
+                <div className="schedule-container">
+                  {currentSchedule ? (
+                    <div
+                      className="countdown-wrapper"
+                      style={{ backgroundImage: "url('/images/timer-background.jpg')" }}
+                    >
+                      <div className="countdown-display">
+                        <div className="action-display">
+                          {selectedDevice.deviceName +
+                            " sẽ được " +
+                            (currentSchedule.action === '*A: 1' ? 'bật' : 'tắt') +
+                            " sau"}
+                        </div>
+                        <div className="time-numbers">
+                          {timeLeft
+                            ? timeLeft.split(':').map((item, index) => (
+                                <span key={index}>{item}</span>
+                              ))
+                            : ['00', '00', '00'].map((item, index) => (
+                                <span key={index}>{item}</span>
+                              ))}
+                        </div>
+                        <div className="schedule-info">
+                          <div className="info-row">
+                            <span className="info-value">
+                              {new Date(currentSchedule.scheduleTime).toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          className="cancel-button"
+                          onClick={() => CancelSchedule(currentSchedule.id)}
+                        >
+                          Hủy lịch
+                        </button>
                       </div>
                     </div>
-
-                    {/* Nút hủy */}
-                    <button
-                      className="cancel-button"
-                      onClick={() => CancelSchedule(currentSchedule.id)}
-                    >
-                      Hủy lịch
-                    </button>
-
-                  </div>
+                  ) : (
+                    <div className="schedule-form">
+                      <div className="schedule-inputs">
+                        <div className="date-picker">
+                          <label htmlFor="schedule-date">Chọn ngày:</label>
+                          <input
+                            type="date"
+                            id="schedule-date"
+                            value={scheduleDate}
+                            onChange={(e) => setScheduleDate(e.target.value)}
+                            min={new Date().toISOString().split('T')[0]}
+                          />
+                        </div>
+                        <div className="time-picker">
+                          <label htmlFor="schedule-time">Chọn giờ:</label>
+                          <input
+                            type="time"
+                            id="schedule-time"
+                            value={scheduleTime}
+                            onChange={(e) => setScheduleTime(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      <div className="action-selection">
+                        <label>Hành động:</label>
+                        <div className="action-buttons">
+                          <button
+                            className={`action-btn ${
+                              timerAction === '*A: 1' ? 'active' : ''
+                            }`}
+                            onClick={() => setTimerAction('*A: 1')}
+                          >
+                            Bật
+                          </button>
+                          <button
+                            className={`action-btn ${
+                              timerAction === '*A: 0' ? 'active' : ''
+                            }`}
+                            onClick={() => setTimerAction('*A: 0')}
+                          >
+                            Tắt
+                          </button>
+                        </div>
+                      </div>
+                      <button
+                        className="schedule-submit"
+                        onClick={() => {
+                          if (scheduleDate && scheduleTime && timerAction) {
+                            const dateTime = `${scheduleDate}T${scheduleTime}`;
+                            handleSetTimer(selectedDevice, dateTime, timerAction);
+                          }
+                        }}
+                      >
+                        Đặt hẹn giờ
+                      </button>
+                    </div>
+                  )}
                 </div>
-
-                ) : (
-                  <div className="schedule-form">
-                    <div className="schedule-inputs">
-                      <div className="date-picker">
-                        <label htmlFor="schedule-date">Chọn ngày:</label>
-                        <input
-                          type="date"
-                          id="schedule-date"
-                          value={scheduleDate}
-                          onChange={(e) => setScheduleDate(e.target.value)}
-                          min={new Date().toISOString().split('T')[0]}
-                        />
-                      </div>
-                      <div className="time-picker">
-                        <label htmlFor="schedule-time">Chọn giờ:</label>
-                        <input
-                          type="time"
-                          id="schedule-time"
-                          value={scheduleTime}
-                          onChange={(e) => setScheduleTime(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <div className="action-selection">
-                      <label>Hành động:</label>
-                      <div className="action-buttons">
-                        <button
-                          className={`action-btn ${timerAction === '*A: 1' ? 'active' : ''}`}
-                          onClick={() => setTimerAction('*A: 1')}
-                        >
-                          Bật
-                        </button>
-                        <button
-                          className={`action-btn ${timerAction === '*A: 0' ? 'active' : ''}`}
-                          onClick={() => setTimerAction('*A: 0')}
-                        >
-                          Tắt
-                        </button>
-                      </div>
-                    </div>
-                    <button
-                      className="schedule-submit"
-                      onClick={() => {
-                        if (scheduleDate && scheduleTime && timerAction) {
-                          const dateTime = `${scheduleDate}T${scheduleTime}`;
-                          handleSetTimer(selectedDevice, dateTime, timerAction);
-                        }
-                      }}
-                    >
-                      Đặt hẹn giờ
-                    </button>
-                  </div>
-                )}
-              </div>
+              ) : (
+                <p className="not-my-device">Thiết bị này không thuộc quyền quản lý của bạn.</p>
+              )
             )}
           </div>
+
         </div>
         <div className="right-sidebar">
           <div className="card my-devices-card">
@@ -611,20 +624,6 @@ function Dashboard() {
               ) : (
                 <p>No members available.</p>
               )}
-            </div>
-          </div>
-          <div className="card power-card">
-            <div className="card-header">
-              <h3>Power Consumed</h3>
-              <ChevronDown size={16} />
-            </div>
-            <div className="power-info">
-              <div className="power-percentage">
-                <span>73%</span> Spending
-              </div>
-              <div className="chart-placeholder">
-                📊 (Chart ở đây — có thể dùng Recharts / Chart.js sau)
-              </div>
             </div>
           </div>
         </div>

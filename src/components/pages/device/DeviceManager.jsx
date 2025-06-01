@@ -32,7 +32,7 @@ function DeviceManager() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>📱 Danh sách thiết bị</h2>
+        <h2>Danh sách thiết bị</h2>
         <Link className="link-button" to="/devices/add">+ Thêm thiết bị</Link>
       </div>
 

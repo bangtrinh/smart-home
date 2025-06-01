@@ -78,15 +78,13 @@ function MyDevices() {
   };
 
   useEffect(() => {
-    if (selectedContractId) {
-      if (user.contracts && user.contracts.includes(selectedContractId)) {
-        fetchDevices(selectedContractId);
-      } else {
-        console.error("404 Not Found");
-        // Hoặc navigate về trang 404 nếu có:
-        // navigate('/not-found');
-      }
+    if (!selectedContractId) {
+      console.error("404 Not Found");
+      setDevices([]);
+      return;
     }
+
+    fetchDevices(selectedContractId);
   }, [selectedContractId]);
 
 

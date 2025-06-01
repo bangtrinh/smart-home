@@ -1,0 +1,58 @@
+.homeowner-details-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 40px 20px;
+    margin-top: 20px;
+}
+
+.homeowner-card {
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.homeowner-card h2 {
+  font-size: 24px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.homeowner-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.contracts-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contracts-section h3 {
+  font-size: 20px;
+}
+
+.contracts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.back-link {
+  text-align: center;
+}
+
+.back-link a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
+}

@@ -13,9 +13,6 @@ function DeviceCard({ device, onDelete, onClick, userId, schedule }) {
     >
       <div className="contract-card-header">
         <h3>{device.deviceName}</h3>
-        <span className={`status ${device.status === '*A: 1' ? 'on' : 'off'}`}>
-          {device.status === '*A: 1' ? 'On' : 'Off'}
-        </span>
       </div>
 
       <div className="contract-card-body">
@@ -23,22 +20,24 @@ function DeviceCard({ device, onDelete, onClick, userId, schedule }) {
         <p><strong>Trạng thái:</strong> {device.status === '*A: 1' ? 'On' : 'Off'}</p>
       </div>
 
-      <div className="contract-card-actions space-y-2">
+      <div className="contract-card-actions">
         {onDelete && (
           <>
             <Link
               to={`/devices/edit/${device.id}`}
               onClick={(e) => e.stopPropagation()}
+              className="edit-device-btn"
             >
-              ✏️ Sửa
+              Sửa
             </Link>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(device.id);
               }}
+              className="delete-device-btn"
             >
-              🗑️ Xoá
+              Xoá
             </button>
           </>
         )}

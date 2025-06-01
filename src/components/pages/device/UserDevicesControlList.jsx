@@ -39,7 +39,6 @@ function UserDevicesControlList({ userId, contractId }) {
 
   return (
     <div>
-      <h4>📱 Thiết bị user này đang điều khiển:</h4>
       {devices.length > 0 ? (
         devices.map((device) => (
             <DeviceCard key={device.id} device={device} userId={userId} />

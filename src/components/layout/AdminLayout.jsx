@@ -21,7 +21,7 @@ function AdminLayout({ children }) {
             {children}
           </div>
         </div>
-        <Footer />
+        <Footer isSidebarCollapsed={collapsed} />
       </div>
     </ContractProvider>
   );

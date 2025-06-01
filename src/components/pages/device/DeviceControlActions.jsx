@@ -5,6 +5,8 @@ import {
   unassignControl,
   checkControlActive
 } from '../../../api/deviceControlApi';
+import '../../css/MyDevices.css'
+import { Check } from 'lucide-react';
 
 function DeviceControlActions({ userId, device, isSubscribed, onSubscribe, onUnsubscribe }) {
   const [otp, setOtp] = useState('');
@@ -78,42 +80,39 @@ function DeviceControlActions({ userId, device, isSubscribed, onSubscribe, onUns
   };
 
   return (
-    <div style={{ marginTop: 8 }}>
-
-      {/* Nút Đăng ký hoặc Huỷ điều khiển */}
+    <div className="device-control-actions">
       {isControlled ? (
         <button
           onClick={handleUnassignControl}
-          className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+          className="btn-unsubscribe"
         >
-        Huỷ đăng ký
+          Huỷ đăng ký
         </button>
       ) : (
         !showOtpInput && (
           <button
             onClick={handleRequestControl}
-            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="btn-subscribe"
           >
-          Đăng ký
+            Đăng ký
           </button>
         )
       )}
 
-      {/* Khung nhập OTP */}
       {showOtpInput && (
-        <div style={{ marginTop: 8 }}>
+        <div className="otp-section">
           <input
             type="text"
             placeholder="Nhập OTP"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
-            className="border p-1 mr-2 rounded"
+            className="otp-input"
           />
           <button
             onClick={handleConfirmControl}
-            className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+            className="btn-confirm"
           >
-            ✅ Xác nhận
+           <Check size={14} />
           </button>
         </div>
       )}

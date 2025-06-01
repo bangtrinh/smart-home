@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getDeviceById, addDevice, updateDevice } from '../../../api/deviceApi';
 import { getContracts } from '../../../api/contractApi';
+import '../../css/DeviceForm.css'
 
 function DeviceForm() {
   const { id } = useParams();
@@ -15,9 +16,7 @@ function DeviceForm() {
 
   useEffect(() => {
     fetchContracts();
-    if (id) {
-      fetchDevice();
-    }
+    if (id) fetchDevice();
   }, [id]);
 
   const fetchDevice = async () => {
@@ -41,33 +40,47 @@ function DeviceForm() {
   };
 
   return (
-    <div>
-      <h2>{id ? 'Sửa' : 'Thêm'} thiết bị</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Tên thiết bị"
-          value={device.deviceName}
-          onChange={(e) => setDevice({ ...device, deviceName: e.target.value })}
-          required
-        />
+    <div className="device-form-wrapper">
+      <div className="device-form-card">
+        <h2>{id ? 'Sửa' : 'Thêm'} thiết bị</h2>
+        <form onSubmit={handleSubmit} className="device-form">
+          <div className="form-group">
+            <label>Tên thiết bị</label>
+            <input
+              type="text"
+              placeholder="Nhập tên thiết bị"
+              value={device.deviceName}
+              onChange={(e) => setDevice({ ...device, deviceName: e.target.value })}
+              required
+            />
+          </div>
 
-        <select
-          value={device.contractId}
-          onChange={(e) => setDevice({ ...device, contractId: e.target.value })}
-          required
-        >
-          <option value="">-- Chọn hợp đồng --</option>
-          {contracts.map(c => (
-            <option key={c.contractId} value={c.contractId}>
-              {c.contractCode} - {c.contractName}
-            </option>
-          ))}
-        </select>
+          <div className="form-group">
+            <label>Thuộc hợp đồng</label>
+            <select
+              value={device.contractId}
+              onChange={(e) => setDevice({ ...device, contractId: e.target.value })}
+              required
+            >
+              <option value="">-- Chọn hợp đồng --</option>
+              {contracts.map(c => (
+                <option key={c.contractId} value={c.contractId}>
+                  {c.contractCode} - {c.contractName}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <button type="submit">Lưu</button>
-        <button type="button" onClick={() => navigate('/devices')}>Hủy</button>
-      </form>
+          <div className="form-actions">
+            <button type="submit" className="save-btn">
+              Lưu
+            </button>
+            <button type="button" className="cancel-btn" onClick={() => navigate('/devices')}>
+              Hủy
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

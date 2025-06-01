@@ -162,32 +162,32 @@ function Header({ collapsed, setCollapsed }) {
           </button>
 
           {showNotificationDropdown && (
-          <div className="notification-dropdown">
-            {notifications.length === 0 ? (
-              <div className="notification-item empty">Không có thông báo mới</div>
-            ) : (
-              notifications.map((noti, idx) => (
-                <div key={idx} className="notification-item">
-                  <span className="time">{new Date(noti.timestamp).toLocaleTimeString()}</span>
-                  <p>{noti.message}</p>
-                </div>
-              ))
-            )}
-            {roles.includes('OWNER') && (
-              <button
-                onClick={() => {
-                  setNotifications([]);
-                  localStorage.removeItem('notifications');
-                }}
-                className="clear-button"
-              >
-                Xóa tất cả
-              </button>
-            )}
-          </div>
-        )}
-
-
+            <div className="notification-dropdown">
+              <div className="notification-list">
+                {notifications.length === 0 ? (
+                  <div className="notification-item empty">Không có thông báo mới</div>
+                ) : (
+                  notifications.map((noti, idx) => (
+                    <div key={idx} className="notification-item">
+                      <span className="time">{new Date(noti.timestamp).toLocaleTimeString()}</span>
+                      <p>{noti.message}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+              {roles.includes('OWNER') && (
+                <button
+                  onClick={() => {
+                    setNotifications([]);
+                    localStorage.removeItem('notifications');
+                  }}
+                  className="clear-button"
+                >
+                  Xóa tất cả
+                </button>
+              )}
+            </div>
+          )}
           {currentUser && (
             <div className="user-dropdown-container">
               <button

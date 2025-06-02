@@ -96,8 +96,7 @@ public class DeviceControlServiceImpl implements DeviceControlService {
 
     @Override
     public boolean isControlActive(Long userId, Long deviceId) {
-        return deviceControlRepository.findByUserIdAndDeviceId(userId, deviceId)
-                .stream().anyMatch(control -> control.getEndDate().isAfter(LocalDateTime.now()));
+        return deviceControlRepository.existsByUserIdAndDeviceId(userId, deviceId);
     }
 
     @Override

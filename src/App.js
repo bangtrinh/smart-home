@@ -275,7 +275,7 @@ function App() {
           />
 
           {/* Nếu route không đúng thì chuyển về login */}
-          <Route path="*" element={<Navigate to="/not-found" />} />
+          <Route path="*" element={<Navigate to={isLoggedIn() ? "/not-found" : "/login"} />} />
         </Routes>
       </BrowserRouter>
     </WebSocketProvider>

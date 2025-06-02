@@ -13,7 +13,7 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
     e.stopPropagation();
     if (!window.confirm(`Bạn chắc chắn muốn hủy liên kết với hợp đồng ${contract.contractCode}?`)) return;
     try {
-      await unLinkFromContract(user.id, contract.contractCode);
+      await unLinkFromContract(user.id, contract.contractId);
       alert('Đã hủy liên kết hợp đồng!');
       if (onDelete) onDelete(contract.contractId);
     } catch (err) {

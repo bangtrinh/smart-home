@@ -26,6 +26,8 @@ import DeviceControlHistoryPage from './components/pages/device/DeviceControlHis
 import EditProfile from './components/EditProfile';
 import AdminRoute from './components/AdminRoute';
 import NotFoundPage from './components/NotFoundPage';
+import UserRoute from './components/UserRoute';
+
 
 
 // Hàm kiểm tra đã đăng nhập chưa
@@ -94,11 +96,11 @@ function App() {
           <Route
             path="/my-devices"
             element={
-              <PrivateRoute>
+              <UserRoute>
                 <AdminLayout>
                   <MyDevices />
                 </AdminLayout>
-              </PrivateRoute>
+              </UserRoute>
             }
           />
           <Route
@@ -124,11 +126,11 @@ function App() {
           <Route
             path="/devices/history"
             element={
-              <PrivateRoute>
+              <UserRoute>
                 <AdminLayout>
                   <DeviceControlHistoryPage />
                 </AdminLayout>
-              </PrivateRoute>
+              </UserRoute>
             }
           />
 
@@ -146,11 +148,11 @@ function App() {
           <Route
             path="/my-contracts"
             element={
-              <PrivateRoute>
+              <UserRoute>
                 <AdminLayout>
                   <MyContracts />
                 </AdminLayout>
-              </PrivateRoute>
+              </UserRoute>
             }
           />
           <Route

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getDevices, deleteDevice } from '../../../api/deviceApi';
 import DeviceCard from './DeviceCard';
+import '../../css/MyDevices.css'
 
 function DeviceManager() {
   const [devices, setDevices] = useState([]);
@@ -30,11 +31,11 @@ function DeviceManager() {
   };
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>Danh sách thiết bị</h2>
-        <Link className="link-button" to="/devices/add">+ Thêm thiết bị</Link>
+    <div className='my-devices-page'>
+      <div className="page-header">
+        <h1 className="page-title">Quản lý thiết bị</h1>
       </div>
+      <Link className="link-button" to="/devices/add">+ Thêm thiết bị</Link>
 
       <div className="card-list">
         {devices.length > 0 ? (

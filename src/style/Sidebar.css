@@ -1,0 +1,122 @@
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 220px;
+  background: #ffffff;
+  color: #334155;
+  padding: 25px 15px;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.4s ease, padding 0.4s ease; /* Smooth transition for collapse/expand */
+  box-shadow: 1px 0 3px rgba(0, 0, 0, 0.05);
+  border-right: 1px solid #ede9fe; /* Viền tím nhạt */
+  font-weight: 500;
+  animation: slideInSidebar 0.6s ease-out forwards; /* Hiệu ứng trượt vào khi tải */
+  position: relative;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+  padding: 25px 10px;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.sidebar a {
+  color: #334155;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden; /* Đảm bảo hiệu ứng không tràn ra ngoài */
+}
+
+/* Hiệu ứng khi hover */
+.sidebar a:hover {
+  background-color: #ddd6fe; /* Tím nhạt */
+  color: #4c2c7d; /* Tím đậm */
+  font-weight: 600;
+  transform: scale(1.02); /* Phóng to nhẹ nhàng */
+}
+
+/* Hiệu ứng cho icon khi hover */
+.sidebar a:hover svg {
+  transform: rotate(15deg); /* Xoay icon nhẹ */
+  transition: transform 0.3s ease;
+}
+
+/* Hiệu ứng khi active */
+.sidebar a.active {
+  background-color: #e8e4ff; /* Tím nhạt hơn */
+  border-left: 3px solid #7c3aed; /* Viền tím đậm */
+  animation: bounceActive 0.5s ease-out forwards; /* Hiệu ứng bounce khi active */
+}
+
+/* Ẩn text khi collapsed */
+.sidebar.collapsed a span {
+  display: none;
+}
+
+/* Hiệu ứng cho icon khi collapsed */
+.sidebar.collapsed a svg {
+  transform: scale(1.1); /* Phóng to icon một chút khi collapsed */
+  transition: transform 0.3s ease;
+}
+
+/* Hiệu ứng lấp lánh khi hover */
+.sidebar a:hover::after {
+  content: '✨';
+  position: absolute;
+  font-size: 1rem;
+  color: #9f7aea; /* Tím sáng */
+  right: 10px;
+  animation: sparkle 0.5s ease-out forwards;
+}
+
+/* Các hiệu ứng animation */
+
+/* Slide In cho sidebar khi tải */
+@keyframes slideInSidebar {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Bounce cho link active */
+@keyframes bounceActive {
+  0% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Sparkle cho hiệu ứng lấp lánh khi hover */
+@keyframes sparkle {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}

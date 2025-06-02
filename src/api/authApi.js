@@ -26,7 +26,7 @@ export const register = async (userData) => {
   }
 };
 
-export const forgotPassword = async ({email}) => {
+export const forgotPassword = async ({ email }) => {
   try {
     const response = await axios.post(`${API_URL}/reset-password/request`, { email }, {
       headers: { 'Content-Type': 'application/json' },
@@ -47,11 +47,19 @@ export const confirmResetPassword = async ({ token, newPassword }) => {
   }
 };
 
+export const changePassword = async (changePasswordData) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
-export const changePassword = (changePassword) => {
-  return axios.put(`${API_URL}/change-password`, changePassword, {
+  if (!token) {
+    throw new Error('Không tìm thấy token. Vui lòng đăng nhập lại.');
+  }
+
+  const response = await axios.put(`${API_URL}/change-password`, changePasswordData, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
-    }
-  }).then(res => res.data);
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return response.data;
 };

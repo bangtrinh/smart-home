@@ -5,12 +5,14 @@ import UserCard from '../user/UserCard';
 import { useNavigate } from 'react-router-dom';
 import UserDevicesControlList from '../device/UserDevicesControlList';
 import '../../css/ContractDetails.css';
+import { ChevronLeft } from 'lucide-react';
 
 function ContractDetails() {
   const { id } = useParams();
   const [contract, setContract] = useState(null);
   const navigate = useNavigate();
   const [selectedUser, setSelectedUser] = useState(null);
+  const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
 
 
   useEffect(() => {
@@ -55,7 +57,20 @@ function ContractDetails() {
   return (
     <div className="contract-details-container">
       <div className="contract-details-header">
-        <h2>{contract.contractCode}</h2>
+        <h2 className="contract-title">{contract.contractCode}</h2>
+        <div className="back-link-container">
+          <ChevronLeft size={20} className="back-icon" />
+          {user.roles[0] === 'ADMIN' && (
+              <Link to="/contracts" className="back-link">
+                  Quay lại danh sách hợp đồng
+              </Link>
+          )}
+          {user.roles[0] !== 'ADMIN' && (
+              <Link to="/my-contracts" className="back-link">
+                  Quay lại danh sách hợp đồng
+              </Link>
+          )}            
+        </div>
       </div>
 
       <div className="contract-info">

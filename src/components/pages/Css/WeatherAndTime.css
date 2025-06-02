@@ -1,0 +1,259 @@
+/* src/pages/css/WeatherAndTime.css */
+/* Cái này css bỏ qua cũng được  */
+.weather-time-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to right, #e8e4ff, #c3b7ff); /* Gradient tím nhạt */
+  color: #4c2c7d; /* Tím đậm dễ đọc trên nền nhạt */
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 6px 10px rgba(76, 44, 125, 0.2); /* Bóng đổ tím nhạt */
+  transition: box-shadow 0.3s ease;
+  min-width: 320px;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.weather-time-container:hover {
+  box-shadow: 0 12px 18px rgba(76, 44, 125, 0.35);
+}
+
+.time-section,
+.weather-section {
+  flex: 1;
+  position: relative;
+  z-index: 1; /* Ensure content is above animations */
+}
+
+.weather-section {
+  text-align: right;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.375rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.time-section .section-title {
+  justify-content: flex-start;
+}
+
+.weather-section .section-title {
+  justify-content: flex-end;
+}
+
+.icon {
+  font-size: 2.25rem;
+  margin-right: 0.5rem;
+  color: #6b46c1; /* Tím nổi bật cho icon */
+}
+
+.main-info {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.sub-info {
+  font-size: 0.875rem;
+  opacity: 0.85;
+}
+
+.loading {
+  color: #9f7aea; /* Tím sáng cho loading */
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.city-select {
+  margin-left: 0.5rem;
+  padding: 0.3rem;
+  border: 1px solid #ede9fe; /* Viền tím nhạt */
+  border-radius: 6px;
+  background-color: #f5f3ff; /* Tím nhạt */
+  color: #4c2c7d; /* Tím đậm */
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.city-select:focus {
+  outline: none;
+  border-color: #9f7aea; /* Tím sáng khi focus */
+}
+
+/* Animation Overlay for Background Effects */
+.animation-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Prevent overlay from blocking interaction */
+  z-index: 0;
+}
+
+/* Sunny Animation */
+.weather-time-container.sunny-animation .animation-overlay {
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3), transparent 70%);
+  animation: sunnyGlow 5s infinite ease-in-out;
+}
+
+@keyframes sunnyGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Rain Animation */
+.weather-time-container.rain-animation .animation-overlay {
+  overflow: hidden;
+}
+
+.weather-time-container.rain-animation .animation-overlay::before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 20px;
+  background: rgba(159, 122, 234, 0.8); /* Tím sáng cho mưa */
+  animation: rainFall 0.5s infinite linear;
+}
+
+.weather-time-container.rain-animation .animation-overlay::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 20px;
+  background: rgba(159, 122, 234, 0.8); /* Tím sáng cho mưa */
+  animation: rainFall 0.5s infinite linear 0.2s;
+}
+
+@keyframes rainFall {
+  0% {
+    transform: translateY(-100%) translateX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) translateX(-10px);
+    opacity: 0;
+  }
+}
+
+/* Snow Animation */
+.weather-time-container.snow-animation .animation-overlay::before {
+  content: '❄️';
+  position: absolute;
+  font-size: 1rem;
+  color: #f5f3ff; /* Tím nhạt cho tuyết */
+  animation: snowFall 3s infinite linear;
+}
+
+.weather-time-container.snow-animation .animation-overlay::after {
+  content: '❄️';
+  position: absolute;
+  font-size: 1rem;
+  color: #f5f3ff;  /* Tím nhạt cho tuyết */
+  animation: snowFall 3s infinite linear 1s;
+}
+
+@keyframes snowFall {
+  0% {
+    transform: translateY(-100%) translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) translateX(20px);
+    opacity: 0;
+  }
+}
+
+/* Thunderstorm Animation */
+.weather-time-container.thunderstorm-animation .animation-overlay {
+  background: linear-gradient(to right, #c3b7ff, #a78bfa); /* Gradient tím đậm hơn */
+  animation: thunderFlash 5s infinite;
+}
+
+.weather-time-container.thunderstorm-animation .animation-overlay::before {
+  content: '⚡️';
+  position: absolute;
+  font-size: 2rem;
+  color: #fff;
+  opacity: 0;
+  animation: lightning 5s infinite;
+}
+
+@keyframes thunderFlash {
+  0%, 10%, 100% {
+    background: linear-gradient(to right, #c3b7ff, #a78bfa);
+  }
+  5% {
+    background: linear-gradient(to right, #e8e4ff, #c3b7ff);
+  }
+}
+
+@keyframes lightning {
+  0%, 4%, 6%, 100% {
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+}
+
+/* Cloudy Animation */
+.weather-time-container.cloudy-animation .animation-overlay::before {
+  content: '☁️';
+  position: absolute;
+  font-size: 3rem;
+  color: #ede9fe; /* Tím nhạt cho mây */
+  animation: cloudMove 10s infinite linear;
+}
+
+.weather-time-container.cloudy-animation .animation-overlay::after {
+  content: '☁️';
+  position: absolute;
+  font-size: 3rem;
+  color: #ede9fe; /* Tím nhạt cho mây */
+  animation: cloudMove 10s infinite linear 5s;
+}
+
+@keyframes cloudMove {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0.7;
+  }
+}
+
+/* Default Animation (e.g., partly cloudy) */
+.weather-time-container.default-animation .animation-overlay {
+  background: linear-gradient(to right, #e8e4ff, #c3b7ff); /* Gradient tím nhạt */
+}

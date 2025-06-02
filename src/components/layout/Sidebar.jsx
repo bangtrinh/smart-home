@@ -3,9 +3,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Home,
   Server,
-  Bell,
+  FileText,
   Shield,
-  MapPin,
+  Users,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -34,11 +34,19 @@ function Sidebar({ collapsed, setCollapsed }) {
         <button className="nav-link toggle-button" onClick={() => setCollapsed(!collapsed)}>
           {collapsed ? <ChevronRight size={24} /> : <ChevronLeft size={24} />} 
         </button>
+         {(roles.includes('OWNER') || roles.includes('MEMBER')) && (
+          <Link to="/dashboard" className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}>
+            <Home size={20} />
+            {!collapsed && <span className="link-label">Dashboard</span>}
+          </Link>
+          )}
 
-        <Link to="/dashboard" className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}>
-          <Home size={20} />
-          {!collapsed && <span className="link-label">Dashboard</span>}
-        </Link>
+          {roles.includes('ADMIN') && (
+          <Link to="/admin/dashboard" className={`nav-link ${isActive('/admin/dashboard') ? 'active' : ''}`}>
+            <Home size={20} />
+            {!collapsed && <span className="link-label">Dashboard</span>}
+          </Link>
+        )}
 
         <Link
           to={roles.includes('ADMIN') ? '/devices' : '/my-devices'}
@@ -52,7 +60,7 @@ function Sidebar({ collapsed, setCollapsed }) {
           to={roles.includes('ADMIN') ? '/contracts' : '/my-contracts'}
           className={`nav-link ${isActive('/contracts') || isActive('/my-contracts') ? 'active' : ''}`}
         >
-          <Bell size={20} />
+          <FileText  size={20} />
           {!collapsed && <span className="link-label">Hợp đồng</span>}
         </Link>
         {(roles.includes('OWNER') || roles.includes('MEMBER')) && (
@@ -71,7 +79,7 @@ function Sidebar({ collapsed, setCollapsed }) {
 
         {roles.includes('ADMIN') && (
           <Link to="/users" className={`nav-link ${isActive('/users') ? 'active' : ''}`}>
-            <MapPin size={20} />
+            <Users size={20} />
             {!collapsed && <span className="link-label">Người dùng</span>}
           </Link>
         )}

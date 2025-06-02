@@ -1,6 +1,8 @@
 .homeowner-form-container {
-  max-width: 100%;
-  margin: 0 auto;
+  padding-top: 36px;
+  max-width: 1400px;    /* tăng max-width từ 1200 lên 1400 */
+  width: 90%;           /* chiếm 90% chiều ngang màn hình (với max-width) */
+  margin: 80px auto 0;
   background: #fff;
   border-radius: 16px;
   padding: 36px 28px;

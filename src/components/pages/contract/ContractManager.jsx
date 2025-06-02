@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getContracts, deleteContract } from '../../../api/contractApi';
 import { useNavigate, Link } from 'react-router-dom';
 import ContractListCard from './ContractListCard';
+import '../../css/Contract.css';
 
 function ContractManager() {
   const [contracts, setContracts] = useState([]);
@@ -23,21 +24,23 @@ function ContractManager() {
     }
   };
 
-
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>📄 Danh sách hợp đồng</h2>
-        <Link className="link-button" to="/contracts/add">+ Thêm hợp đồng</Link>
+    <div className="contract-manager-container">
+      <div className="contract-title">
+        <h2>Danh sách hợp đồng</h2>
       </div>
+      <Link className="link-button" to="/contracts/add">+ Thêm hợp đồng</Link>
 
-      {contracts.map(contract => (
-        <ContractListCard
-          key={contract.contractId}
-          contract={contract}
-          onDelete={handleDelete}
-        />
-      ))}
+      <div className="contracts-grid">
+        {contracts.map(contract => (
+          <ContractListCard
+            key={contract.contractId}
+            contract={contract}
+            isMyContract={false} // hoặc logic của bạn
+            onDelete={handleDelete}
+          />
+        ))}
+      </div>
     </div>
   );
 }

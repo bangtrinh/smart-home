@@ -1,6 +1,6 @@
-import '../../css/auth/LoginForm.css';
+import './pages/Css/LoginForm.css';
 import React, { useEffect, useState } from 'react';
-import { login } from '../../../api/authApi';
+import { login } from '../api/authApi';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
@@ -25,19 +25,13 @@ function LoginForm() {
         localStorage.setItem('token', result.token);
         localStorage.setItem('user', JSON.stringify(result.user));
         localStorage.setItem('roles', JSON.stringify(result.user.roles));
-        
       } else {
         sessionStorage.setItem('token', result.token);
         sessionStorage.setItem('user', JSON.stringify(result.user));
         sessionStorage.setItem('roles', JSON.stringify(result.user.roles));
       }
       alert('Đăng nhập thành công!');
-      const roles = result.user.roles;
-      if (roles.includes('ADMIN'))
-        navigate('/admin/dashboard');
-      else
-        navigate('/dashboard');
-
+      navigate('/dashboard');
     } catch (error) {
       alert('Đăng nhập thất bại!');
     }

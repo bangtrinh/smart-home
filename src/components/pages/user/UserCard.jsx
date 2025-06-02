@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import UserDevicesControlList from '../device/UserDevicesControlList';
-
+import '../Css/UserCard.css';
 function UserCard({ user, contractId, onDelete, showDeviceButton = true }) {
   const [showDevices, setShowDevices] = useState(false);
 
@@ -9,20 +9,20 @@ function UserCard({ user, contractId, onDelete, showDeviceButton = true }) {
   };
 
   return (
-    <div className="contract-card">
-      <div className="contract-card-header">
+    <div className="user-card">
+      <div className="user-card-header">
         <h3>{user.username}</h3>
       </div>
 
-      <div className="contract-card-body">
+      <div className="user-card-body">
         <p><strong>ID:</strong> {user.id}</p>
         <p><strong>Email:</strong> {user.email}</p>
       </div>
-
-      <div className="contract-card-actions">
-        <button onClick={() => onDelete(user.id)}>🗑️ Xoá</button>
+    {/* thêm class để css  */}
+      <div className="user-card-actions">
+        <button className="btn delete-btn" onClick={() => onDelete(user.id)}>🗑️ Xoá</button>
         {showDeviceButton && (
-          <button onClick={toggleDevices}>
+          <button className="btn toggle-btn" onClick={toggleDevices}>
             {showDevices ? 'Ẩn thiết bị' : 'Xem thiết bị'}
           </button>
         )}

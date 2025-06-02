@@ -80,7 +80,7 @@ function Header({ collapsed, setCollapsed }) {
   };
 
   const handleProfile = () => {
-    navigate('/profile');
+    navigate('/edit-profile');
     setShowDropdown(false);
   };
 
@@ -126,6 +126,7 @@ function Header({ collapsed, setCollapsed }) {
       <div className="header-content">
         {/* Left section: contract selector */}
         <div className="header-left">
+          {!roles.includes('ADMIN') && (
           <div className="contract-select-container">
             <select
               value={selectedContractId}
@@ -146,7 +147,9 @@ function Header({ collapsed, setCollapsed }) {
               <option value="add">Thêm...</option>
             </select>
           </div>
+          )}
         </div>
+     
 
         {/* Right section: actions */}
         <div className="header-actions">
@@ -154,12 +157,14 @@ function Header({ collapsed, setCollapsed }) {
             <Settings className="icon" />
           </button>
 
-          <button className="icon-button notification-btn" onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}>
-            <Bell className="icon" />
-            {notifications.length > 0 && (
-              <span className="notification-badge">{notifications.length}</span>
-            )}
-          </button>
+          {!roles.includes('ADMIN') && (
+            <button className="icon-button notification-btn" onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}>
+              <Bell className="icon" />
+              {notifications.length > 0 && (
+                <span className="notification-badge">{notifications.length}</span>
+              )}
+            </button>
+          )}
 
           {showNotificationDropdown && (
             <div className="notification-dropdown">
@@ -222,13 +227,13 @@ function Header({ collapsed, setCollapsed }) {
 
                     <button
                       onClick={() => {
-                        navigate('/settings');
+                        navigate('/change-password');
                         setShowDropdown(false);
                       }}
                       className="dropdown-item"
                     >
                       <Settings className="dropdown-icon" />
-                      App Settings
+                      Change Password
                     </button>
 
                     <hr className="dropdown-divider" />

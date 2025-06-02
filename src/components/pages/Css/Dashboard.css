@@ -1,0 +1,155 @@
+/* Container chính */
+.profileContainer {
+  max-width: 800px;
+  margin: 80px auto;
+  padding: 32px;
+  background-color: #ffffff;
+  border: 1px solid #ede9fe;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(107, 70, 193, 0.12);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Lời chào */
+.greeting {
+  font-size: 20px;
+  font-weight: 500;
+  color: #4c1d95;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* Tiêu đề */
+.profileTitle {
+  font-size: 26px;
+  font-weight: 700;
+  color: #4c1d95;
+  margin-bottom: 28px;
+  text-align: center;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.profileTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+  border-radius: 3px;
+}
+
+/* Section thông tin */
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 32px;
+}
+
+/* Dòng thông tin */
+.infoRow {
+  display: flex;
+  align-items: center;
+  background-color: #f5f3ff;
+  padding: 14px 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd6fe;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.infoRow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(107, 70, 193, 0.15);
+}
+
+.infoLabel {
+  font-weight: 600;
+  color: #6b46c1;
+  min-width: 150px;
+}
+
+.infoValue {
+  color: #4c2c7d;
+  flex: 1;
+  word-break: break-word;
+}
+
+/* Nhóm nút */
+.actionButtons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.primaryBtn {
+  background: linear-gradient(135deg, #7c3aed, #6b46c1);
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(124, 58, 237, 0.2);
+}
+
+.primaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(124, 58, 237, 0.3);
+}
+
+.primaryBtn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Tablet */
+@media (max-width: 768px) {
+  .profileContainer {
+    margin: 40px 20px;
+    padding: 24px;
+  }
+
+  .infoRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 16px;
+  }
+
+  .infoLabel {
+    min-width: auto;
+    margin-bottom: 4px;
+  }
+}
+
+/* Responsive Mobile */
+@media (max-width: 480px) {
+  .profileContainer {
+    margin: 30px 12px;
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .profileTitle {
+    font-size: 22px;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .primaryBtn {
+    width: 100%;
+  }
+}

@@ -11,67 +11,54 @@ body.login-form-page {
 
 .login-container {
   animation: fadeInUp 0.6s ease-out;
-  width: 100%;
-  max-width: 420px;
-  padding: 0 20px;
-  box-sizing: border-box;
 }
 
 .login-form {
-  background: rgba(255, 255, 255, 0.97);
-  padding: 40px 40px 48px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px 35px;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(91, 46, 255, 0.25);
   width: 100%;
+  max-width: 420px;
   text-align: center;
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(10px);
   animation: scaleIn 0.4s ease-out;
-  border: 1px solid rgba(123, 71, 255, 0.3);
 }
 
 .login-title {
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 700;
   color: #1a1a1a;
-  margin-bottom: 12px;
-  letter-spacing: -0.6px;
-  user-select: none;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
 }
 
 .login-subtitle {
-  font-size: 16px;
-  color: #555;
-  margin-bottom: 36px;
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 30px;
   font-weight: 400;
-  user-select: none;
 }
 
 .login-input-group {
   position: relative;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .login-input-field {
-  width: 100%;
-  padding: 14px 50px 14px 48px;
-  border: 1.5px solid #ddd;
-  border-radius: 12px;
-  font-size: 16px;
-  background: #fafafa;
+  width: 75%;
+  padding: 14px 45px 14px 48px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  background: #f9f9f9;
   transition: all 0.3s ease;
-  box-sizing: border-box;
-  color: #222;
-  font-weight: 500;
-}
-
-.login-input-field::placeholder {
-  color: #aaa;
 }
 
 .login-input-field:focus {
   border-color: #7e3ff2;
   background: #fff;
-  box-shadow: 0 0 0 5px rgba(123, 71, 255, 0.15);
+  box-shadow: 0 0 0 4px rgba(123, 71, 255, 0.1);
   outline: none;
 }
 
@@ -80,9 +67,8 @@ body.login-form-page {
   top: 50%;
   left: 16px;
   transform: translateY(-50%);
-  color: #999;
-  font-size: 20px;
-  user-select: none;
+  color: #888;
+  font-size: 18px;
 }
 
 .login-password-toggle {
@@ -94,7 +80,6 @@ body.login-form-page {
   font-size: 20px;
   color: #999;
   transition: color 0.3s ease;
-  user-select: none;
 }
 
 .login-password-toggle:hover {
@@ -105,10 +90,8 @@ body.login-form-page {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 14px;
-  margin-bottom: 28px;
-  color: #444;
-  user-select: none;
+  font-size: 13px;
+  margin-bottom: 24px;
 }
 
 .login-remember-me {
@@ -118,16 +101,14 @@ body.login-form-page {
 }
 
 .login-remember-me input {
-  margin-right: 8px;
+  margin-right: 6px;
   accent-color: #7e3ff2;
-  width: 18px;
-  height: 18px;
 }
 
 .login-forgot-link {
   text-decoration: none;
   color: #7e3ff2;
-  font-weight: 600;
+  font-weight: 500;
   transition: color 0.3s ease;
 }
 
@@ -137,48 +118,43 @@ body.login-form-page {
 
 .login-button {
   width: 100%;
-  padding: 16px;
+  padding: 14px;
   background: linear-gradient(90deg, #7e3ff2, #a855f7);
   color: white;
   border: none;
-  border-radius: 14px;
-  font-size: 17px;
-  font-weight: 700;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 6px 18px rgba(123, 71, 255, 0.3);
-  user-select: none;
 }
 
 .login-button:hover {
   background: linear-gradient(90deg, #5b2eff, #9333ea);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 24px rgba(91, 46, 255, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(91, 46, 255, 0.3);
 }
 
 .login-button:active {
   transform: translateY(0);
-  box-shadow: 0 6px 18px rgba(123, 71, 255, 0.3);
 }
 
 .login-links {
-  margin-top: 24px;
-  font-size: 14px;
+  margin-top: 20px;
+  font-size: 13px;
   color: #444;
-  user-select: none;
 }
 
 .login-links span {
   margin-right: 6px;
-  user-select: none;
 }
 
 .login-register-link {
   color: #7e3ff2;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
   transition: color 0.3s ease;
 }
 
@@ -211,31 +187,15 @@ body.login-form-page {
 
 @media (max-width: 480px) {
   .login-form {
-    padding: 30px 25px 36px;
-    max-width: 100%;
+    padding: 30px 20px;
+    max-width: 90%;
   }
 
   .login-title {
     font-size: 24px;
   }
 
-  .login-subtitle {
-    font-size: 14px;
-    margin-bottom: 28px;
-  }
-
   .login-input-field {
-    padding: 14px 45px 14px 44px;
-    font-size: 15px;
-  }
-
-  .login-remember-forgot {
-    font-size: 13px;
-    margin-bottom: 20px;
-  }
-
-  .login-button {
-    padding: 14px;
-    font-size: 16px;
+    padding: 12px 40px 12px 44px;
   }
 }

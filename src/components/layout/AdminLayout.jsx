@@ -18,7 +18,7 @@ function AdminLayout({ children }) {
         <div className="main-layout">
           <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
           <div className={`main-content ${collapsed ? 'collapsed' : ''}`}>
-            {children}
+                              {children}
           </div>
         </div>
         <Footer isSidebarCollapsed={collapsed} />

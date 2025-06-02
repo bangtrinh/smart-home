@@ -21,16 +21,10 @@ function ChangePasswordForm() {
       const changePasswordData = { oldPassword, newPassword };
       const result = await changePassword(changePasswordData);
       alert(result.message || 'Đổi mật khẩu thành công!');
-
-      const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-      if (user && user.roles.includes('ROLE_ADMIN')) {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/dashboard');
-      }
+      navigate('/dashboard');
     } catch (error) {
-      console.error(error);
       alert('Đổi mật khẩu thất bại!');
+      console.error('Lỗi:', error);
     }
   };
 

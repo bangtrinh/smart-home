@@ -36,6 +36,31 @@
   font-weight: 600;
 }
 
+.back-link-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-link {
+  color: #5b2eff;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.back-link:hover {
+  background-color: #f8f9fa;
+  color: #2980b9;
+}
+
+.back-icon {
+  vertical-align: middle;
+  color: #3498db; /* Màu icon giống với link */
+}
+
 .member-list {
   display: flex;
   flex-wrap: wrap;

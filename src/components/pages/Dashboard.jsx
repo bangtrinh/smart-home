@@ -607,8 +607,8 @@ function Dashboard() {
                     </span>
 
                     {/* Dropdown */}
-                    {openDropdownIndex === index && (
-                      <div className="dropdown-menu">
+                    {openDropdownIndex === index && user.roles.includes('OWNER') && (
+                      <div className="dropdown-kick-menu">
                         <button
                           className="dropdown-item"
                           onClick={() => handleKickUser(member.id)}

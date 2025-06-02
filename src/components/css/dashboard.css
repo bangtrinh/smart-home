@@ -622,6 +622,22 @@
   overflow: hidden;
 }
 
+.dropdown-kick-menu {
+  position: absolute;
+  top: 45px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 100px; /* đây là cái quan trọng */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 4px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 99;
+  overflow: hidden;
+}
+
 .dropdown-menu button {
   width: 100%;
   padding: 8px 12px;

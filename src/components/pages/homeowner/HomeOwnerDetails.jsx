@@ -4,6 +4,7 @@ import { getHomeOwnerById } from '../../../api/homeOwnerApi';
 import { getContractsByOwnerId } from '../../../api/contractApi';
 import ContractCard from '../contract/ContractListCard';
 import '../../css/HomeOwnerDetails.css'
+import { ChevronLeft } from 'lucide-react';
 
 function HomeOwnerDetails() {
   const { ownerId  } = useParams();
@@ -58,7 +59,10 @@ function HomeOwnerDetails() {
       </div>
 
       <div className="back-link">
-        <Link to="/homeowners">⬅️ Quay lại danh sách chủ nhà</Link>
+        <ChevronLeft size={20}/>
+        <Link to="/homeowners">
+            Quay lại danh sách chủ nhà
+        </Link>
       </div>
     </div>
   );

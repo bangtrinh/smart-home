@@ -1,0 +1,220 @@
+/* Wrapper chính */
+.page-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  background-color: #f5f3ff; /* Tím nhạt thay cho xám nhạt */
+}
+
+/* Tiêu đề */
+.page-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #4c2c7d; /* Tím đậm thay cho xanh */
+  margin-bottom: 24px;
+}
+
+/* Weather & Time */
+.weather-time-box {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  background: linear-gradient(135deg, #e8e4ff, #c3b7ff); /* Gradient tím nhạt */
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 10px rgba(76, 44, 125, 0.08); /* Bóng đổ tím nhạt */
+  color: #4c2c7d; /* Tím đậm cho nội dung */
+}
+
+.weather-time-section {
+  flex: 1;
+}
+
+.weather-time-section h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.weather-time-section p {
+  font-size: 1rem;
+  margin: 4px 0;
+}
+
+/* Grid thiết bị */
+.device-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Card thiết bị */
+.device-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #fff; /* Giữ trắng cho card */
+  border: 1px solid #ddd6fe; /* Viền tím nhạt */
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(76, 44, 125, 0.05); /* Bóng đổ tím nhạt */
+  padding: 20px;
+  min-height: 240px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.device-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(76, 44, 125, 0.12); /* Bóng đổ tím đậm hơn */
+}
+
+/* Header */
+.device-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* Badge trạng thái */
+.device-status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: white;
+}
+
+.device-status-badge.on {
+  background-color: #7c3aed; /* Tím nhạt thay cho xanh */
+}
+
+.device-status-badge.off {
+  background-color: #d1d5db; /* Giữ xám cho trạng thái off */
+}
+
+/* Thông tin thiết bị */
+.device-info p {
+  margin: 3px 0;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+/* Nút hành động */
+.device-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.device-card-actions button,
+.device-card-actions a {
+  flex: 1 1 48%;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+.device-card-actions a.edit-btn {
+  background-color: #e8e4ff; /* Tím nhạt thay cho xanh */
+  color: #6b46c1; /* Tím nổi bật */
+  text-decoration: none;
+}
+
+.device-card-actions a.edit-btn:hover {
+  background-color: #c3b7ff; /* Tím nhạt đậm hơn */
+  color: #4c2c7d; /* Tím đậm hơn */
+}
+
+.device-card-actions button.delete-btn {
+  background-color: #fecaca; /* Giữ màu đỏ nhạt cho nút xóa */
+  color: #b91c1c;
+  border: none;
+}
+
+.device-card-actions button.delete-btn:hover {
+  background-color: #fca5a5;
+  color: #7f1d1d;
+}
+
+/* Toggle Switch */
+.toggle-switch-container {
+  flex: 1 1 100%;
+  display: flex;
+  justify-content: left;
+  margin: 10px 0;
+}
+
+/* Nút lịch */
+.schedule-toggle-btn {
+  flex: 1 1 100%;
+  background-color: #e8e4ff; /* Tím nhạt thay cho xanh */
+  color: #6b46c1; /* Tím nổi bật */
+  border: none;
+  padding: 8px 0;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+.schedule-toggle-btn:hover {
+  background-color: #c3b7ff; /* Tím nhạt đậm hơn */
+  color: #4c2c7d; /* Tím đậm hơn */
+}
+
+.device-scheduler {
+  margin-top: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .weather-time-box {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .device-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .device-card-actions button,
+  .device-card-actions a {
+    flex: 1 1 100%;
+  }
+}
+
+.quay-lai-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 10px 16px !important;
+  background-color: white !important;
+  color: #7c3aed !important; /* Tím nhạt đậm thay cho xanh */
+  border: 2px solid #7c3aed !important; /* Viền tím nhạt */
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  box-shadow: 0 1px 3px rgba(76, 44, 125, 0.1) !important; /* Bóng đổ tím nhạt */
+  transition: all 0.3s ease !important;
+}
+
+.quay-lai-btn:hover {
+  background-color: #f5f3ff !important; /* Tím nhạt hơn */
+  box-shadow: 0 4px 6px rgba(76, 44, 125, 0.1) !important; /* Bóng đổ tím nhạt */
+  transform: translateY(-2px) !important;
+}
+
+.quay-lai-btn:active {
+  transform: scale(0.96) !important;
+}

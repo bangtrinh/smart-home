@@ -1,0 +1,108 @@
+.user-card {
+  position: relative;
+  background: white;
+  color: #333;
+  border-radius: 16px;
+  padding: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(91, 46, 255, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: fadeIn 0.4s ease-in-out;
+
+  /* Viền gradient nhẹ */
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  border-image: linear-gradient(145deg, #5b2eff, #a855f7) 1;
+}
+
+.user-card::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: -40%;
+  width: 180%;
+  height: 180%;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(91, 46, 255, 0.05) 0%, transparent 80%),
+    radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.04) 0%, transparent 80%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.user-card::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 80px;
+  height: 80px;
+  background: url('data:image/svg+xml;utf8,<svg fill="%23a855f733" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg>') no-repeat center;
+  background-size: contain;
+  opacity: 0.07;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.user-card * {
+  position: relative;
+  z-index: 1;
+}
+
+.user-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3);
+}
+
+/* Header */
+.user-card-header h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: #5b2eff;
+}
+
+/* Body */
+.user-card-body p {
+  margin: 4px 0;
+}
+
+/* Actions */
+.user-card-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.delete-btn {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #d9363e;
+}
+
+.toggle-btn {
+  background: linear-gradient(to right, #5b2eff, #a855f7);
+  color: white;
+}
+
+.toggle-btn:hover {
+  opacity: 0.9;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

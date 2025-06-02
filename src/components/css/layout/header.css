@@ -155,8 +155,8 @@
 .dropdown-backdrop {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: auto;
+  right: 20px;
   bottom: 0;
   z-index: 40;
 }
@@ -164,11 +164,12 @@
 .dropdown-menu {
   position: absolute;
   top: calc(100% + 8px);
-  right: 0;
-  width: 240px;
+  right: 20px;
+  margin-right: 20px;
+  min-width: 260px !important;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.08);
   border: 1px solid #e5e7eb;
   overflow: hidden;
   z-index: 50;

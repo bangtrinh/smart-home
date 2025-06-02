@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^6.0.0",
     "@floating-ui/dom": "^1.7.0",
     "@stomp/stompjs": "^7.1.1",
     "@testing-library/dom": "^10.4.0",

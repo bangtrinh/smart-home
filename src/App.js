@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './components/layout/AdminLayout';
 import UserManager from './components/pages/user/UserManager';
 import Dashboard from './components/pages/Dashboard';
+import AdminDashboard from './components/pages/AdminDashboard';
 import DeviceManager from './components/pages/device/DeviceManager';
 import DeviceForm from './components/pages/device/DeviceForm';
 import HomeOwnerManager from './components/pages/homeowner/HomeOwnerManager';
@@ -22,6 +23,10 @@ import HomeOwnerDetails from './components/pages/homeowner/HomeOwnerDetails';
 import './App.css'; // Import your global styles
 import { WebSocketProvider } from './context/WebSocketContext';
 import DeviceControlHistoryPage from './components/pages/device/DeviceControlHistoryPage'; 
+import EditProfile from './components/EditProfile';
+import AdminRoute from './components/AdminRoute';
+import NotFoundPage from './components/NotFoundPage';
+
 
 // Hàm kiểm tra đã đăng nhập chưa
 const isLoggedIn = () => {
@@ -46,6 +51,16 @@ function App() {
           <Route path="/confirmResetPassword" element={<ConfirmResetPassword />} />
           {/* Private routes */}
           <Route
+            path="/admin/dashboard"
+            element={
+              <AdminRoute>
+                <AdminLayout>
+                  <AdminDashboard />
+                </AdminLayout>
+              </AdminRoute>
+            }
+          />
+          <Route
             path="/dashboard"
             element={
               <PrivateRoute>
@@ -69,11 +84,11 @@ function App() {
           <Route
             path="/devices"
             element={
-              <PrivateRoute>
+              <AdminRoute> {/* Thay PrivateRoute bằng AdminRoute */}
                 <AdminLayout>
                   <DeviceManager />
                 </AdminLayout>
-              </PrivateRoute>
+              </AdminRoute>
             }
           />
           <Route
@@ -89,21 +104,21 @@ function App() {
           <Route
             path="/devices/add"
             element={
-              <PrivateRoute>
+              <AdminRoute>
                 <AdminLayout>
                   <DeviceForm />
                 </AdminLayout>
-              </PrivateRoute>
+              </AdminRoute>
             }
           />
           <Route
             path="/devices/edit/:id"
             element={
-              <PrivateRoute>
+              <AdminRoute>
                 <AdminLayout>
                   <DeviceForm />
                 </AdminLayout>
-              </PrivateRoute>
+              </AdminRoute>
             }
           />
           <Route
@@ -121,11 +136,11 @@ function App() {
           <Route
             path="/contracts"
             element={
-              <PrivateRoute>
+              <AdminRoute>
                 <AdminLayout>
                   <ContractManager />
                 </AdminLayout>
-              </PrivateRoute>
+              </AdminRoute>
             }
           />
           <Route
@@ -242,9 +257,25 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/edit-profile"
+            element={
+              <PrivateRoute>
+                <AdminLayout>
+                  <EditProfile />
+                </AdminLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/not-found"
+            element={
+                  <NotFoundPage />
+            }
+          />
 
           {/* Nếu route không đúng thì chuyển về login */}
-          <Route path="*" element={<Navigate to="/login" />} />
+          <Route path="*" element={<Navigate to="/not-found" />} />
         </Routes>
       </BrowserRouter>
     </WebSocketProvider>

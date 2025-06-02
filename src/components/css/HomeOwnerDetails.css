@@ -48,9 +48,14 @@
 }
 
 .back-link a {
-  color: #3b82f6;
+  color: #7e3ff2;
   text-decoration: none;
   font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .back-link a:hover {

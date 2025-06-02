@@ -69,8 +69,10 @@ function MyContracts() {
   };
 
   return (
-    <div className="page-container">
-
+    <div className="contract-manager-container">
+      <div className="contract-title">
+        <h2>Hợp đồng của tôi</h2>
+      </div>
       {loading ? (
         <p className="loading-text">Đang tải hợp đồng của bạn...</p>
       ) : contracts.length > 0 ? (

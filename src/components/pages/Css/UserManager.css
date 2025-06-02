@@ -1,0 +1,24 @@
+.user-manager-container {
+  padding: 40px 24px;
+  max-width: 1200px;
+  margin: auto;
+  background: #f4f4ff;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(91, 46, 255, 0.15);
+  animation: fadeIn 0.6s ease;
+}
+
+.user-manager-title {
+  text-align: center;
+  font-size: 30px;
+  margin-bottom: 36px;
+  font-weight: 700;
+  color: #5b2eff;
+  letter-spacing: 0.8px;
+}
+
+.user-manager-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}

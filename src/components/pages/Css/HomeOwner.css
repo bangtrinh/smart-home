@@ -1,0 +1,150 @@
+.homeowner-manager-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 40px 20px;
+  background: linear-gradient(to bottom right, #ede9fe, #f3e8ff);
+  border-radius: 16px;
+  animation: fadeInUp 0.6s ease-in-out;
+  box-shadow: 0 8px 24px rgba(91, 46, 255, 0.15);
+}
+
+.homeowner-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #5b2eff;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-btn {
+  background: linear-gradient(to right, #5b2eff, #a855f7);
+  color: white;
+  margin-bottom: 24px;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.add-btn:hover {
+  opacity: 0.9;
+}
+
+.homeowner-card-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.homeowner-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  color: #333;
+  box-shadow: 0 4px 16px rgba(91, 46, 255, 0.12);
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: fadeInUp 0.5s ease;
+}
+
+.homeowner-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.2);
+}
+
+.homeowner-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.homeowner-card-header h3 {
+  font-size: 20px;
+  color: #5b2eff;
+  margin: 0;
+}
+
+.status-tag {
+  background-color: #ede9fe;
+  color: #7c3aed;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.homeowner-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-box {
+  background-color: #f3f0ff;
+  border: 1px solid #ddd6fe;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.info-box strong {
+  color: #5b2eff;
+  margin-right: 6px;
+}
+
+.homeowner-card-actions {
+  margin-top: 16px;
+}
+
+.delete-btn {
+  background-color: #f87171;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #ef4444;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+}
+.edit-btn {
+  background-color: #7c3aed;
+  color: white;
+  margin-right: 10px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+}
+
+.edit-btn:hover {
+  background-color: #5b21b6;
+}
+

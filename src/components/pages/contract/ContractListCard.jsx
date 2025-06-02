@@ -9,8 +9,13 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
     navigate(`/contracts/${contract.contractId}`);
   };
 
+  const handleGoToEdit = (e) => {
+    e.stopPropagation(); // tránh bị trigger vào thẻ cha
+    navigate(`/ContractForm?id=${contract.contractId}`);
+  };
+
   const handleUnlink = async (e) => {
-    e.stopPropagation();  
+    e.stopPropagation();
     if (!window.confirm(`Bạn chắc chắn muốn hủy liên kết với hợp đồng ${contract.contractCode}?`)) return;
     try {
       await unLinkFromContract(user.id, contract.contractCode);
@@ -41,7 +46,7 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
         <p>⏳ <strong>Kết thúc:</strong> {contract.endDate?.replace('T', ' ').slice(0, 16)}</p>
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-start gap-2">
         <button
           onClick={handleGoToDetails}
           className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
@@ -49,6 +54,18 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
           📘 Xem chi tiết
         </button>
 
+        <button
+          onClick={handleGoToEdit}
+          className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm"
+        >
+          ✏️ Sửa
+        </button>
+        <button
+            onClick={handleUnlink}
+            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+          >
+            ❌ Xóa
+          </button>
         {isMyContract && (
           <button
             onClick={handleUnlink}
@@ -56,6 +73,7 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
           >
             ❌ Hủy liên kết
           </button>
+          
         )}
       </div>
     </div>

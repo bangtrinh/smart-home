@@ -1,27 +1,40 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../Css/HomeOwner.css';
 
 function HomeOwnerCard({ owner, onDelete }) {
   return (
-    <Link to={`/homeowners/${owner.ownerId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-      <div className="contract-card">
-        <div className="contract-card-header">
-          <h3>{owner.fullName}</h3>
-          <span className="status">Chủ nhà</span>
-        </div>
+    <div className="homeowner-card">
+      <div className="homeowner-card-header">
+        <h3>{owner.fullName}</h3>
+        <span className="status-tag">Chủ nhà</span>
+      </div>
 
-        <div className="contract-card-body">
-          <p><strong>ID:</strong> {owner.ownerId}</p>
-          <p><strong>Email:</strong> {owner.email}</p>
-          <p><strong>SĐT:</strong> {owner.phone}</p>
-          <p><strong>Địa chỉ:</strong> {owner.address}</p>
+      <div className="homeowner-card-body">
+        <div className="info-box">
+          <strong>Email:</strong> {owner.email}
         </div>
-
-        <div className="contract-card-actions">
-          <button onClick={(e) => { e.preventDefault(); onDelete(owner.ownerId); }}>🗑️ Xoá</button>
+        <div className="info-box">
+          <strong>SĐT:</strong> {owner.phone}
+        </div>
+        <div className="info-box">
+          <strong>Địa chỉ:</strong> {owner.address}
         </div>
       </div>
-    </Link>
+
+      <div className="homeowner-card-actions"> 
+        {/* Truyènr own id để thực hiện việc sửa  */}
+        <Link to={`/homeowners/edit/${owner.ownerId}`} className="btn edit-btn">
+          ✏️ Sửa
+        </Link>
+        <button
+          className="btn delete-btn"
+          onClick={() => onDelete(owner.ownerId)}
+        >
+          🗑️ Xoá
+        </button>
+      </div>
+    </div>
   );
 }
 

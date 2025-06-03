@@ -56,7 +56,6 @@ function Dashboard() {
     }
     try {
       const payload = JSON.parse(rawMessage);
-      console.log('WebSocket payload:', payload);
       const deviceId = payload.deviceId;
       const newStatus = payload.value;
 
@@ -81,7 +80,6 @@ function Dashboard() {
   const fetchSchedules = useCallback(async (deviceId) => {
     try {
       const response = await getSchedulesByDevice(deviceId);
-      console.log(`Schedules for device ${deviceId}:`, response);
       
       // Store schedules for the device
       setSchedules(prev => ({
@@ -96,12 +94,10 @@ function Dashboard() {
           .filter(s => {
             const scheduleDate = new Date(s.scheduleTime);
             const isValid = !isNaN(scheduleDate) && scheduleDate > now;
-            console.log(`Schedule ${s.id}:`, { scheduleTime: s.scheduleTime, isValid });
             return isValid;
           })
           .sort((a, b) => new Date(a.scheduleTime) - new Date(b.scheduleTime))[0];
 
-        console.log(`Upcoming schedule for device ${deviceId}:`, upcoming);
         setCurrentSchedule(upcoming || null);
       }
     } catch (err) {
@@ -165,7 +161,6 @@ function Dashboard() {
           const controllable = [];
           for (const device of devicesData.data) {
             const isActive = await checkControlActive(user.id, device.id);
-            console.log("Check: " + isActive.data);
             if (isActive.data) {
               controllable.push(device);
             }
@@ -218,7 +213,6 @@ function Dashboard() {
       const timeDiff = scheduleTime - now;
 
       if (timeDiff <= 0) {
-        console.log(`Schedule ${currentSchedule.id} expired`);
         setTimeLeft('Expired');
         setCurrentSchedule(null);
         fetchSchedules(selectedDevice.id);

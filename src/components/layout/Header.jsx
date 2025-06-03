@@ -4,7 +4,7 @@ import { getMyContracts, requestLinkToContract, confirmLinkToContract } from '..
 import { Settings, Bell, ChevronDown, User, LogOut } from 'lucide-react';
 import '../css/layout/header.css';
 import { useContract } from '../../context/ContractContext';
-import { useWS } from '../../context/WebSocketContext';
+import { useWS } from '../../context/WebSocketContext'; 
 
 function Header({ collapsed, setCollapsed }) {
   const [notifications, setNotifications] = useState([]);
@@ -23,19 +23,45 @@ function Header({ collapsed, setCollapsed }) {
   const { selectedContractId, setSelectedContractId } = useContract();
   const { connected, subscribeToTopic, unsubscribeFromTopic } = useWS();
 
+  // Lấy tất cả thông báo từ localStorage
+  const getAllNotificationsFromStorage = () => {
+    const savedNoti = localStorage.getItem('notifications');
+    return savedNoti ? JSON.parse(savedNoti) : [];
+  };
+
+  // Lấy thông báo theo contractId
+  const getNotificationsByContractId = (contractId) => {
+    const allNotifications = getAllNotificationsFromStorage();
+    return allNotifications.filter(noti => noti.contractId === contractId);
+  };
+
+  // Lưu thông báo vào localStorage
+  const saveNotificationsToStorage = (notifications) => {
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+  };
+
+  // Thêm thông báo mới
+  const addNewNotification = (notification) => {
+    const allNotifications = getAllNotificationsFromStorage();
+    const updatedNotifications = [notification, ...allNotifications];
+    saveNotificationsToStorage(updatedNotifications);
+    return updatedNotifications;
+  };
+
+  // Xóa thông báo theo contractId
+  const clearNotificationsByContractId = (contractId) => {
+    const allNotifications = getAllNotificationsFromStorage();
+    const updatedNotifications = allNotifications.filter(noti => noti.contractId !== contractId);
+    saveNotificationsToStorage(updatedNotifications);
+    return updatedNotifications;
+  };
+
   useEffect(() => {
     const user = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (user) {
       setCurrentUser(JSON.parse(user));
-      const roles = JSON.parse(localStorage.getItem('roles') || sessionStorage.getItem('roles') || '[]');
+      const roles = JSON.parse(localStorage.getItem('roles') || sessionStorage.getItem('roles'));
       setRoles(roles);
-      console.log('Roles:', roles);
-    }
-    const savedNoti = localStorage.getItem('notifications');
-    if (savedNoti) {
-      const parsedNoti = JSON.parse(savedNoti);
-      setNotifications(parsedNoti);
-      console.log('Initial notifications from localStorage:', parsedNoti);
     }
   }, []);
 
@@ -44,7 +70,10 @@ function Header({ collapsed, setCollapsed }) {
       const data = await getMyContracts();
       setContracts(data);
       if (data.length > 0 && !selectedContractId) {
-        setSelectedContractId(data[0].contractId);
+        const firstContractId = data[0].contractId;
+        setSelectedContractId(firstContractId);
+        // Load notifications for the first contract
+        setNotifications(getNotificationsByContractId(firstContractId));
       }
     } catch (error) {
       console.error('Failed to load contracts', error);
@@ -55,45 +84,38 @@ function Header({ collapsed, setCollapsed }) {
     fetchContracts();
   }, []);
 
+  // Effect để xử lý khi selectedContractId thay đổi
   useEffect(() => {
-    if (!connected || contracts.length === 0) return;
+    if (selectedContractId) {
+      // Load notifications for the selected contract
+      setNotifications(getNotificationsByContractId(selectedContractId));
+    }
+  }, [selectedContractId]);
 
-    // Subscribe to all contract topics
-    const subscriptions = contracts.map((contract) => {
-      const topic = `/contract/${contract.contractId}/notifications`;
-      return subscribeToTopic(topic, (rawMessage) => {
-        const notification = JSON.parse(rawMessage);
-        console.log('Received notification:', notification, 'for topic:', topic);
-        if (notification.contractId) {
-          setNotifications((prev) => {
-            const updated = [
-              notification,
-              ...prev.filter((noti) => noti.id !== notification.id),
-            ];
-            localStorage.setItem('notifications', JSON.stringify(updated));
-            console.log('Updated notifications in localStorage:', updated);
-            return updated;
-          });
-        } else {
-          console.warn('Notification missing contractId:', notification);
-        }
-      });
+  // Effect để xử lý WebSocket subscription
+  useEffect(() => {
+    if (!selectedContractId || !connected) return;
+
+    const topic = `/contract/${selectedContractId}/notifications`;
+    const subId = subscribeToTopic(topic, (rawMessage) => {
+      const notification = JSON.parse(rawMessage);
+      
+      // Thêm contractId vào notification
+      const notificationWithContractId = {
+        ...notification,
+        contractId: selectedContractId,
+        timestamp: new Date().toISOString()
+      };
+
+      // Cập nhật state và localStorage
+      const updatedNotifications = addNewNotification(notificationWithContractId);
+      setNotifications(updatedNotifications.filter(noti => noti.contractId === selectedContractId));
     });
 
-    // Reload notifications from localStorage when selectedContractId changes
-    const savedNoti = localStorage.getItem('notifications');
-    if (savedNoti) {
-      const parsedNoti = JSON.parse(savedNoti);
-      setNotifications(parsedNoti);
-      console.log('Reloaded notifications for contract switch:', parsedNoti, 'selectedContractId:', selectedContractId);
-    }
-
     return () => {
-      subscriptions.forEach((subId) => {
-        if (subId) unsubscribeFromTopic(subId);
-      });
+      if (subId) unsubscribeFromTopic(subId);
     };
-  }, [connected, contracts, selectedContractId, subscribeToTopic, unsubscribeFromTopic]);
+  }, [selectedContractId, connected, subscribeToTopic, unsubscribeFromTopic]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -114,7 +136,7 @@ function Header({ collapsed, setCollapsed }) {
     try {
       const request = {
         objectCode: newContractCode,
-        userId: currentUser.id,
+        userId: currentUser.id
       };
       const res = await requestLinkToContract(request);
       setRequestId(res.data.requestId);
@@ -131,7 +153,7 @@ function Header({ collapsed, setCollapsed }) {
       const confirm = {
         contractCode: newContractCode,
         otpCode: otp,
-        userId: currentUser.id,
+        userId: currentUser.id
       };
       await confirmLinkToContract(confirm);
       await fetchContracts();
@@ -147,14 +169,17 @@ function Header({ collapsed, setCollapsed }) {
     }
   };
 
-  // Filter notifications for the current contract
-  const filteredNotifications = notifications.filter((noti) => {
-    const matches = String(noti.contractId) === String(selectedContractId);
-    console.log('Filtering notification:', noti, 'matches:', matches, 'selectedContractId:', selectedContractId);
-    return matches;
-  });
+  // Xóa thông báo của contract hiện tại
+  const clearCurrentNotifications = () => {
+    if (!selectedContractId) return;
+    
+    // Xóa trong localStorage
+    const updatedNotifications = clearNotificationsByContractId(selectedContractId);
+    
+    // Cập nhật state
+    setNotifications([]);
+  };
 
-  console.log('Rendering dropdown, filteredNotifications:', filteredNotifications);
 
   return (
     <header className={`dashboard-header ${collapsed ? 'collapsed' : ''}`}>
@@ -162,30 +187,29 @@ function Header({ collapsed, setCollapsed }) {
         {/* Left section: contract selector */}
         <div className="header-left">
           {!roles.includes('ADMIN') && (
-            <div className="contract-select-container">
-              <select
-                value={selectedContractId}
-                onChange={(e) => {
-                  if (e.target.value === 'add') {
-                    setShowLinkContractForm(true);
-                  } else {
-                    setSelectedContractId(e.target.value);
-                    console.log('Selected contract changed to:', e.target.value);
-                  }
-                }}
-                className="contract-select"
-              >
-                {contracts.map((contract) => (
-                  <option key={contract.contractId} value={contract.contractId}>
-                    {contract.contractCode}
-                  </option>
-                ))}
-                <option value="add">Thêm...</option>
-              </select>
-            </div>
+          <div className="contract-select-container">
+            <select
+              value={selectedContractId}
+              onChange={(e) => {
+                if (e.target.value === 'add') {
+                  setShowLinkContractForm(true);
+                } else {
+                  setSelectedContractId(e.target.value);
+                }
+              }}
+              className="contract-select"
+            >
+              {contracts.map((contract) => (
+                <option key={contract.contractId} value={contract.contractId}>
+                  {contract.contractCode}
+                </option>
+              ))}
+              <option value="add">Thêm...</option>
+            </select>
+          </div>
           )}
         </div>
-
+     
         {/* Right section: actions */}
         <div className="header-actions">
           <button className="icon-button">
@@ -193,13 +217,10 @@ function Header({ collapsed, setCollapsed }) {
           </button>
 
           {!roles.includes('ADMIN') && (
-            <button
-              className="icon-button notification-btn"
-              onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
-            >
+            <button className="icon-button notification-btn" onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}>
               <Bell className="icon" />
-              {filteredNotifications.length > 0 && (
-                <span className="notification-badge">{filteredNotifications.length}</span>
+              {notifications.length > 0 && (
+                <span className="notification-badge">{notifications.length}</span>
               )}
             </button>
           )}
@@ -207,11 +228,11 @@ function Header({ collapsed, setCollapsed }) {
           {showNotificationDropdown && (
             <div className="notification-dropdown">
               <div className="notification-list">
-                {filteredNotifications.length === 0 ? (
+                {notifications.length === 0 ? (
                   <div className="notification-item empty">Không có thông báo mới</div>
                 ) : (
-                  filteredNotifications.map((noti, idx) => (
-                    <div key={noti.id || idx} className="notification-item">
+                  notifications.map((noti, idx) => (
+                    <div key={idx} className="notification-item">
                       <span className="time">{new Date(noti.timestamp).toLocaleTimeString()}</span>
                       <p>{noti.message}</p>
                     </div>
@@ -220,14 +241,7 @@ function Header({ collapsed, setCollapsed }) {
               </div>
               {roles.includes('OWNER') && (
                 <button
-                  onClick={() => {
-                    const updatedNotifications = notifications.filter(
-                      (noti) => String(noti.contractId) !== String(selectedContractId)
-                    );
-                    setNotifications(updatedNotifications);
-                    localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
-                    console.log('Cleared notifications for contract:', selectedContractId, 'Remaining:', updatedNotifications);
-                  }}
+                  onClick={clearCurrentNotifications}
                   className="clear-button"
                 >
                   Xóa tất cả
@@ -235,6 +249,8 @@ function Header({ collapsed, setCollapsed }) {
               )}
             </div>
           )}
+          
+          {/* Phần user dropdown giữ nguyên */}
           {currentUser && (
             <div className="user-dropdown-container">
               <button
@@ -292,7 +308,7 @@ function Header({ collapsed, setCollapsed }) {
         </div>
       </div>
 
-      {/* Link Contract Modal */}
+      {/* Link Contract Modal - Giữ nguyên */}
       {showLinkContractForm && (
         <>
           <div className="modal-backdrop" onClick={() => setShowLinkContractForm(false)}></div>
@@ -309,15 +325,8 @@ function Header({ collapsed, setCollapsed }) {
                   className="modal-input"
                 />
                 <div className="modal-actions">
-                  <button onClick={handleRequestLinkContract} className="modal-confirm-btn">
-                    Gửi yêu cầu
-                  </button>
-                  <button
-                    onClick={() => setShowLinkContractForm(false)}
-                    className="modal-cancel-btn"
-                  >
-                    Hủy
-                  </button>
+                  <button onClick={handleRequestLinkContract} className="modal-confirm-btn">Gửi yêu cầu</button>
+                  <button onClick={() => setShowLinkContractForm(false)} className="modal-cancel-btn">Hủy</button>
                 </div>
               </>
             ) : (
@@ -330,15 +339,8 @@ function Header({ collapsed, setCollapsed }) {
                   className="modal-input"
                 />
                 <div className="modal-actions">
-                  <button onClick={handleConfirmLinkContract} className="modal-confirm-btn">
-                    Xác nhận
-                  </button>
-                  <button
-                    onClick={() => setShowLinkContractForm(false)}
-                    className="modal-cancel-btn"
-                  >
-                    Hủy
-                  </button>
+                  <button onClick={handleConfirmLinkContract} className="modal-confirm-btn">Xác nhận</button>
+                  <button onClick={() => setShowLinkContractForm(false)} className="modal-cancel-btn">Hủy</button>
                 </div>
               </>
             )}

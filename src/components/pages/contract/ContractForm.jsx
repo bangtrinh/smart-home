@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { addContract, getContractById, updateContract } from '../../../api/contractApi';
 import { getHomeOwners } from '../../../api/homeOwnerApi';
 import { useNavigate, useParams } from 'react-router-dom';
+import '../../css/ContractForm.css'
 
 function ContractForm() {
   const { id } = useParams();
@@ -39,85 +40,90 @@ function ContractForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-  // Tạo DTO payload đúng chuẩn gửi backend
     const payload = {
-        contractCode: contract.contractCode,
-        ownerId: contract.ownerId,
-        startDate: contract.startDate,
-        endDate: contract.endDate,
-        status: contract.status
+      contractCode: contract.contractCode,
+      ownerId: contract.ownerId,
+      startDate: contract.startDate,
+      endDate: contract.endDate,
+      status: contract.status
     };
 
-    // 👉 Log DTO ra console tại đây
     console.log('Contract DTO gửi về server:', payload);
 
-    // Gửi API
     if (id) {
-        await updateContract(id, payload);
+      await updateContract(id, payload);
     } else {
-        await addContract(payload);
+      await addContract(payload);
     }
     navigate('/contracts');
   };
 
   return (
-    <div>
+    <div className="contract-form-container">
       <h2>{id ? 'Sửa' : 'Thêm'} hợp đồng</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Mã hợp đồng"
-          value={contract.contractCode}
-          onChange={(e) => setContract({ ...contract, contractCode: e.target.value })}
-          required
-        />
 
-        <select
+      <form className="contract-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Mã hợp đồng</label>
+          <input
+            type="text"
+            value={contract.contractCode}
+            onChange={(e) => setContract({ ...contract, contractCode: e.target.value })}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Chủ nhà</label>
+          <select
             value={contract.ownerId}
             onChange={(e) => setContract({ ...contract, ownerId: e.target.value })}
             required
-            >
+          >
             <option value="">-- Chọn chủ nhà --</option>
             {owners.map(o => (
-                <option key={o.ownerId} value={o.ownerId}>{o.fullName}</option>
+              <option key={o.ownerId} value={o.ownerId}>{o.fullName}</option>
             ))}
-        </select>
+          </select>
+        </div>
 
+        <div className="form-group">
+          <label>Ngày bắt đầu</label>
+          <input
+            type="datetime-local"
+            value={contract.startDate}
+            onChange={(e) => setContract({ ...contract, startDate: e.target.value })}
+            required
+          />
+        </div>
 
-        <label>Ngày bắt đầu</label>
-        <input
-          type="datetime-local"
-          value={contract.startDate}
-          onChange={(e) => setContract({ ...contract, startDate: e.target.value })}
-          required
-        />
+        <div className="form-group">
+          <label>Ngày kết thúc</label>
+          <input
+            type="datetime-local"
+            value={contract.endDate}
+            onChange={(e) => setContract({ ...contract, endDate: e.target.value })}
+            required
+          />
+        </div>
 
-        <label>Ngày kết thúc</label>
-        <input
-          type="datetime-local"
-          value={contract.endDate}
-          onChange={(e) => setContract({ ...contract, endDate: e.target.value })}
-          required
-        />
+        <div className="form-group">
+          <label>Trạng thái</label>
+          <select
+            value={contract.status}
+            onChange={(e) => setContract({ ...contract, status: e.target.value })}
+          >
+            <option value="active">Active</option>
+          </select>
+        </div>
 
-        <label>Trạng thái</label>
-        <select
-          value={contract.status}
-          onChange={(e) => setContract({ ...contract, status: e.target.value })}
-        >
-          <option value="Pending">Pending</option>
-          <option value="Active">Active</option>
-          <option value="Canceled">Canceled</option>
-        </select>
-
-          
-
-        <button type="submit">Lưu</button>
-        <button type="button" onClick={() => navigate('/contracts')}>Hủy</button>
+        <div className="form-actions">
+          <button type="submit" className="save-btn">Lưu</button>
+          <button type="button" className="cancel-btn" onClick={() => navigate('/contracts')}>Hủy</button>
+        </div>
       </form>
     </div>
   );
-  
 }
 
 export default ContractForm;

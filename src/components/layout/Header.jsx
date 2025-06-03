@@ -4,7 +4,7 @@ import { getMyContracts, requestLinkToContract, confirmLinkToContract } from '..
 import { Settings, Bell, ChevronDown, User, LogOut } from 'lucide-react';
 import '../css/layout/header.css';
 import { useContract } from '../../context/ContractContext';
-import { useWS } from '../../context/WebSocketContext'; 
+import { useWS } from '../../context/WebSocketContext';
 
 function Header({ collapsed, setCollapsed }) {
   const [notifications, setNotifications] = useState([]);
@@ -21,19 +21,21 @@ function Header({ collapsed, setCollapsed }) {
   const [roles, setRoles] = useState([]);
 
   const { selectedContractId, setSelectedContractId } = useContract();
-  const { connected, subscribeToTopic, unsubscribeFromTopic } = useWS(); // <- lấy websocket API từ context
+  const { connected, subscribeToTopic, unsubscribeFromTopic } = useWS();
 
   useEffect(() => {
     const user = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (user) {
       setCurrentUser(JSON.parse(user));
-      const roles = JSON.parse(localStorage.getItem('roles') || sessionStorage.getItem('roles'));
+      const roles = JSON.parse(localStorage.getItem('roles') || sessionStorage.getItem('roles') || '[]');
       setRoles(roles);
-      console.log(roles);
+      console.log('Roles:', roles);
     }
     const savedNoti = localStorage.getItem('notifications');
     if (savedNoti) {
-      setNotifications(JSON.parse(savedNoti));
+      const parsedNoti = JSON.parse(savedNoti);
+      setNotifications(parsedNoti);
+      console.log('Initial notifications from localStorage:', parsedNoti);
     }
   }, []);
 
@@ -54,28 +56,52 @@ function Header({ collapsed, setCollapsed }) {
   }, []);
 
   useEffect(() => {
-    if (!selectedContractId || !connected) return;
+    if (!connected || contracts.length === 0) return;
 
-    const topic = `/contract/${selectedContractId}/notifications`;
-    const subId = subscribeToTopic(topic, (rawMessage) => {
-      const notification = JSON.parse(rawMessage);
-      setNotifications((prev) => {
-        const updated = [notification, ...prev];
-        localStorage.setItem('notifications', JSON.stringify(updated));
-        return updated;
+    // Subscribe to all contract topics
+    const subscriptions = contracts.map((contract) => {
+      const topic = `/contract/${contract.contractId}/notifications`;
+      return subscribeToTopic(topic, (rawMessage) => {
+        const notification = JSON.parse(rawMessage);
+        console.log('Received notification:', notification, 'for topic:', topic);
+        if (notification.contractId) {
+          setNotifications((prev) => {
+            const updated = [
+              notification,
+              ...prev.filter((noti) => noti.id !== notification.id),
+            ];
+            localStorage.setItem('notifications', JSON.stringify(updated));
+            console.log('Updated notifications in localStorage:', updated);
+            return updated;
+          });
+        } else {
+          console.warn('Notification missing contractId:', notification);
+        }
       });
     });
 
+    // Reload notifications from localStorage when selectedContractId changes
+    const savedNoti = localStorage.getItem('notifications');
+    if (savedNoti) {
+      const parsedNoti = JSON.parse(savedNoti);
+      setNotifications(parsedNoti);
+      console.log('Reloaded notifications for contract switch:', parsedNoti, 'selectedContractId:', selectedContractId);
+    }
+
     return () => {
-      if (subId) unsubscribeFromTopic(subId);
+      subscriptions.forEach((subId) => {
+        if (subId) unsubscribeFromTopic(subId);
+      });
     };
-  }, [selectedContractId, connected, subscribeToTopic, unsubscribeFromTopic]);
+  }, [connected, contracts, selectedContractId, subscribeToTopic, unsubscribeFromTopic]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    localStorage.removeItem('roles');
     sessionStorage.removeItem('user');
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('roles');
     navigate('/login');
   };
 
@@ -88,7 +114,7 @@ function Header({ collapsed, setCollapsed }) {
     try {
       const request = {
         objectCode: newContractCode,
-        userId: currentUser.id
+        userId: currentUser.id,
       };
       const res = await requestLinkToContract(request);
       setRequestId(res.data.requestId);
@@ -105,7 +131,7 @@ function Header({ collapsed, setCollapsed }) {
       const confirm = {
         contractCode: newContractCode,
         otpCode: otp,
-        userId: currentUser.id
+        userId: currentUser.id,
       };
       await confirmLinkToContract(confirm);
       await fetchContracts();
@@ -121,35 +147,44 @@ function Header({ collapsed, setCollapsed }) {
     }
   };
 
+  // Filter notifications for the current contract
+  const filteredNotifications = notifications.filter((noti) => {
+    const matches = String(noti.contractId) === String(selectedContractId);
+    console.log('Filtering notification:', noti, 'matches:', matches, 'selectedContractId:', selectedContractId);
+    return matches;
+  });
+
+  console.log('Rendering dropdown, filteredNotifications:', filteredNotifications);
+
   return (
     <header className={`dashboard-header ${collapsed ? 'collapsed' : ''}`}>
       <div className="header-content">
         {/* Left section: contract selector */}
         <div className="header-left">
           {!roles.includes('ADMIN') && (
-          <div className="contract-select-container">
-            <select
-              value={selectedContractId}
-              onChange={(e) => {
-                if (e.target.value === 'add') {
-                  setShowLinkContractForm(true);
-                } else {
-                  setSelectedContractId(e.target.value);
-                }
-              }}
-              className="contract-select"
-            >
-              {contracts.map((contract) => (
-                <option key={contract.contractId} value={contract.contractId}>
-                  {contract.contractCode}
-                </option>
-              ))}
-              <option value="add">Thêm...</option>
-            </select>
-          </div>
+            <div className="contract-select-container">
+              <select
+                value={selectedContractId}
+                onChange={(e) => {
+                  if (e.target.value === 'add') {
+                    setShowLinkContractForm(true);
+                  } else {
+                    setSelectedContractId(e.target.value);
+                    console.log('Selected contract changed to:', e.target.value);
+                  }
+                }}
+                className="contract-select"
+              >
+                {contracts.map((contract) => (
+                  <option key={contract.contractId} value={contract.contractId}>
+                    {contract.contractCode}
+                  </option>
+                ))}
+                <option value="add">Thêm...</option>
+              </select>
+            </div>
           )}
         </div>
-     
 
         {/* Right section: actions */}
         <div className="header-actions">
@@ -158,10 +193,13 @@ function Header({ collapsed, setCollapsed }) {
           </button>
 
           {!roles.includes('ADMIN') && (
-            <button className="icon-button notification-btn" onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}>
+            <button
+              className="icon-button notification-btn"
+              onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
+            >
               <Bell className="icon" />
-              {notifications.length > 0 && (
-                <span className="notification-badge">{notifications.length}</span>
+              {filteredNotifications.length > 0 && (
+                <span className="notification-badge">{filteredNotifications.length}</span>
               )}
             </button>
           )}
@@ -169,11 +207,11 @@ function Header({ collapsed, setCollapsed }) {
           {showNotificationDropdown && (
             <div className="notification-dropdown">
               <div className="notification-list">
-                {notifications.length === 0 ? (
+                {filteredNotifications.length === 0 ? (
                   <div className="notification-item empty">Không có thông báo mới</div>
                 ) : (
-                  notifications.map((noti, idx) => (
-                    <div key={idx} className="notification-item">
+                  filteredNotifications.map((noti, idx) => (
+                    <div key={noti.id || idx} className="notification-item">
                       <span className="time">{new Date(noti.timestamp).toLocaleTimeString()}</span>
                       <p>{noti.message}</p>
                     </div>
@@ -183,8 +221,12 @@ function Header({ collapsed, setCollapsed }) {
               {roles.includes('OWNER') && (
                 <button
                   onClick={() => {
-                    setNotifications([]);
-                    localStorage.removeItem('notifications');
+                    const updatedNotifications = notifications.filter(
+                      (noti) => String(noti.contractId) !== String(selectedContractId)
+                    );
+                    setNotifications(updatedNotifications);
+                    localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+                    console.log('Cleared notifications for contract:', selectedContractId, 'Remaining:', updatedNotifications);
                   }}
                   className="clear-button"
                 >
@@ -267,8 +309,15 @@ function Header({ collapsed, setCollapsed }) {
                   className="modal-input"
                 />
                 <div className="modal-actions">
-                  <button onClick={handleRequestLinkContract} className="modal-confirm-btn">Gửi yêu cầu</button>
-                  <button onClick={() => setShowLinkContractForm(false)} className="modal-cancel-btn">Hủy</button>
+                  <button onClick={handleRequestLinkContract} className="modal-confirm-btn">
+                    Gửi yêu cầu
+                  </button>
+                  <button
+                    onClick={() => setShowLinkContractForm(false)}
+                    className="modal-cancel-btn"
+                  >
+                    Hủy
+                  </button>
                 </div>
               </>
             ) : (
@@ -281,8 +330,15 @@ function Header({ collapsed, setCollapsed }) {
                   className="modal-input"
                 />
                 <div className="modal-actions">
-                  <button onClick={handleConfirmLinkContract} className="modal-confirm-btn">Xác nhận</button>
-                  <button onClick={() => setShowLinkContractForm(false)} className="modal-cancel-btn">Hủy</button>
+                  <button onClick={handleConfirmLinkContract} className="modal-confirm-btn">
+                    Xác nhận
+                  </button>
+                  <button
+                    onClick={() => setShowLinkContractForm(false)}
+                    className="modal-cancel-btn"
+                  >
+                    Hủy
+                  </button>
                 </div>
               </>
             )}

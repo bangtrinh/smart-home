@@ -20,7 +20,7 @@ function UserCard({ user, contractId, onDelete, showDeviceButton = true }) {
       </div>
     {/* thêm class để css  */}
       <div className="user-card-actions">
-        <button className="btn delete-btn" onClick={() => onDelete(user.id)}>🗑️ Xoá</button>
+        <button className="btn delete-btn" onClick={() => onDelete(user.id)}>Xoá</button>
         {showDeviceButton && (
           <button className="btn toggle-btn" onClick={toggleDevices}>
             {showDevices ? 'Ẩn thiết bị' : 'Xem thiết bị'}

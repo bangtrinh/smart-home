@@ -18,10 +18,9 @@ function ContractManager() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Xóa hợp đồng này?')) {
       await deleteContract(id);
       fetchContracts();
-    }
+    
   };
 
   return (
@@ -36,7 +35,7 @@ function ContractManager() {
           <ContractListCard
             key={contract.contractId}
             contract={contract}
-            isMyContract={false} // hoặc logic của bạn
+            isMyContract={false} 
             onDelete={handleDelete}
           />
         ))}

@@ -158,21 +158,21 @@ function App() {
           <Route
             path="/contracts/add"
             element={
-              <PrivateRoute>
+              <AdminRoute>
                 <AdminLayout>
                   <ContractForm />
                 </AdminLayout>
-              </PrivateRoute>
+              </AdminRoute>
             }
           />
           <Route
             path="/contracts/edit/:id"
             element={
-              <PrivateRoute>
+              <AdminRoute>
                 <AdminLayout>
                   <ContractForm />
                 </AdminLayout>
-              </PrivateRoute>
+              </AdminRoute>
             }
           />
           <Route

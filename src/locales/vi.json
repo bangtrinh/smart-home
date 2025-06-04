@@ -134,7 +134,8 @@
     "device": "Thiết bị",
     "action": "Hành động",
     "actionOn": "Bật",
-    "actionOff": "Tắt"
+    "actionOff": "Tắt",
+    "searchPlaceholder": "Tìm kiếm theo ngày, tên thiết bị hoặc ID"
   },
    "deviceForm": {
     "addTitle": "Thêm thiết bị",
@@ -200,7 +201,8 @@
   "homeOwnerManager": {
     "title": "Danh sách Chủ nhà",
     "add": "Thêm chủ nhà",
-    "confirmDelete": "Xóa chủ nhà này?"
+    "confirmDelete": "Xóa chủ nhà này?",
+    "searchPlaceholder":"Tìm kiếm bằng ID, Name, Phone hoặc Email"
   },
   "userCard": {
     "id": "ID",
@@ -211,7 +213,8 @@
   },
   "userManager": {
     "title": "Danh sách người dùng",
-    "confirmDelete": "Xoá người dùng này?"
+    "confirmDelete": "Xoá người dùng này?",
+    "searchPlaceholder":"Tìm kiếm bằng ID, tên đăng nhập hoặc mail"
   },
   "contractListCard": {
     "confirmUnlink": "Bạn chắc chắn muốn hủy liên kết với hợp đồng {{contractCode}}?",
@@ -307,5 +310,8 @@
     "title": "404 - Trang không tồn tại",
     "message": "Xin lỗi, đường dẫn bạn truy cập hiện không khả dụng hoặc đã bị xóa.",
     "backToDashboard": "Quay lại Bảng điều khiển"
-  }
+  },
+    "searchPlaceholder": "Tìm kiếm bằng ID hoặc mã hợp đồng",
+      "searchPlaceholderDevice": "Tìm kiếm bằng ID hoặc tên"
+
 }

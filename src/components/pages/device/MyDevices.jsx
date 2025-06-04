@@ -7,6 +7,7 @@ import DeviceCard from './DeviceCard';
 import { useContract } from '../../../context/ContractContext';
 import '../../css/MyDevices.css'
 import { useTranslation } from 'react-i18next';
+import { Search } from 'lucide-react'; // Nếu bạn đang dùng thư viện icon này
 
 
 function MyDevices() {
@@ -16,6 +17,7 @@ function MyDevices() {
   const [subscriptions, setSubscriptions] = useState({});
   const [controlStatuses, setControlStatuses] = useState({});
   const [deviceStatuses, setDeviceStatuses] = useState({});
+  const [searchTerm, setSearchTerm] = useState('');
 
   const token = localStorage.getItem('token') || sessionStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user')) || {};
@@ -90,7 +92,6 @@ function MyDevices() {
     fetchDevices(selectedContractId);
   }, [selectedContractId]);
 
-
   useEffect(() => {
     if (!connected || devices.length === 0 || !selectedContractId) return;
 
@@ -119,17 +120,39 @@ function MyDevices() {
     };
   }, [subscriptions, unsubscribeFromTopic]);
 
+  // Filter devices dựa trên searchTerm (theo id hoặc deviceName)
+  const filteredDevices = devices.filter(device => {
+    const lowerSearch = searchTerm.toLowerCase();
+    return (
+      device.id.toString().toLowerCase().includes(lowerSearch) ||
+      (device.deviceName && device.deviceName.toLowerCase().includes(lowerSearch))
+    );
+  });
+
   return (
     <div className="my-devices-page">
       <div className="page-header">
         <h1 className="page-title">{t('mydevices.pageTitle')}</h1>
         <p className="page-subtitle">{t('mydevices.pageSubtitle')}</p>
+
+              <div className="top-bar">
+                <div className="search-wrapper">
+                  <Search size={16} className="search-icon" />
+                  <input
+                    type="text"
+                    className="search-input"
+                    placeholder={t('searchPlaceholderDevice') || "Search by ID or Code"}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              </div>
       </div>
 
       <div className="devices-container">
-        {devices.length > 0 ? (
+        {filteredDevices.length > 0 ? (
           <div className="devices-grid">
-            {devices.map(device => (
+            {filteredDevices.map(device => (
               <DeviceCard
                 key={device.id}
                 device={{

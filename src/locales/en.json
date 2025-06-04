@@ -133,7 +133,8 @@
     "device": "Device",
     "action": "Action",
     "actionOn": "On",
-    "actionOff": "Off"
+    "actionOff": "Off",
+    "searchPlaceholder": "Search by Date, Name of device or ID"
   },
     "deviceForm": {
         "addTitle": "Add Device",
@@ -198,7 +199,8 @@
     "homeOwnerManager": {
     "title": "Homeowners List",
     "add": "Add Homeowner",
-    "confirmDelete": "Are you sure you want to delete this homeowner?"
+    "confirmDelete": "Are you sure you want to delete this homeowner?",
+    "searchPlaceholder":"Search by ID, Name, Phone or Email"
   },
   "userCard": {
     "id": "ID",
@@ -209,7 +211,8 @@
   },
     "userManager": {
     "title": "User List",
-    "confirmDelete": "Delete this user?"
+    "confirmDelete": "Delete this user?",
+    "searchPlaceholder":"Search by ID, Name or Email"
   },
   "contractListCard": {
     "confirmUnlink": "Are you sure you want to unlink from contract {{contractCode}}?",
@@ -306,5 +309,7 @@
     "title": "404 - Page Not Found",
     "message": "Sorry, the page you are looking for is unavailable or has been removed.",
     "backToDashboard": "Back to Dashboard"
-  }
+  },
+  "searchPlaceholder": "Search by ID or Contract Code",
+  "searchPlaceholderDevice": "Search by ID or name"
 }

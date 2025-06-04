@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getMyContracts, requestLinkToContract, confirmLinkToContract } from '../../../api/contractApi';
 import ContractCard from './ContractListCard';
 import { useTranslation } from 'react-i18next';
-import '../../css/Contract.css'
+import '../../css/Contract.css';
+import {Search} from 'lucide-react'
 
 function MyContracts() {
   const { t } = useTranslation();
@@ -12,6 +13,7 @@ function MyContracts() {
   const [contractCode, setContractCode] = useState('');
   const [otp, setOtp] = useState('');
   const [showOtpInput, setShowOtpInput] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
 
   useEffect(() => {
@@ -62,23 +64,49 @@ function MyContracts() {
       setContractCode('');
       setOtp('');
       setShowOtpInput(false);
-      fetchContracts(); // reload hợp đồng mới
+      fetchContracts();
     } catch (err) {
       alert(err.response?.data || t('linkConfirmFailed'));
       console.error(err);
     }
   };
 
+  // Filter contracts theo searchTerm (theo contractCode hoặc contractName)
+  const filteredContracts = contracts.filter(contract => {
+    const lowerSearch = searchTerm.toLowerCase();
+    return (
+      (contract.contractCode && contract.contractCode.toLowerCase().includes(lowerSearch)) ||
+      (contract.contractName && contract.contractName.toLowerCase().includes(lowerSearch))
+    );
+  });
+
   return (
     <div className="contract-manager-container">
       <div className="contract-title">
         <h2>{t('myContracts')}</h2>
       </div>
+
+
+      <div className="top-bar">
+        <div className="search-wrapper">
+          <Search size={16} className="search-icon" />
+          <input
+            type="text"
+            className="search-input"
+            placeholder={t('searchPlaceholder') || "Search by ID or Code"}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      
+
       {loading ? (
         <p className="loading-text">{t('loadingMyContracts')}</p>
-      ) : contracts.length > 0 ? (
+      ) : filteredContracts.length > 0 ? (
         <div className="contract-grid">
-          {contracts.map(contract => (
+          {filteredContracts.map(contract => (
             <ContractCard
               key={contract.contractId}
               contract={contract}

@@ -174,3 +174,41 @@
 .delete-button:hover {
   background-color: #c0392b;
 }
+
+.search-wrapper {
+  position: relative;
+  width: 320px;
+  max-width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #7c3aed;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 12px 10px 36px; /* để tạo khoảng trống bên trái cho icon */
+  font-size: 16px;
+  border: 2px solid #7c3aed;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(124, 58, 237, 0.15);
+}
+
+.search-input:focus {
+  border-color: #a78bfa;
+  box-shadow: 0 4px 12px rgba(167, 139, 250, 0.4);
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* đẩy 2 phần tử ra 2 đầu */
+  margin-bottom: 16px; /* khoảng cách dưới */
+}

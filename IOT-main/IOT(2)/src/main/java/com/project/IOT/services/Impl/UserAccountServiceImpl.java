@@ -58,7 +58,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));  
 
         if (dto.getRoles() == null) {
-            Role defaultRole = roleRepository.findByName("GUEST")
+            Role defaultRole = roleRepository.findByName("MEMBER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
             user.setRoles(Set.of(defaultRole));
         }

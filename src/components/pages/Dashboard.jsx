@@ -49,7 +49,6 @@ function Dashboard() {
   const isMyDevice = useMemo(() => {
     return myDevices.some(device => device.id === selectedDevice?.id);
   }, [myDevices, selectedDevice]);
-
   const { connected, subscribeToTopic, unsubscribeFromTopic } = useWS();
 
   const handleWebSocketMessage = useCallback((rawMessage, topic) => {
@@ -588,7 +587,7 @@ function Dashboard() {
                       {member.roles[0].toLowerCase() || t('dashboard.members.inactive')}
                     </span>
 
-                    {openDropdownIndex === index && user.roles.includes('OWNER') && (
+                    {openDropdownIndex === index && user.email === homeOwner?.email && (
                       <div className="dropdown-kick-menu">
                         <button
                           className="dropdown-item"

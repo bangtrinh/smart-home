@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 import DeviceControlActions from './DeviceControlActions';
 
-
 function DeviceCard({ device, onDelete, onClick, userId, schedule }) {
-  const [showScheduler, setShowScheduler] = useState(false); 
+  const { t } = useTranslation();
+
   return (
     <div
       className={`contract-card ${onClick ? 'cursor-pointer hover:shadow-lg' : ''}`}
@@ -16,8 +15,11 @@ function DeviceCard({ device, onDelete, onClick, userId, schedule }) {
       </div>
 
       <div className="contract-card-body">
-        <p><strong>ID:</strong> {device.id}</p>
-        <p><strong>Trạng thái:</strong> {device.status === '*A: 1' ? 'On' : 'Off'}</p>
+        <p><strong>{t('id')}:</strong> {device.id}</p>
+        <p>
+          <strong>{t('status')}:</strong>{' '}
+          {device.status === '*A: 1' ? t('on') : t('off')}
+        </p>
       </div>
 
       <div className="contract-card-actions">
@@ -28,7 +30,7 @@ function DeviceCard({ device, onDelete, onClick, userId, schedule }) {
               onClick={(e) => e.stopPropagation()}
               className="edit-device-btn"
             >
-              Sửa
+              {t('edit')}
             </Link>
             <button
               onClick={(e) => {
@@ -37,7 +39,7 @@ function DeviceCard({ device, onDelete, onClick, userId, schedule }) {
               }}
               className="delete-device-btn"
             >
-              Xoá
+              {t('delete')}
             </button>
           </>
         )}

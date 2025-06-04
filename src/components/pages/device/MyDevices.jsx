@@ -6,8 +6,11 @@ import { publishMqttMessage } from '../../../api/mqttApi';
 import DeviceCard from './DeviceCard';
 import { useContract } from '../../../context/ContractContext';
 import '../../css/MyDevices.css'
+import { useTranslation } from 'react-i18next';
+
 
 function MyDevices() {
+  const { t } = useTranslation();
   const { selectedContractId } = useContract();
   const [devices, setDevices] = useState([]);
   const [subscriptions, setSubscriptions] = useState({});
@@ -73,7 +76,7 @@ function MyDevices() {
       }));
     } catch (error) {
       console.error('Failed to send MQTT command:', error);
-      alert('Không thể gửi lệnh tới thiết bị.');
+      alert(t('mydevices.publishError'));
     }
   };
 
@@ -119,8 +122,8 @@ function MyDevices() {
   return (
     <div className="my-devices-page">
       <div className="page-header">
-        <h1 className="page-title">Thiết bị của tôi</h1>
-        <p className="page-subtitle">Quản lý và điều khiển các thiết bị smart home</p>
+        <h1 className="page-title">{t('mydevices.pageTitle')}</h1>
+        <p className="page-subtitle">{t('mydevices.pageSubtitle')}</p>
       </div>
 
       <div className="devices-container">
@@ -143,7 +146,7 @@ function MyDevices() {
         ) : (
           selectedContractId && (
             <div className="no-devices-message">
-              <p>Không có thiết bị nào trong hợp đồng này.</p>
+              <p>{t('mydevices.noDevicesMessage')}</p>
             </div>
           )
         )}

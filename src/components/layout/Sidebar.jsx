@@ -12,8 +12,10 @@ import {
   Clock
 } from 'lucide-react';
 import '../css/layout/sidebar.css';
+import { useTranslation } from 'react-i18next';
 
 function Sidebar({ collapsed, setCollapsed }) {
+  const { t } = useTranslation();
   const roles = JSON.parse(localStorage.getItem('roles') || sessionStorage.getItem('roles') || '[]');
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,14 +39,14 @@ function Sidebar({ collapsed, setCollapsed }) {
          {(roles.includes('OWNER') || roles.includes('MEMBER')) && (
           <Link to="/dashboard" className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}>
             <Home size={20} />
-            {!collapsed && <span className="link-label">Dashboard</span>}
+            {!collapsed && <span className="link-label">{t('sidebar.dashboard')}</span>}
           </Link>
           )}
 
           {roles.includes('ADMIN') && (
           <Link to="/admin/dashboard" className={`nav-link ${isActive('/admin/dashboard') ? 'active' : ''}`}>
             <Home size={20} />
-            {!collapsed && <span className="link-label">Dashboard</span>}
+            {!collapsed && <span className="link-label">{t('sidebar.dashboard')}</span>}
           </Link>
         )}
 
@@ -53,7 +55,7 @@ function Sidebar({ collapsed, setCollapsed }) {
           className={`nav-link ${isActive('/devices') || isActive('/my-devices') ? 'active' : ''}`}
         >
           <Server size={20} />
-          {!collapsed && <span className="link-label">Thiết bị</span>}
+          {!collapsed && <span className="link-label">{t('sidebar.devices')}</span>}
         </Link>
 
         <Link
@@ -61,26 +63,26 @@ function Sidebar({ collapsed, setCollapsed }) {
           className={`nav-link ${isActive('/contracts') || isActive('/my-contracts') ? 'active' : ''}`}
         >
           <FileText  size={20} />
-          {!collapsed && <span className="link-label">Hợp đồng</span>}
+          {!collapsed && <span className="link-label">{t('sidebar.contracts')}</span>}
         </Link>
         {(roles.includes('OWNER') || roles.includes('MEMBER')) && (
           <Link to="/devices/history" className={`nav-link ${isActive('/devices/history') ? 'active' : ''}`}>
             <Clock size={20} />
-            {!collapsed && <span className="link-label">Lịch sử</span>}
+            {!collapsed && <span className="link-label">{t('sidebar.history')}</span>}
           </Link>
         )}
 
         {roles.includes('ADMIN') && (
           <Link to="/homeowners" className={`nav-link ${isActive('/homeowners') ? 'active' : ''}`}>
             <Shield size={20} />
-            {!collapsed && <span className="link-label">Chủ nhà</span>}
+            {!collapsed && <span className="link-label">{t('sidebar.homeowners')}</span>}
           </Link>
         )}
 
         {roles.includes('ADMIN') && (
           <Link to="/users" className={`nav-link ${isActive('/users') ? 'active' : ''}`}>
             <Users size={20} />
-            {!collapsed && <span className="link-label">Người dùng</span>}
+            {!collapsed && <span className="link-label">{t('sidebar.users')}</span>}
           </Link>
         )}
       </nav>
@@ -88,7 +90,7 @@ function Sidebar({ collapsed, setCollapsed }) {
       {/* Logout button ở dưới cùng */}
       <button className="nav-link logout-button" onClick={handleLogout}>
         <LogOut size={20} />
-        {!collapsed && <span className="link-label">Đăng xuất</span>}
+        {!collapsed && <span className="link-label">{t('sidebar.logout')}</span>}
       </button>
     </div>
   );

@@ -18,9 +18,12 @@ import { createSchedule, getSchedulesByDevice, cancelSchedule } from '../../api/
 import { unLinkFromContract } from '../../api/contractApi';
 import { ChevronDown, ChevronRight, LogOut } from 'lucide-react';
 import '../css/dashboard.css';
+import { useTranslation } from 'react-i18next';
+import i18n, { getWeatherLanguage, getCurrentWeatherLanguage } from '../../i18n.js';
 
 
 function Dashboard() {
+  const { t, i18n } = useTranslation();
   const { selectedContractId } = useContract();
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
@@ -81,13 +84,11 @@ function Dashboard() {
     try {
       const response = await getSchedulesByDevice(deviceId);
       
-      // Store schedules for the device
       setSchedules(prev => ({
         ...prev,
         [deviceId]: response
       }));
 
-      // Only update currentSchedule if fetching for the selected device
       if (deviceId === selectedDevice?.id) {
         const now = new Date();
         const upcoming = response
@@ -111,19 +112,19 @@ function Dashboard() {
       if (selectedDevice) {
         await fetchSchedules(selectedDevice.id);
       }
-      alert("Đã hủy lịch hẹn thành công");
+      alert(t('dashboard.schedule.errors.cancelSuccess'));
     } catch (error) {
-      console.error("Lỗi khi hủy lịch hẹn:", error);
-      alert("Không thể hủy lịch. Vui lòng thử lại.");
+      console.error("Error canceling schedule:", error);
+      alert(t('dashboard.schedule.errors.cancelError'));
     }
   };
 
   const handleNavigateToMyDevices = () => {
-  navigate(`/my-devices`);
+    navigate(`/my-devices`);
   };
 
-  // Main data fetching effect
   useEffect(() => {
+    const weatherLang = getCurrentWeatherLanguage();
     if (!selectedContractId) return;
 
     let subscriptions = [];
@@ -136,7 +137,7 @@ function Dashboard() {
           setHomeOwner(homeOwnerData);
 
           if (homeOwnerData?.address) {
-            const weatherData = await getWeatherData(homeOwnerData.address);
+            const weatherData = await getWeatherData(homeOwnerData.address, weatherLang);
             setWeather(weatherData);
             const { lat, lon } = weatherData.coord;
             const airData = await getAirQualityData(lat, lon);
@@ -164,19 +165,16 @@ function Dashboard() {
             if (isActive.data) {
               controllable.push(device);
             }
-            // Fetch schedules for all devices but don't override currentSchedule
             await fetchSchedules(device.id);
           }
           setMyDevices(controllable);
 
-          // Restore or set default selectedDevice
           if (!selectedDevice && devicesData.data.length > 0) {
             const defaultDevice = devicesData.data[0];
             setSelectedDevice(defaultDevice);
             localStorage.setItem(`selectedDevice_${selectedContractId}`, JSON.stringify(defaultDevice));
             await fetchSchedules(defaultDevice.id);
           } else if (selectedDevice) {
-            // Validate selectedDevice exists in devices list
             const deviceExists = devicesData.data.some(d => d.id === selectedDevice.id);
             if (!deviceExists) {
               const defaultDevice = devicesData.data[0];
@@ -198,9 +196,8 @@ function Dashboard() {
     return () => {
       subscriptions.forEach(unsubscribeFromTopic);
     };
-  }, [selectedContractId, connected, handleWebSocketMessage, fetchSchedules, selectedDevice]);
+  }, [selectedContractId, connected, handleWebSocketMessage, fetchSchedules, selectedDevice, i18n.language]);
 
-  // Countdown timer effect
   useEffect(() => {
     if (!currentSchedule || !selectedDevice) {
       setTimeLeft('');
@@ -213,7 +210,7 @@ function Dashboard() {
       const timeDiff = scheduleTime - now;
 
       if (timeDiff <= 0) {
-        setTimeLeft('Expired');
+        setTimeLeft(t('dashboard.schedule.expired'));
         setCurrentSchedule(null);
         fetchSchedules(selectedDevice.id);
         return;
@@ -229,9 +226,8 @@ function Dashboard() {
     const interval = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(interval);
-  }, [currentSchedule, selectedDevice?.id, fetchSchedules]);
+  }, [currentSchedule, selectedDevice?.id, fetchSchedules, t]);
 
-  // Persist selectedDevice to localStorage
   useEffect(() => {
     if (selectedDevice) {
       localStorage.setItem(`selectedDevice_${selectedContractId}`, JSON.stringify(selectedDevice));
@@ -248,18 +244,6 @@ function Dashboard() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
   
-
-  const getAqiLabel = (aqi) => {
-    const labels = {
-      1: "The air is fresh, a perfect day to go outside!",
-      2: "Air quality is fair, you can go out but stay aware.",
-      3: "Moderate air, sensitive people should limit outdoor activities.",
-      4: "Poor air quality, better to stay indoors today.",
-      5: "Very poor air quality, avoid outdoor activities as much as possible."
-    };
-    return labels[aqi] || "Air quality data unavailable.";
-  };
-
   const getWeatherIcon = (main) => {
     switch (main) {
       case "Clear": return "☀️";
@@ -301,7 +285,7 @@ function Dashboard() {
 
   const handleSetTimer = async (device, scheduleTimeInput, action) => {
     if (!scheduleTimeInput || !action) {
-      alert("Vui lòng chọn thời gian và hành động.");
+      alert(t('dashboard.schedule.errors.timeRequired'));
       return;
     }
 
@@ -309,7 +293,7 @@ function Dashboard() {
     const now = new Date();
 
     if (scheduledTime <= now) {
-      alert("Thời gian phải nằm trong tương lai.");
+      alert(t('dashboard.schedule.errors.futureTime'));
       return;
     }
 
@@ -334,23 +318,26 @@ function Dashboard() {
     try {
       await createSchedule(scheduleDTO);
       await fetchSchedules(device.id);
-      alert(`Đã đặt lịch ${action === '*A: 1' ? 'bật' : 'tắt'} thiết bị vào lúc ${scheduleTimeInput}`);
+      alert(t('dashboard.schedule.errors.createSuccess', {
+        action: action === '*A: 1' ? t('dashboard.schedule.form.turnOn') : t('dashboard.schedule.form.turnOff'),
+        time: scheduleTimeInput
+      }));
     } catch (error) {
-      console.error("Lỗi khi tạo lịch hẹn giờ:", error);
-      alert("Không thể tạo lịch. Vui lòng thử lại.");
+      console.error("Error creating schedule:", error);
+      alert(t('dashboard.schedule.errors.createError'));
     }
   };
 
   const handleKickUser = async (userId) => {
     try {
       await unLinkFromContract(userId, selectedContractId);
-      alert('User removed successfully!');
+      alert(t('dashboard.members.kickSuccess'));
       const usersData = await getUsersByContractId(selectedContractId);
-          setMembers(usersData.data);
+      setMembers(usersData.data);
       setOpenDropdownIndex(null);
     } catch (err) {
       console.error('Error unlinking user:', err);
-      alert('Failed to remove user.');
+      alert(t('dashboard.members.kickError'));
     }
   };
 
@@ -374,21 +361,21 @@ function Dashboard() {
         <div className="main-content-card">
           <div className="welcome-card">
             <div className="welcome-left">
-              <h1 className="welcome-title">Hello, {user.username}!</h1>
+              <h1 className="welcome-title">{t('dashboard.welcome.title', { username: user.username })}</h1>
               <p className="welcome-text">
-                Welcome Home! {airQuality ? getAqiLabel(airQuality.list[0].main.aqi) : "--"}
+                {t('dashboard.welcome.subtitle')} {airQuality ? t(`dashboard.welcome.aqi.${airQuality.list[0].main.aqi}`) : "--"}
               </p>
               <div className="weather-info">
                 <div className="weather-item">
                   <span>{weather ? `${weather.main.temp}°C` : "--°C"}</span>
-                  <span>Outdoor Temperature</span>
+                  <span>{t('dashboard.welcome.weather.temp')}</span>
                 </div>
                 <div className="weather-item">
-                  <span>{weather ? getWeatherIcon(weather.weather[0].main) : "No data"}</span>
+                  <span>{weather ? getWeatherIcon(weather.weather[0].main) : t('dashboard.welcome.weather.noData')}</span>
                   <span>
                     {weather
-                      ? weather.weather[0].description.replace(/\b\w/g, (char) => char.toUpperCase())
-                      : "Loading weather..."}
+                      ? weather.weather[0].description.charAt(0).toUpperCase() + weather.weather[0].description.slice(1).toLowerCase()
+                      : t('dashboard.welcome.weather.loading')}
                   </span>
                 </div>
               </div>
@@ -399,11 +386,11 @@ function Dashboard() {
           </div>
           <div className="home-control-card">
             <div className="home-control-header">
-              <h2 className="home-title">{homeOwner?.fullName || 'Unknown'}'s Home</h2>
+              <h2 className="home-title">{t('dashboard.home.title', { name: homeOwner?.fullName || t('dashboard.home.unknown') })}</h2>
               <div className="home-stats">
                 <div className="stat-item">
                   <div className="stat-dot"></div>
-                  <span>Indoor temperature</span>
+                  <span>{t('dashboard.home.stats.temp')}</span>
                 </div>
                 <span>15°C</span>
               </div>
@@ -418,22 +405,22 @@ function Dashboard() {
                   >
                     <div className="device-info">
                       <span className="device-name">{device.deviceName}</span>
-                      <span className="device-status">{device.status === '*A: 1' ? 'ON' : 'OFF'}</span>
+                      <span className="device-status">{device.status === '*A: 1' ? t('dashboard.devices.on') : t('dashboard.devices.off')}</span>
                     </div>
                   </div>
                 ))
               ) : (
-                <p>No devices found.</p>
+                <p>{t('dashboard.devices.noDevices')}</p>
               )}
             </div>
           </div>
           <div className="temperature-control">
             <div className="temp-header">
               <h3 className="temp-title">
-                {selectedDevice ? selectedDevice.deviceName : 'Select a device'}
+                {selectedDevice ? selectedDevice.deviceName : t('dashboard.devices.selectDevice')}
               </h3>
               <div className="temp-toggle">
-                <span>POWER</span>
+                <span>{t('dashboard.devices.power')}</span>
                 {selectedDevice && (
                   <>
                     <div
@@ -442,7 +429,7 @@ function Dashboard() {
                     >
                       <div className="toggle-ball"></div>
                     </div>
-                    <span>{selectedDevice.status === '*A: 1' ? 'ON' : 'OFF'}</span>
+                    <span>{selectedDevice.status === '*A: 1' ? t('dashboard.devices.on') : t('dashboard.devices.off')}</span>
                   </>
                 )}
               </div>
@@ -458,10 +445,12 @@ function Dashboard() {
                     >
                       <div className="countdown-display">
                         <div className="action-display">
-                          {selectedDevice.deviceName +
-                            " sẽ được " +
-                            (currentSchedule.action === '*A: 1' ? 'bật' : 'tắt') +
-                            " sau"}
+                          {t('dashboard.schedule.countdown', {
+                            device: selectedDevice.deviceName,
+                            action: currentSchedule.action === '*A: 1' 
+                              ? t('dashboard.schedule.form.turnOn').toLowerCase() 
+                              : t('dashboard.schedule.form.turnOff').toLowerCase()
+                          })}
                         </div>
                         <div className="time-numbers">
                           {timeLeft
@@ -475,7 +464,7 @@ function Dashboard() {
                         <div className="schedule-info">
                           <div className="info-row">
                             <span className="info-value">
-                              {new Date(currentSchedule.scheduleTime).toLocaleString()}
+                              {t('dashboard.schedule.scheduledTime')}: {new Date(currentSchedule.scheduleTime).toLocaleString()}
                             </span>
                           </div>
                         </div>
@@ -483,7 +472,7 @@ function Dashboard() {
                           className="cancel-button"
                           onClick={() => CancelSchedule(currentSchedule.id)}
                         >
-                          Hủy lịch
+                          {t('dashboard.schedule.cancel')}
                         </button>
                       </div>
                     </div>
@@ -491,7 +480,7 @@ function Dashboard() {
                     <div className="schedule-form">
                       <div className="schedule-inputs">
                         <div className="date-picker">
-                          <label htmlFor="schedule-date">Chọn ngày:</label>
+                          <label htmlFor="schedule-date">{t('dashboard.schedule.form.selectDate')}</label>
                           <input
                             type="date"
                             id="schedule-date"
@@ -501,7 +490,7 @@ function Dashboard() {
                           />
                         </div>
                         <div className="time-picker">
-                          <label htmlFor="schedule-time">Chọn giờ:</label>
+                          <label htmlFor="schedule-time">{t('dashboard.schedule.form.selectTime')}</label>
                           <input
                             type="time"
                             id="schedule-time"
@@ -511,7 +500,7 @@ function Dashboard() {
                         </div>
                       </div>
                       <div className="action-selection">
-                        <label>Hành động:</label>
+                        <label>{t('dashboard.schedule.form.action')}</label>
                         <div className="action-buttons">
                           <button
                             className={`action-btn ${
@@ -519,7 +508,7 @@ function Dashboard() {
                             }`}
                             onClick={() => setTimerAction('*A: 1')}
                           >
-                            Bật
+                            {t('dashboard.schedule.form.turnOn')}
                           </button>
                           <button
                             className={`action-btn ${
@@ -527,7 +516,7 @@ function Dashboard() {
                             }`}
                             onClick={() => setTimerAction('*A: 0')}
                           >
-                            Tắt
+                            {t('dashboard.schedule.form.turnOff')}
                           </button>
                         </div>
                       </div>
@@ -540,32 +529,31 @@ function Dashboard() {
                           }
                         }}
                       >
-                        Đặt hẹn giờ
+                        {t('dashboard.schedule.form.setTimer')}
                       </button>
                     </div>
                   )}
                 </div>
               ) : (
-                <p className="not-my-device">Thiết bị này không thuộc quyền quản lý của bạn.</p>
+                <p className="not-my-device">{t('dashboard.devices.notControllable')}</p>
               )
             )}
           </div>
-
         </div>
         <div className="right-sidebar">
           <div className="card my-devices-card">
             <div className="card-header">
-              <h3>My Devices</h3>
+              <h3>{t('dashboard.devices.myDevices.title')}</h3>
               <div 
                 className="chevron-wrapper"
-                onClick={() => handleNavigateToMyDevices ()}
+                onClick={handleNavigateToMyDevices}
               >
                 <ChevronRight size={16} />
               </div>            
             </div>
             <div className="device-list">
               {myDevices.length === 0 ? (
-                <p style={{ padding: "10px" }}>No controllable devices available.</p>
+                <p style={{ padding: "10px" }}>{t('dashboard.devices.myDevices.noDevices')}</p>
               ) : (
                 myDevices.map((device) => (
                   <div
@@ -581,7 +569,7 @@ function Dashboard() {
           </div>
           <div className="card members-card">
             <div className="card-header">
-              <h3>Members</h3>
+              <h3>{t('dashboard.members.title')}</h3>
             </div>
             <div className="members-list">
               {members.length > 0 ? (
@@ -597,10 +585,9 @@ function Dashboard() {
                         : member.username}
                     </span>
                     <span className="member-role">
-                      {member.roles[0].toLowerCase() || 'Inactive'}
+                      {member.roles[0].toLowerCase() || t('dashboard.members.inactive')}
                     </span>
 
-                    {/* Dropdown */}
                     {openDropdownIndex === index && user.roles.includes('OWNER') && (
                       <div className="dropdown-kick-menu">
                         <button
@@ -608,7 +595,7 @@ function Dashboard() {
                           onClick={() => handleKickUser(member.id)}
                           style={{fontWeight: 'bold', fontSize: 12}}
                         >
-                            Kick
+                          {t('dashboard.members.kick')}
                           <LogOut size={14} style={{color: '#cc0000'}} />
                         </button>
                       </div>
@@ -616,7 +603,7 @@ function Dashboard() {
                   </div>
                 ))
               ) : (
-                <p>No members available.</p>
+                <p>{t('dashboard.members.noMembers')}</p>
               )}
             </div>
           </div>

@@ -5,7 +5,7 @@ function Footer({ isSidebarCollapsed }) {
   return (
     <div className={`app-footer ${isSidebarCollapsed ? 'collapsed' : 'expanded'}`}>
       <div className="footer-left">© 2024 SmartHome</div>
-      <div className="footer-right">Made by Trinh Vu</div>
+      <div className="footer-right">Trinh Vu</div>
     </div>
   );
 }

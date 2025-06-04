@@ -1,44 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getContractById } from '../../../api/contractApi';
-import UserCard from '../user/UserCard';
-import { useNavigate } from 'react-router-dom';
 import UserDevicesControlList from '../device/UserDevicesControlList';
-import '../../css/ContractDetails.css';
 import { ChevronLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';  // <-- import
+import '../../css/ContractDetails.css';
 
 function ContractDetails() {
+  const { t } = useTranslation();  // <-- hook i18n
+
   const { id } = useParams();
   const [contract, setContract] = useState(null);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
-
+  const backLink = user.roles?.[0] === 'ADMIN' ? '/contracts' : '/my-contracts';
 
   useEffect(() => {
+    const fetchContract = async () => {
+      setLoading(true);
+      try {
+        const data = await getContractById(id);
+        setContract(data);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchContract();
   }, [id]);
 
-  const fetchContract = async () => {
-    const data = await getContractById(id);
-    setContract(data);
-  };
-
-  const handleToggleDevices = (user) => {
-    if (selectedUser && selectedUser.id === user.id) {
-      setSelectedUser(null); // nếu đang mở thì tắt
-    } else {
-      setSelectedUser(user);
-    }
-  };
-
-  const handleUserClick = (user) => {
+  const handleUserClick = useCallback((user) => {
     if (selectedUser && selectedUser.id === user.id) {
       setSelectedUser(null);
     } else {
       setSelectedUser(user);
     }
-  };
+  }, [selectedUser]);
 
   const getAvatarColor = (role) => {
     switch (role) {
@@ -51,8 +48,9 @@ function ContractDetails() {
     }
   };
 
+  if (loading) return <div>{t('loadingData')}</div>;
 
-  if (!contract) return <div>Đang tải dữ liệu...</div>;
+  if (!contract) return <div>{t('noContractFound')}</div>;
 
   return (
     <div className="contract-details-container">
@@ -60,25 +58,18 @@ function ContractDetails() {
         <h2 className="contract-title">{contract.contractCode}</h2>
         <div className="back-link-container">
           <ChevronLeft size={20} className="back-icon" />
-          {user.roles[0] === 'ADMIN' && (
-              <Link to="/contracts" className="back-link">
-                  Quay lại danh sách hợp đồng
-              </Link>
-          )}
-          {user.roles[0] !== 'ADMIN' && (
-              <Link to="/my-contracts" className="back-link">
-                  Quay lại danh sách hợp đồng
-              </Link>
-          )}            
+          <Link to={backLink} className="back-link">
+            {t('backToContractList')}
+          </Link>
         </div>
       </div>
 
       <div className="contract-info">
-        <p><strong>ID:</strong> {contract.contractId}</p>
-        <p><strong>Chủ nhà:</strong> {contract.owner?.fullName}</p>
-        <p><strong>Ngày bắt đầu:</strong> {contract.startDate?.replace('T', ' ').slice(0, 16)}</p>
-        <p><strong>Ngày kết thúc:</strong> {contract.endDate?.replace('T', ' ').slice(0, 16)}</p>
-        <p><strong>Số lượng user liên kết:</strong> {contract.users?.length || 0}</p>
+        <p><strong>{t('id')}:</strong> {contract.contractId}</p>
+        <p><strong>{t('homeOwner')}:</strong> {contract.owner?.fullName}</p>
+        <p><strong>{t('startDate')}:</strong> {contract.startDate?.replace('T', ' ').slice(0, 16)}</p>
+        <p><strong>{t('endDate')}:</strong> {contract.endDate?.replace('T', ' ').slice(0, 16)}</p>
+        <p><strong>{t('linkedUsersCount')}:</strong> {contract.users?.length || 0}</p>
       </div>
 
       <div className="users-section">
@@ -93,18 +84,17 @@ function ContractDetails() {
                   {u.username[0]?.toUpperCase()}
                 </div>
                 <div className="member-name">{u.username}</div>
-                <div className="member-role">{u.roles[0]}</div>
+                <div className="member-role">{t(u.roles[0])}</div> {/* assuming role keys exist */}
               </div>
             ))
           ) : (
-            <p className="no-users-message">Không có user nào liên kết.</p>
+            <p className="no-users-message">{t('noLinkedUsers')}</p>
           )}
         </div>
 
-        {/* Danh sách thiết bị điều khiển của user */}
         {selectedUser && (
           <div className="user-devices-section">
-            <h4>Thiết bị của {selectedUser.username}:</h4>
+            <h4>{t('devicesOfUser', { username: selectedUser.username })}:</h4>
             <UserDevicesControlList userId={selectedUser.id} contractId={contract.contractId} />
           </div>
         )}

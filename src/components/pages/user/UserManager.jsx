@@ -3,8 +3,10 @@ import { getUsers, deleteUser } from '../../../api/userApi';
 import UserCard from './UserCard';
 import { useNavigate } from 'react-router-dom';
 import '../Css/UserManager.css';
+import { useTranslation } from 'react-i18next';
 
 function UserManager() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
@@ -18,15 +20,15 @@ function UserManager() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Xoá người dùng này?')) {
+    if (window.confirm(t('userManager.confirmDelete'))) {
       await deleteUser(id);
       fetchUsers();
     }
   };
-// thêm class để csscss
+
   return (
     <div className="user-manager-container">
-      <h2 className="user-manager-title">👤 Danh sách người dùng</h2>
+      <h2 className="user-manager-title">{t('userManager.title')}</h2>
       <div className="user-manager-grid">
         {users.map(user => (
           <UserCard 

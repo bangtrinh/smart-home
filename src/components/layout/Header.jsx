@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMyContracts, requestLinkToContract, confirmLinkToContract } from '../../api/contractApi';
-import { Settings, Bell, ChevronDown, User, LogOut } from 'lucide-react';
+import { Settings, Bell, ChevronDown, User, LogOut, Globe } from 'lucide-react';
 import '../css/layout/header.css';
 import { useContract } from '../../context/ContractContext';
 import { useWS } from '../../context/WebSocketContext'; 
+import i18n from '../../i18n';
+import { useTranslation } from 'react-i18next';
 
 function Header({ collapsed, setCollapsed }) {
   const [notifications, setNotifications] = useState([]);
@@ -22,6 +24,17 @@ function Header({ collapsed, setCollapsed }) {
 
   const { selectedContractId, setSelectedContractId } = useContract();
   const { connected, subscribeToTopic, unsubscribeFromTopic } = useWS();
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const { t, i18n } = useTranslation();
+
+
+
+  const handleLanguageChange = (lang) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem('language', lang);
+    setShowLanguageDropdown(false);
+  };
+
 
   // Lấy tất cả thông báo từ localStorage
   const getAllNotificationsFromStorage = () => {
@@ -64,6 +77,14 @@ function Header({ collapsed, setCollapsed }) {
       setRoles(roles);
     }
   }, []);
+
+  useEffect(() => {
+    const savedLang = localStorage.getItem('language');
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, []);
+
 
   const fetchContracts = async () => {
     try {
@@ -141,10 +162,10 @@ function Header({ collapsed, setCollapsed }) {
       const res = await requestLinkToContract(request);
       setRequestId(res.data.requestId);
       setIsWaitingOtp(true);
-      alert('Mã OTP đã được gửi!');
+      alert(t('otpSent'));
     } catch (error) {
       console.error('Request link contract failed', error);
-      alert('Liên kết hợp đồng thất bại!');
+      alert(t('linkContractFailed'));
     }
   };
 
@@ -162,10 +183,10 @@ function Header({ collapsed, setCollapsed }) {
       setOtp('');
       setIsWaitingOtp(false);
       setRequestId(null);
-      alert('Liên kết hợp đồng thành công!');
+      alert(t('linkContractSuccess'));
     } catch (error) {
       console.error('Confirm link contract failed', error);
-      alert('Xác thực OTP thất bại!');
+      alert(t('otpVerificationFailed'));
     }
   };
 
@@ -204,7 +225,7 @@ function Header({ collapsed, setCollapsed }) {
                   {contract.contractCode}
                 </option>
               ))}
-              <option value="add">Thêm...</option>
+              <option value="add">{t('addContract')}</option>
             </select>
           </div>
           )}
@@ -212,9 +233,39 @@ function Header({ collapsed, setCollapsed }) {
      
         {/* Right section: actions */}
         <div className="header-actions">
-          <button className="icon-button">
-            <Settings className="icon" />
-          </button>
+          <div className="language-dropdown-container">
+            <button
+              className="icon-button"
+              onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+            >
+              <Globe className="icon" />
+            </button>
+
+            {showLanguageDropdown && (
+              <div className="language-dropdown">
+                <div
+                  className="language-option"
+                  onClick={() => {
+                    handleLanguageChange('vi');
+                    setShowLanguageDropdown(false);
+                  }}
+                >
+                  Tiếng Việt
+                </div>
+                <div
+                  className="language-option"
+                  onClick={() => {
+                    handleLanguageChange('en');
+                    setShowLanguageDropdown(false);
+                  }}
+                >
+                  English
+                </div>
+              </div>
+            )}
+          </div>
+
+
 
           {!roles.includes('ADMIN') && (
             <button className="icon-button notification-btn" onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}>
@@ -229,7 +280,7 @@ function Header({ collapsed, setCollapsed }) {
             <div className="notification-dropdown">
               <div className="notification-list">
                 {notifications.length === 0 ? (
-                  <div className="notification-item empty">Không có thông báo mới</div>
+                  <div className="notification-item empty">{t('noNewNotifications')}</div>
                 ) : (
                   notifications.map((noti, idx) => (
                     <div key={idx} className="notification-item">
@@ -244,7 +295,7 @@ function Header({ collapsed, setCollapsed }) {
                   onClick={clearCurrentNotifications}
                   className="clear-button"
                 >
-                  Xóa tất cả
+                  {t('clearAll')}
                 </button>
               )}
             </div>
@@ -280,7 +331,7 @@ function Header({ collapsed, setCollapsed }) {
 
                     <button onClick={handleProfile} className="dropdown-item">
                       <User className="dropdown-icon" />
-                      Profile Settings
+                      {t('profileSettings')}
                     </button>
 
                     <button
@@ -291,14 +342,14 @@ function Header({ collapsed, setCollapsed }) {
                       className="dropdown-item"
                     >
                       <Settings className="dropdown-icon" />
-                      Change Password
+                      {t('changePassword')}
                     </button>
 
                     <hr className="dropdown-divider" />
 
                     <button onClick={handleLogout} className="dropdown-item danger">
                       <LogOut className="dropdown-icon" />
-                      Sign Out
+                       {t('logout')}
                     </button>
                   </div>
                 </>
@@ -321,12 +372,12 @@ function Header({ collapsed, setCollapsed }) {
                   type="text"
                   value={newContractCode}
                   onChange={(e) => setNewContractCode(e.target.value)}
-                  placeholder="Nhập mã hợp đồng..."
+                  placeholder={t('enterContractCode')}
                   className="modal-input"
                 />
                 <div className="modal-actions">
-                  <button onClick={handleRequestLinkContract} className="modal-confirm-btn">Gửi yêu cầu</button>
-                  <button onClick={() => setShowLinkContractForm(false)} className="modal-cancel-btn">Hủy</button>
+                  <button onClick={handleRequestLinkContract} className="modal-confirm-btn">{t('sendRequest')}</button>
+                  <button onClick={() => setShowLinkContractForm(false)} className="modal-cancel-btn">{t('cancel')}</button>
                 </div>
               </>
             ) : (
@@ -335,12 +386,12 @@ function Header({ collapsed, setCollapsed }) {
                   type="text"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
-                  placeholder="Nhập mã OTP..."
+                  placeholder={t('enterOtpCode')}
                   className="modal-input"
                 />
                 <div className="modal-actions">
-                  <button onClick={handleConfirmLinkContract} className="modal-confirm-btn">Xác nhận</button>
-                  <button onClick={() => setShowLinkContractForm(false)} className="modal-cancel-btn">Hủy</button>
+                  <button onClick={handleConfirmLinkContract} className="modal-confirm-btn">{t('confirm')}</button>
+                  <button onClick={() => setShowLinkContractForm(false)} className="modal-cancel-btn">{t('cancel')}</button>
                 </div>
               </>
             )}

@@ -40,7 +40,6 @@ const PrivateRoute = ({ children }) => {
   return isLoggedIn() ? children : <Navigate to="/login" />;
 };
 
-
 function App() {
   return (
     <WebSocketProvider>

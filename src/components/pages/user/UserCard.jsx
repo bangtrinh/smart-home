@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import UserDevicesControlList from '../device/UserDevicesControlList';
 import '../Css/UserCard.css';
+import { useTranslation } from 'react-i18next';
+
 function UserCard({ user, contractId, onDelete, showDeviceButton = true }) {
+  const { t } = useTranslation();
   const [showDevices, setShowDevices] = useState(false);
 
   const toggleDevices = () => {
@@ -15,15 +18,15 @@ function UserCard({ user, contractId, onDelete, showDeviceButton = true }) {
       </div>
 
       <div className="user-card-body">
-        <p><strong>ID:</strong> {user.id}</p>
-        <p><strong>Email:</strong> {user.email}</p>
+        <p><strong>{t('userCard.id')}:</strong> {user.id}</p>
+        <p><strong>{t('userCard.email')}:</strong> {user.email}</p>
       </div>
-    {/* thêm class để css  */}
+
       <div className="user-card-actions">
-        <button className="btn delete-btn" onClick={() => onDelete(user.id)}>Xoá</button>
+        <button className="btn delete-btn" onClick={() => onDelete(user.id)}>{t('userCard.delete')}</button>
         {showDeviceButton && (
           <button className="btn toggle-btn" onClick={toggleDevices}>
-            {showDevices ? 'Ẩn thiết bị' : 'Xem thiết bị'}
+            {showDevices ? t('userCard.hideDevices') : t('userCard.showDevices')}
           </button>
         )}
       </div>

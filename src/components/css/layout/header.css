@@ -478,6 +478,73 @@
   border-radius: 0 0 8px 8px;
 }
 
+.language-dropdown-container {
+  position: relative; /* Cần có để con position:absolute dựa vào đây */
+  display: inline-block; /* hoặc flex, tùy thiết kế */
+}
+
+.language-dropdown {
+  position: absolute;
+  top: 100%; /* ngay dưới phần tử cha */
+  right: 0; /* canh sát bên phải container */
+  margin-top: 4px; /* cách icon chút */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 1000;
+  min-width: 120px; /* rộng bằng hoặc lớn hơn select */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+
+.language-option {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.language-option:hover {
+  background-color: #eee;
+}
+
+.language-select {
+  appearance: none; /* tắt style mặc định browser */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 30px 6px 12px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  width: 120px;
+}
+
+/* Tạo mũi tên tùy chỉnh bằng background */
+.language-select {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px 12px;
+}
+
+/* Hover effect */
+.language-select:hover {
+  border-color: #999;
+}
+
+/* Focus effect */
+.language-select:focus {
+  border-color: #666;
+  box-shadow: 0 0 4px rgba(100, 100, 100, 0.3);
+}
+
+
+
 
 /* Animation */
 @keyframes modalFadeIn {

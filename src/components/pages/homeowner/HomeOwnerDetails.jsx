@@ -5,25 +5,26 @@ import { getContractsByOwnerId } from '../../../api/contractApi';
 import ContractCard from '../contract/ContractListCard';
 import '../../css/HomeOwnerDetails.css'
 import { ChevronLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 function HomeOwnerDetails() {
+  const { t } = useTranslation();
   const { ownerId  } = useParams();
   const [owner, setOwner] = useState(null);
   const [contracts, setContracts] = useState([]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (ownerId) {
-        fetchOwnerDetails();
-        fetchContracts();
+      fetchOwnerDetails();
+      fetchContracts();
     }
-    }, [ownerId]);
+  }, [ownerId]);
 
-    const fetchOwnerDetails = async () => {
+  const fetchOwnerDetails = async () => {
     const data = await getHomeOwnerById(ownerId);
     console.log('Owner details:', data);
     setOwner(data);
-    };
-
+  };
 
   const fetchContracts = async () => {
     const data = await getContractsByOwnerId(ownerId);
@@ -31,22 +32,22 @@ function HomeOwnerDetails() {
     setContracts(data);
   };
 
-  if (!owner) return <p>Đang tải...</p>;
+  if (!owner) return <p>{t('homeOwnerDetails.loading')}</p>;
 
   return (
     <div className="homeowner-details-wrapper">
       <div className="homeowner-card">
-        <h2>Chi tiết Chủ nhà</h2>
+        <h2>{t('homeOwnerDetails.title')}</h2>
         <div className="homeowner-info">
           <h3>{owner.fullName}</h3>
-          <p><strong>Email:</strong> {owner.email}</p>
-          <p><strong>SĐT:</strong> {owner.phone}</p>
-          <p><strong>Địa chỉ:</strong> {owner.address}</p>
+          <p><strong>{t('homeOwnerDetails.email')}:</strong> {owner.email}</p>
+          <p><strong>{t('homeOwnerDetails.phone')}:</strong> {owner.phone}</p>
+          <p><strong>{t('homeOwnerDetails.address')}:</strong> {owner.address}</p>
         </div>
       </div>
 
       <div className="contracts-section">
-        <h3>Hợp đồng của chủ nhà này</h3>
+        <h3>{t('homeOwnerDetails.contractsTitle')}</h3>
         {contracts.length > 0 ? (
           <div className="contracts-grid">
             {contracts.map(contract => (
@@ -54,14 +55,14 @@ function HomeOwnerDetails() {
             ))}
           </div>
         ) : (
-          <p>Chưa có hợp đồng nào.</p>
+          <p>{t('homeOwnerDetails.noContracts')}</p>
         )}
       </div>
 
       <div className="back-link">
         <ChevronLeft size={20}/>
         <Link to="/homeowners">
-            Quay lại danh sách chủ nhà
+          {t('homeOwnerDetails.backToList')}
         </Link>
       </div>
     </div>

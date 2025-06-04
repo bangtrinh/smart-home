@@ -3,8 +3,10 @@ import { getHomeOwners, deleteHomeOwner } from '../../../api/homeOwnerApi';
 import { Link } from 'react-router-dom';
 import HomeOwnerCard from './HomeOwnerCard';
 import '../Css/HomeOwner.css';
+import { useTranslation } from 'react-i18next';
 
 function HomeOwnerManager() {
+  const { t } = useTranslation();
   const [owners, setOwners] = useState([]);
 
   useEffect(() => {
@@ -18,7 +20,7 @@ function HomeOwnerManager() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Xóa chủ nhà này?')) {
+    if (window.confirm(t('homeOwnerManager.confirmDelete'))) {
       await deleteHomeOwner(id);
       fetchOwners();
     }
@@ -26,8 +28,8 @@ function HomeOwnerManager() {
 
   return (
     <div className="homeowner-manager-container">
-      <h2 className="homeowner-title">Danh sách Chủ nhà</h2>
-      <Link to="/homeowners/add" className="btn add-btn">+ Thêm chủ nhà</Link>
+      <h2 className="homeowner-title">{t('homeOwnerManager.title')}</h2>
+      <Link to="/homeowners/add" className="btn add-btn">+ {t('homeOwnerManager.add')}</Link>
 
       <div className="homeowner-card-list">
         {owners.map(owner => (

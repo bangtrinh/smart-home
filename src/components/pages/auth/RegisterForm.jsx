@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { register } from '../../../api/authApi';
 import '../../css/auth/RegisterForm.css';
 import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
-import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function RegisterForm() {
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,27 +17,26 @@ function RegisterForm() {
     e.preventDefault();
     try {
       await register({ username, email, password });
-      alert('Đăng ký thành công!');
+      alert(t('registerSuccess'));
       navigate('/login');
     } catch (error) {
-      setError('Đăng ký thất bại: ' + (error.response?.data || error.message));
+      setError(t('registerFailed') + ': ' + (error.response?.data || error.message));
     }
   };
 
-useEffect(() => {
-  document.body.className = 'register-page';
-  return () => {
-    document.body.className = '';
-  };
-}, []);
-
+  useEffect(() => {
+    document.body.className = 'register-page';
+    return () => {
+      document.body.className = '';
+    };
+  }, []);
 
   return (
     <div className="register-page">
       <div className="register-container">
         <form className="register-form" onSubmit={handleSubmit}>
-          <h2 className="register-title">Chào mừng bạn</h2>
-          <p className="register-subtitle">Hãy tạo tài khoản để tiếp tục</p>
+          <h2 className="register-title">{t('welcome')}</h2>
+          <p className="register-subtitle">{t('createAccount')}</p>
 
           {error && <p className="error">{error}</p>}
 
@@ -44,7 +44,7 @@ useEffect(() => {
             <FaUser className="input-icon" />
             <input
               type="text"
-              placeholder="Tên đăng nhập"
+              placeholder={t('username')}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -56,7 +56,7 @@ useEffect(() => {
             <FaEnvelope className="input-icon" />
             <input
               type="email"
-              placeholder="Email"
+              placeholder={t('email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -68,7 +68,7 @@ useEffect(() => {
             <FaLock className="input-icon" />
             <input
               type="password"
-              placeholder="Mật khẩu"
+              placeholder={t('password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -76,11 +76,11 @@ useEffect(() => {
             />
           </div>
 
-          <button type="submit" className="register-button">Đăng ký</button>
+          <button type="submit" className="register-button">{t('register')}</button>
 
           <div className="register-links">
-            <span>Đã có tài khoản?</span>
-            <Link to="/login" className="login-link">Đăng nhập</Link>
+            <span>{t('alreadyAccount')}</span>
+            <Link to="/login" className="login-link">{t('login')}</Link>
           </div>
         </form>
       </div>

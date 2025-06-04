@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { changePassword } from '../../../api/authApi';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import '../../css/ChangePasswordForm.css';
 
 function ChangePasswordForm() {
+  const { t } = useTranslation();
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -13,29 +15,35 @@ function ChangePasswordForm() {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
-      alert('Mật khẩu mới và xác nhận mật khẩu không khớp!');
+      alert(t('newPasswordMismatch'));
       return;
     }
 
     try {
       const changePasswordData = { oldPassword, newPassword };
       const result = await changePassword(changePasswordData);
-      alert(result.message || 'Đổi mật khẩu thành công!');
-      navigate('/dashboard');
+      alert(result.message || t('passwordChangeSuccess'));
+
+      const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+      if (user && user.roles.includes('ROLE_ADMIN')) {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
-      alert('Đổi mật khẩu thất bại!');
-      console.error('Lỗi:', error);
+      console.error(error);
+      alert(t('passwordChangeFailed'));
     }
   };
 
   return (
     <div className="change-password-page">
       <div className="change-password-container">
-        <h2 className="change-password-title">Đổi mật khẩu</h2>
+        <h2 className="change-password-title">{t('changePassword')}</h2>
         <form className="change-password-form" onSubmit={handleSubmit}>
           <input
             type="password"
-            placeholder="Mật khẩu cũ"
+            placeholder={t('oldPassword')}
             value={oldPassword}
             onChange={(e) => setOldPassword(e.target.value)}
             className="change-password-input"
@@ -43,7 +51,7 @@ function ChangePasswordForm() {
           />
           <input
             type="password"
-            placeholder="Mật khẩu mới"
+            placeholder={t('newPassword')}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             className="change-password-input"
@@ -51,27 +59,27 @@ function ChangePasswordForm() {
           />
           <input
             type="password"
-            placeholder="Xác nhận mật khẩu mới"
+            placeholder={t('confirmNewPassword')}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             className="change-password-input"
             required
           />
           <div className="change-password-actions">
-            <button type="submit" className="change-password-button">Xác nhận</button>
+            <button type="submit" className="change-password-button">{t('confirm')}</button>
             <button
               type="button"
               className='change-password-cancel'
               onClick={() => {
                 const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-                if (user && user.roles.includes('ADMIN')) {
+                if (user && user.roles.includes('ROLE_ADMIN')) {
                   navigate('/admin/dashboard');
                 } else {
                   navigate('/dashboard');
                 }
               }}
             >
-              Hủy
+              {t('cancel')}
             </button>
           </div>
         </form>

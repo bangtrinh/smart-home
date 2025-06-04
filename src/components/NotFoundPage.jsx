@@ -1,17 +1,20 @@
 import { Link } from 'react-router-dom';
-import { HomeOutlined } from '@ant-design/icons'; // Hoặc sử dụng icon khác
-import './css/NotFoundPage.css'
+import { HomeOutlined } from '@ant-design/icons';
+import './css/NotFoundPage.css';
+import { useTranslation } from 'react-i18next';
 
 function NotFoundPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="not-found-container">
       <div className="not-found-content">
-        <h1>404 - Trang không tồn tại</h1>
-        <p>Xin lỗi, đường dẫn bạn truy cập hiện không khả dụng hoặc đã bị xóa.</p>
+        <h1>{t('notFound.title')}</h1>
+        <p>{t('notFound.message')}</p>
         
         <div className="not-found-actions">
           <Link to="/dashboard" className="back-to-dashboard">
-            <HomeOutlined /> Quay lại Bảng điều khiển
+            <HomeOutlined /> {t('notFound.backToDashboard')}
           </Link>
         </div>
       </div>

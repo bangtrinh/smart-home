@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { getMyContracts, requestLinkToContract, confirmLinkToContract } from '../../../api/contractApi';
 import ContractCard from './ContractListCard';
-import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import '../../css/Contract.css'
 
 function MyContracts() {
+  const { t } = useTranslation();
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +23,7 @@ function MyContracts() {
       const data = await getMyContracts();
       setContracts(data);
     } catch (error) {
-      console.error('Lỗi khi lấy hợp đồng:', error);
+      console.error(t('errorFetchingContracts'), error);
     } finally {
       setLoading(false);
     }
@@ -30,7 +31,7 @@ function MyContracts() {
 
   const handleRequestLink = async () => {
     if (!contractCode) {
-      alert('Vui lòng nhập mã hợp đồng');
+      alert(t('pleaseEnterContractCode'));
       return;
     }
     try {
@@ -38,17 +39,17 @@ function MyContracts() {
         objectCode: contractCode,
         userId: user.id
       });
-      alert('OTP đã được gửi đến chủ nhà để xác nhận!');
+      alert(t('otpSentToOwner'));
       setShowOtpInput(true);
     } catch (err) {
-      alert(err.response?.data || 'Lỗi khi gửi yêu cầu liên kết');
+      alert(err.response?.data || t('errorSendingLinkRequest'));
       console.error(err);
     }
   };
 
   const handleConfirmLink = async () => {
     if (!otp) {
-      alert('Vui lòng nhập OTP');
+      alert(t('pleaseEnterOtp'));
       return;
     }
     try {
@@ -57,13 +58,13 @@ function MyContracts() {
         otpCode: otp,
         userId: user.id
       });
-      alert('Liên kết hợp đồng thành công!');
+      alert(t('linkSuccess'));
       setContractCode('');
       setOtp('');
       setShowOtpInput(false);
       fetchContracts(); // reload hợp đồng mới
     } catch (err) {
-      alert(err.response?.data || 'Xác nhận liên kết thất bại');
+      alert(err.response?.data || t('linkConfirmFailed'));
       console.error(err);
     }
   };
@@ -71,10 +72,10 @@ function MyContracts() {
   return (
     <div className="contract-manager-container">
       <div className="contract-title">
-        <h2>Hợp đồng của tôi</h2>
+        <h2>{t('myContracts')}</h2>
       </div>
       {loading ? (
-        <p className="loading-text">Đang tải hợp đồng của bạn...</p>
+        <p className="loading-text">{t('loadingMyContracts')}</p>
       ) : contracts.length > 0 ? (
         <div className="contract-grid">
           {contracts.map(contract => (
@@ -87,7 +88,7 @@ function MyContracts() {
           ))}
         </div>
       ) : (
-        <p className="empty-text">Bạn chưa có hợp đồng nào.</p>
+        <p className="empty-text">{t('noContractsYet')}</p>
       )}
     </div>
   );

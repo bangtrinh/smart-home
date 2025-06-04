@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getDeviceById, addDevice, updateDevice } from '../../../api/deviceApi';
 import { getContracts } from '../../../api/contractApi';
-import '../../css/DeviceForm.css'
+import '../../css/DeviceForm.css';
+import { useTranslation } from 'react-i18next';
 
 function DeviceForm() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [device, setDevice] = useState({
     deviceName: '',
@@ -42,13 +44,13 @@ function DeviceForm() {
   return (
     <div className="device-form-wrapper">
       <div className="device-form-card">
-        <h2>{id ? 'Sửa' : 'Thêm'} thiết bị</h2>
+        <h2>{id ? t('deviceForm.editTitle') : t('deviceForm.addTitle')}</h2>
         <form onSubmit={handleSubmit} className="device-form">
           <div className="form-group">
-            <label>Tên thiết bị</label>
+            <label>{t('deviceForm.deviceNameLabel')}</label>
             <input
               type="text"
-              placeholder="Nhập tên thiết bị"
+              placeholder={t('deviceForm.deviceNamePlaceholder')}
               value={device.deviceName}
               onChange={(e) => setDevice({ ...device, deviceName: e.target.value })}
               required
@@ -56,13 +58,13 @@ function DeviceForm() {
           </div>
 
           <div className="form-group">
-            <label>Thuộc hợp đồng</label>
+            <label>{t('deviceForm.contractLabel')}</label>
             <select
               value={device.contractId}
               onChange={(e) => setDevice({ ...device, contractId: e.target.value })}
               required
             >
-              <option value="">-- Chọn hợp đồng --</option>
+              <option value="">{t('deviceForm.contractSelectPlaceholder')}</option>
               {contracts.map(c => (
                 <option key={c.contractId} value={c.contractId}>
                   {c.contractCode} - {c.contractName}
@@ -73,10 +75,10 @@ function DeviceForm() {
 
           <div className="form-actions">
             <button type="submit" className="save-btn">
-              Lưu
+              {t('deviceForm.saveButton')}
             </button>
             <button type="button" className="cancel-btn" onClick={() => navigate('/devices')}>
-              Hủy
+              {t('deviceForm.cancelButton')}
             </button>
           </div>
         </form>

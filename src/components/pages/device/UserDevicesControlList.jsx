@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { checkControlActive } from '../../../api/deviceControlApi';
 import { getDevicesByContractId } from '../../../api/deviceApi';
 import DeviceCard from './DeviceCard';
-import DeviceControlActions from './DeviceControlActions'; 
+import DeviceControlActions from './DeviceControlActions';
+import { useTranslation } from 'react-i18next';
+
 
 function UserDevicesControlList({ userId, contractId }) {
+  const { t } = useTranslation();
   console.log("Props vào UserDevicesControlList:", userId, contractId);
   const [devices, setDevices] = useState([]);
 
@@ -44,7 +47,7 @@ function UserDevicesControlList({ userId, contractId }) {
             <DeviceCard key={device.id} device={device} userId={userId} />
         ))
       ) : (
-        <p>Không có thiết bị nào.</p>
+        <p>{t('mydevices.empty')}</p>
       )}
     </div>
   );

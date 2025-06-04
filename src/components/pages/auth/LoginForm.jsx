@@ -4,8 +4,10 @@ import { login } from '../../../api/authApi';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import { useTranslation } from 'react-i18next';
 
 function LoginForm() {
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -25,13 +27,12 @@ function LoginForm() {
         localStorage.setItem('token', result.token);
         localStorage.setItem('user', JSON.stringify(result.user));
         localStorage.setItem('roles', JSON.stringify(result.user.roles));
-        
       } else {
         sessionStorage.setItem('token', result.token);
         sessionStorage.setItem('user', JSON.stringify(result.user));
         sessionStorage.setItem('roles', JSON.stringify(result.user.roles));
       }
-      alert('Đăng nhập thành công!');
+      alert(t('loginSuccess'));
       const roles = result.user.roles;
       if (roles.includes('ADMIN'))
         navigate('/admin/dashboard');
@@ -39,21 +40,21 @@ function LoginForm() {
         navigate('/dashboard');
 
     } catch (error) {
-      alert('Đăng nhập thất bại!');
+      alert(t('loginFailed'));
     }
   };
 
   return (
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>
-        <h2 className="login-title">Chào mừng bạn</h2>
-        <p className="login-subtitle">Hãy đăng nhập để tiếp tục</p>
+        <h2 className="login-title">{t('welcome')}</h2>
+        <p className="login-subtitle">{t('pleaseLogin')}</p>
 
         <div className="login-input-group">
           <FaUser className="login-input-icon" />
           <input
             type="text"
-            placeholder="Tên đăng nhập"
+            placeholder={t('username')}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -65,7 +66,7 @@ function LoginForm() {
           <FaLock className="login-input-icon" />
           <input
             type={showPassword ? 'text' : 'password'}
-            placeholder="Mật khẩu"
+            placeholder={t('password')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -86,16 +87,16 @@ function LoginForm() {
               checked={rememberMe}
               onChange={() => setRememberMe(!rememberMe)}
             />
-            Nhớ mật khẩu
+            {t('rememberMe')}
           </label>
-          <Link to="/ForgotPassWord" className="login-forgot-link">Quên mật khẩu?</Link>
+          <Link to="/ForgotPassWord" className="login-forgot-link">{t('forgotPassword')}?</Link>
         </div>
 
-        <button type="submit" className="login-button">Đăng nhập</button>
+        <button type="submit" className="login-button">{t('login')}</button>
 
         <div className="login-links">
-          <span>Chưa có tài khoản?</span>
-          <Link to="/register" className="login-register-link">Đăng ký</Link>
+          <span>{t('noAccount')}</span>
+          <Link to="/register" className="login-register-link">{t('register')}</Link>
         </div>
       </form>
     </div>

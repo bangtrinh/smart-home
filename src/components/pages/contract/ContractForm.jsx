@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { addContract, getContractById, updateContract } from '../../../api/contractApi';
 import { getHomeOwners } from '../../../api/homeOwnerApi';
 import { useNavigate, useParams } from 'react-router-dom';
-import '../../css/ContractForm.css'
+import { useTranslation } from 'react-i18next'; // import i18n hook
+import '../../css/ContractForm.css';
 
 function ContractForm() {
+  const { t } = useTranslation(); // khai báo hook
   const { id } = useParams();
   const navigate = useNavigate();
   const [contract, setContract] = useState({
@@ -60,11 +62,11 @@ function ContractForm() {
 
   return (
     <div className="contract-form-container">
-      <h2>{id ? 'Sửa' : 'Thêm'} hợp đồng</h2>
+      <h2>{id ? t('editContract') : t('addContract')}</h2>
 
       <form className="contract-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Mã hợp đồng</label>
+          <label>{t('contractCode')}</label>
           <input
             type="text"
             value={contract.contractCode}
@@ -74,13 +76,13 @@ function ContractForm() {
         </div>
 
         <div className="form-group">
-          <label>Chủ nhà</label>
+          <label>{t('homeOwner')}</label>
           <select
             value={contract.ownerId}
             onChange={(e) => setContract({ ...contract, ownerId: e.target.value })}
             required
           >
-            <option value="">-- Chọn chủ nhà --</option>
+            <option value="">{t('selectHomeOwner')}</option>
             {owners.map(o => (
               <option key={o.ownerId} value={o.ownerId}>{o.fullName}</option>
             ))}
@@ -88,7 +90,7 @@ function ContractForm() {
         </div>
 
         <div className="form-group">
-          <label>Ngày bắt đầu</label>
+          <label>{t('startDate')}</label>
           <input
             type="datetime-local"
             value={contract.startDate}
@@ -98,7 +100,7 @@ function ContractForm() {
         </div>
 
         <div className="form-group">
-          <label>Ngày kết thúc</label>
+          <label>{t('endDate')}</label>
           <input
             type="datetime-local"
             value={contract.endDate}
@@ -108,18 +110,20 @@ function ContractForm() {
         </div>
 
         <div className="form-group">
-          <label>Trạng thái</label>
+          <label>{t('status')}</label>
           <select
             value={contract.status}
             onChange={(e) => setContract({ ...contract, status: e.target.value })}
           >
-            <option value="active">Active</option>
+            <option value="active">{t('active')}</option>
           </select>
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="save-btn">Lưu</button>
-          <button type="button" className="cancel-btn" onClick={() => navigate('/contracts')}>Hủy</button>
+          <button type="submit" className="save-btn">{t('save')}</button>
+          <button type="button" className="cancel-btn" onClick={() => navigate('/contracts')}>
+            {t('cancel')}
+          </button>
         </div>
       </form>
     </div>

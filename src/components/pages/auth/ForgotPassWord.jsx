@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { forgotPassword } from '../../../api/authApi';
 import { useNavigate } from 'react-router-dom';
 import { FaEnvelope } from 'react-icons/fa'; // icon email
-import '../../css/auth/ForgotPassword.css'; 
+import { useTranslation } from 'react-i18next';
+import '../../css/auth/ForgotPassword.css';
 
 function ForgotPassword() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -14,13 +16,13 @@ function ForgotPassword() {
     e.preventDefault();
     try {
       await forgotPassword({ email });
-      setMessage('Đã gửi email khôi phục mật khẩu. Vui lòng kiểm tra hộp thư của bạn.');
+      setMessage(t('forgotPasswordEmailSent'));
       setError('');
       setTimeout(() => {
         navigate('/confirmResetPassword');
       }, 2000);
     } catch (err) {
-      setError('Gửi email khôi phục mật khẩu thất bại: ' + (err.response?.data || err.message));
+      setError(t('forgotPasswordEmailFailed') + ': ' + (err.response?.data || err.message));
       setMessage('');
     }
   };
@@ -35,8 +37,8 @@ function ForgotPassword() {
   return (
     <div className="register-container">
       <form className="register-form" onSubmit={handleSubmit}>
-        <h2 className="register-title">Quên mật khẩu</h2>
-        <p className="register-subtitle">Nhập email để nhận link đặt lại mật khẩu</p>
+        <h2 className="register-title">{t('forgotPassword')}</h2>
+        <p className="register-subtitle">{t('enterEmailForResetLink')}</p>
 
         {message && <p className="message success">{message}</p>}
         {error && <p className="message error">{error}</p>}
@@ -46,17 +48,17 @@ function ForgotPassword() {
           <input
             className="input-field"
             type="email"
-            placeholder="Nhập email của bạn"
+            placeholder={t('enterYourEmail')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
 
-        <button type="submit" className="register-button">Gửi</button>
+        <button type="submit" className="register-button">{t('send')}</button>
 
         <div className="register-links">
-          <a href="/login" className="login-link">Quay lại đăng nhập</a>
+          <a href="/login" className="login-link">{t('backToLogin')}</a>
         </div>
       </form>
     </div>

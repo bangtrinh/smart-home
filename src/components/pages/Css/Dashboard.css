@@ -112,6 +112,29 @@
   transform: translateY(0);
 }
 
+.cancelBtn {
+  background: linear-gradient(135deg, #ef4444, #b91c1c); /* đỏ tươi đến đỏ đậm */
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2); /* bóng đỏ nhẹ */
+}
+
+.cancelBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3); /* bóng đỏ đậm hơn khi hover */
+}
+
+.cancelBtn:active {
+  transform: translateY(0);
+}
+
+
 /* Responsive Tablet */
 @media (max-width: 768px) {
   .profileContainer {

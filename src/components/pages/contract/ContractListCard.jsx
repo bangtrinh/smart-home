@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { unLinkFromContract, deleteContract } from '../../../api/contractApi';
+import { useTranslation } from 'react-i18next';
 
 function ContractListCard({ contract, isMyContract, onDelete }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
   const isAdmin = user?.roles?.includes('ADMIN');
 
@@ -12,13 +14,13 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
 
   const handleUnlink = async (e) => {
     e.stopPropagation();
-    if (!window.confirm(`Bạn chắc chắn muốn hủy liên kết với hợp đồng ${contract.contractCode}?`)) return;
+    if (!window.confirm(t('contractListCard.confirmUnlink', { contractCode: contract.contractCode }))) return;
     try {
       await unLinkFromContract(user.id, contract.contractId);
-      alert('Đã hủy liên kết hợp đồng!');
+      alert(t('contractListCard.unlinkSuccess'));
       if (onDelete) onDelete(contract.contractId);
     } catch (err) {
-      alert(err.response?.data || 'Không thể hủy liên kết');
+      alert(err.response?.data || t('contractListCard.unlinkError'));
       console.error(err);
     }
   };
@@ -30,7 +32,7 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
 
   const handleDelete = (e) => {
     e.stopPropagation();
-    if (window.confirm('Xóa hợp đồng này?')) {
+    if (window.confirm(t('contractListCard.confirmDelete'))) {
       if (onDelete) {
         onDelete(contract.contractId);
       }
@@ -46,9 +48,9 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
         </div>
 
         <div className="contract-card-details">
-          <p><strong>Chủ nhà:</strong> {contract.owner?.fullName}</p>
-          <p><strong>Bắt đầu:</strong> {contract.startDate?.replace('T', ' ').slice(0, 16)}</p>
-          <p><strong>Kết thúc:</strong> {contract.endDate?.replace('T', ' ').slice(0, 16)}</p>
+          <p><strong>{t('contractListCard.owner')}:</strong> {contract.owner?.fullName}</p>
+          <p><strong>{t('contractListCard.start')}:</strong> {contract.startDate?.replace('T', ' ').slice(0, 16)}</p>
+          <p><strong>{t('contractListCard.end')}:</strong> {contract.endDate?.replace('T', ' ').slice(0, 16)}</p>
         </div>
       </div>
 
@@ -56,14 +58,14 @@ function ContractListCard({ contract, isMyContract, onDelete }) {
       <div className="contract-card-footer">
         {isMyContract && (
           <button className="btn delete-btn" onClick={handleUnlink}>
-            Hủy liên kết
+            {t('contractListCard.unlink')}
           </button>
         )}
 
         {isAdmin && (
           <>
-            <button className="btn edit-btn" onClick={handleEdit}>Sửa</button>
-            <button className="btn delete-btn" onClick={handleDelete}>Xóa</button>
+            <button className="btn edit-btn" onClick={handleEdit}>{t('contractListCard.edit')}</button>
+            <button className="btn delete-btn" onClick={handleDelete}>{t('contractListCard.delete')}</button>
           </>
         )}
       </div>

@@ -1,0 +1,311 @@
+{
+  "logout": "Đăng xuất",
+  "profileSettings": "Cài đặt hồ sơ",
+  "changePassword": "Đổi mật khẩu",
+  "addContract": "Thêm...",
+  "enterContractCode": "Nhập mã hợp đồng để liên kết",
+  "enterOtpCode": "Nhập mã OTP",
+  "sendRequest": "Gửi yêu cầu",
+  "cancel": "Hủy",
+  "confirm": "Xác nhận",
+  "otpSent": "Mã OTP đã được gửi!",
+  "linkContractFailed": "Liên kết hợp đồng thất bại!",
+  "linkContractSuccess": "Liên kết hợp đồng thành công!",
+  "otpVerificationFailed": "Xác thực OTP thất bại!",
+  "noNewNotifications": "Không có thông báo mới",
+  "clearAll": "Xóa tất cả",
+  "language": "Ngôn ngữ",
+  "vietnamese": "Tiếng Việt",
+  "english": "Tiếng Anh",
+  "sidebar": {
+    "dashboard": "Trang chủ",
+    "devices": "Thiết bị",
+    "contracts": "Hợp đồng",
+    "history": "Lịch sử",
+    "homeowners": "Chủ nhà",
+    "users": "Người dùng",
+    "logout": "Đăng xuất"
+  },
+  "dashboard": {
+    "welcome": {
+      "title": "Xin chào, {{username}}!",
+      "subtitle": "Chào mừng về nhà!",
+      "aqi": {
+        "1": "Không khí trong lành, một ngày tuyệt vời để ra ngoài!",
+        "2": "Chất lượng không khí khá tốt, bạn có thể ra ngoài nhưng hãy chú ý.",
+        "3": "Không khí trung bình, người nhạy cảm nên hạn chế hoạt động ngoài trời.",
+        "4": "Chất lượng không khí kém, tốt hơn nên ở trong nhà hôm nay.",
+        "5": "Chất lượng không khí rất kém, tránh các hoạt động ngoài trời càng nhiều càng tốt."
+      },
+      "weather": {
+        "temp": "Nhiệt độ ngoài trời",
+        "noData": "Không có dữ liệu",
+        "weatherDescriptions": {
+            "clear_sky": "Trời quang",
+            "few_clouds": "Ít mây",
+            "scattered_clouds": "Mây rải rác",
+            "broken_clouds": "Mây từng đám",
+            "shower_rain": "Mưa rào",
+            "rain": "Mưa",
+            "thunderstorm": "Dông",
+            "snow": "Tuyết",
+            "mist": "Sương mù"
+            }
+
+      }
+    },
+    "home": {
+      "title": "Nhà của {{name}}",
+      "stats": {
+        "temp": "Nhiệt độ trong nhà"
+      }
+    },
+    "devices": {
+      "noDevices": "Không tìm thấy thiết bị",
+      "selectDevice": "Chọn thiết bị",
+      "power": "Nguồn",
+      "on": "BẬT",
+      "off": "TẮT",
+      "notControllable": "Thiết bị này không thuộc quyền quản lý của bạn",
+      "myDevices": {
+        "title": "Thiết bị của tôi",
+        "noDevices": "Không có thiết bị nào có thể điều khiển"
+      }
+    },
+    "schedule": {
+      "countdown": "{{device}} sẽ được {{action}} sau",
+      "scheduledTime": "Lên lịch vào",
+      "cancel": "Hủy",
+      "form": {
+        "selectDate": "Chọn ngày:",
+        "selectTime": "Chọn giờ:",
+        "action": "Hành động:",
+        "turnOn": "Bật",
+        "turnOff": "Tắt",
+        "setTimer": "Đặt hẹn giờ"
+      },
+      "errors": {
+        "timeRequired": "Vui lòng chọn thời gian và hành động",
+        "futureTime": "Thời gian phải nằm trong tương lai",
+        "createSuccess": "Đã đặt lịch {{action}} thiết bị vào lúc {{time}}",
+        "createError": "Không thể tạo lịch. Vui lòng thử lại.",
+        "cancelSuccess": "Đã hủy lịch hẹn thành công",
+        "cancelError": "Không thể hủy lịch. Vui lòng thử lại."
+      }
+    },
+    "members": {
+      "title": "Thành viên",
+      "noMembers": "Không có thành viên nào",
+      "kick": "Loại bỏ"
+    }
+  },
+  "admindashboard": {
+    "userInfoTitle": "Thông tin người dùng",
+    "username": "Tên đăng nhập",
+    "email": "Email",
+    "roles": "Vai trò",
+    "editProfile": "Chỉnh sửa thông tin",
+    "changePassword": "Đổi mật khẩu",
+    "loading": "Đang tải thông tin..."
+  },
+    "id": "ID",
+    "status": "Trạng thái",
+    "on": "Bật",
+    "off": "Tắt",
+    "edit": "Sửa",
+    "delete": "Xoá",
+    "deviceControlActions": {
+        "requestSuccess": "Yêu cầu gửi OTP thành công!",
+        "requestFail": "Không thể gửi yêu cầu điều khiển",
+        "otpPlaceholder": "Nhập OTP",
+        "confirmSuccess": "Đăng ký điều khiển thành công!",
+        "confirmFail": "OTP không hợp lệ hoặc lỗi xác nhận",
+        "unsubscribeConfirm": "Bạn có chắc muốn huỷ điều khiển thiết bị này?",
+        "unsubscribeSuccess": "Huỷ điều khiển thành công!",
+        "unsubscribeFail": "Lỗi khi huỷ điều khiển",
+        "subscribe": "Đăng ký",
+        "unsubscribe": "Huỷ đăng ký"
+  },
+  "deviceControlHistory": {
+    "title": "Lịch sử điều khiển thiết bị",
+    "loading": "Đang tải dữ liệu...",
+    "empty": "Chưa có lịch sử điều khiển.",
+    "time": "Thời gian",
+    "device": "Thiết bị",
+    "action": "Hành động",
+    "actionOn": "Bật",
+    "actionOff": "Tắt"
+  },
+   "deviceForm": {
+    "addTitle": "Thêm thiết bị",
+    "editTitle": "Sửa thiết bị",
+    "deviceNameLabel": "Tên thiết bị",
+    "deviceNamePlaceholder": "Nhập tên thiết bị",
+    "contractLabel": "Thuộc hợp đồng",
+    "contractSelectPlaceholder": "-- Chọn hợp đồng --",
+    "saveButton": "Lưu",
+    "cancelButton": "Hủy"
+  },
+  "deviceManager": {
+    "pageTitle": "Quản lý thiết bị",
+    "addDeviceButton": "+ Thêm thiết bị",
+    "deleteConfirm": "Xóa thiết bị này?",
+    "noDevicesMessage": "Chưa có thiết bị nào."
+  },
+   "deviceScheduleForm": {
+    "scheduleTimeLabel": "Thời gian thực hiện:",
+    "actionLabel": "Hành động:",
+    "actionOn": "Bật",
+    "actionOff": "Tắt",
+    "submitButton": "Hẹn giờ",
+    "successMessage": "Đã hẹn giờ thành công!",
+    "failMessage": "Hẹn giờ thất bại"
+  },
+  "mydevices": {
+  "pageTitle": "Thiết bị của tôi",
+  "pageSubtitle": "Quản lý và điều khiển các thiết bị smart home",
+  "noDevicesMessage": "Không có thiết bị nào trong hợp đồng này.",
+  "publishError": "Không thể gửi lệnh tới thiết bị.",
+      "empty": "Không có thiết bị."
+
+    },
+    "homeownerCard": {
+        "owner": "Chủ nhà",
+        "email": "Email",
+        "phone": "SĐT",
+        "address": "Địa chỉ",
+        "edit": "Sửa",
+        "delete": "Xoá"
+    },
+    "homeOwnerDetails": {
+    "loading": "Đang tải...",
+    "title": "Chi tiết Chủ nhà",
+    "email": "Email",
+    "phone": "SĐT",
+    "address": "Địa chỉ",
+    "contractsTitle": "Hợp đồng của chủ nhà này",
+    "noContracts": "Chưa có hợp đồng nào.",
+    "backToList": "Quay lại danh sách chủ nhà"
+  },
+  "homeOwnerForm": {
+    "addTitle": "Thêm chủ nhà",
+    "editTitle": "Sửa chủ nhà",
+    "fullName": "Họ tên",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "address": "Địa chỉ",
+    "save": "Lưu",
+    "cancel": "Hủy"
+  },
+  "homeOwnerManager": {
+    "title": "Danh sách Chủ nhà",
+    "add": "Thêm chủ nhà",
+    "confirmDelete": "Xóa chủ nhà này?"
+  },
+  "userCard": {
+    "id": "ID",
+    "email": "Email",
+    "delete": "Xoá",
+    "showDevices": "Xem thiết bị",
+    "hideDevices": "Ẩn thiết bị"
+  },
+  "userManager": {
+    "title": "Danh sách người dùng",
+    "confirmDelete": "Xoá người dùng này?"
+  },
+  "contractListCard": {
+    "confirmUnlink": "Bạn chắc chắn muốn hủy liên kết với hợp đồng {{contractCode}}?",
+    "unlinkSuccess": "Đã hủy liên kết hợp đồng!",
+    "unlinkError": "Không thể hủy liên kết",
+    "confirmDelete": "Xóa hợp đồng này?",
+    "owner": "Chủ nhà",
+    "start": "Bắt đầu",
+    "end": "Kết thúc",
+    "unlink": "Hủy liên kết",
+    "edit": "Sửa",
+    "delete": "Xóa"
+  },
+  "loadingData": "Đang tải dữ liệu...",
+  "noContractFound": "Không tìm thấy hợp đồng.",
+  "backToContractList": "Quay lại danh sách hợp đồng",
+  "homeOwner": "Chủ nhà",
+  "startDate": "Ngày bắt đầu",
+  "endDate": "Ngày kết thúc",
+  "linkedUsersCount": "Số lượng user liên kết",
+  "noLinkedUsers": "Không có user nào liên kết.",
+  "devicesOfUser": "Thiết bị của {{username}}",
+  
+  "owner": "Chủ nhà",
+  "member": "Thành viên",
+  "editContract": "Sửa hợp đồng",
+  "contractCode": "Mã hợp đồng",
+  "selectHomeOwner": "-- Chọn chủ nhà --",
+  "active": "Active",
+  "save": "Lưu",
+    "contractListTitle": "Danh sách hợp đồng",
+  "contractUsersTitle": "Danh sách người dùng của hợp đồng #{{id}}",
+  "back": "Quay lại",
+  "userId": "ID",
+  "username": "Tên người dùng",
+  "email": "Email",
+  "role": "Vai trò",
+  "noUsersLinked": "Không có người dùng liên kết.",
+  "myContracts": "Hợp đồng của tôi",
+  "loadingMyContracts": "Đang tải hợp đồng của bạn...",
+  "noContractsYet": "Bạn chưa có hợp đồng nào.",
+  "pleaseEnterContractCode": "Vui lòng nhập mã hợp đồng",
+  "otpSentToOwner": "OTP đã được gửi đến chủ nhà để xác nhận!",
+  "errorSendingLinkRequest": "Lỗi khi gửi yêu cầu liên kết",
+  "pleaseEnterOtp": "Vui lòng nhập OTP",
+  "linkSuccess": "Liên kết hợp đồng thành công!",
+  "linkConfirmFailed": "Xác nhận liên kết thất bại",
+  "errorFetchingContracts": "Lỗi khi lấy hợp đồng",
+  "oldPassword": "Mật khẩu cũ",
+  "newPassword": "Mật khẩu mới",
+  "confirmNewPassword": "Xác nhận mật khẩu mới",
+  "newPasswordMismatch": "Mật khẩu mới và xác nhận mật khẩu không khớp!",
+  "passwordChangeSuccess": "Đổi mật khẩu thành công!",
+  "passwordChangeFailed": "Đổi mật khẩu thất bại!",
+    "resetPassword": "Đặt lại mật khẩu",
+  "enterTokenAndNewPassword": "Nhập token xác thực và mật khẩu mới",
+  "verificationToken": "Token xác thực",
+  "confirmPassword": "Xác nhận mật khẩu",
+  "backToLogin": "Quay lại đăng nhập",
+  "confirmPasswordMismatch": "Mật khẩu xác nhận không khớp.",
+  "passwordResetSuccess": "Mật khẩu đã được cập nhật thành công. Bạn có thể đăng nhập lại.",
+  "passwordResetFailed": "Cập nhật mật khẩu thất bại",
+  "forgotPassword": "Quên mật khẩu",
+  "enterEmailForResetLink": "Nhập email để nhận link đặt lại mật khẩu",
+  "enterYourEmail": "Nhập email của bạn",
+  "send": "Gửi",
+  "forgotPasswordEmailSent": "Đã gửi email khôi phục mật khẩu. Vui lòng kiểm tra hộp thư của bạn.",
+  "forgotPasswordEmailFailed": "Gửi email khôi phục mật khẩu thất bại",
+  "pleaseLogin": "Hãy đăng nhập để tiếp tục",
+  "rememberMe": "Nhớ mật khẩu",
+  "noAccount": "Chưa có tài khoản?",
+  "loginSuccess": "Đăng nhập thành công!",
+  "loginFailed": "Đăng nhập thất bại!",
+    "welcome": "Chào mừng bạn",
+  "createAccount": "Hãy tạo tài khoản để tiếp tục",
+  "password": "Mật khẩu",
+  "register": "Đăng ký",
+  "alreadyAccount": "Đã có tài khoản?",
+  "login": "Đăng nhập",
+  "registerSuccess": "Đăng ký thành công!",
+  "registerFailed": "Đăng ký thất bại",
+  "editProfile": {
+    "title": "Chỉnh sửa thông tin cá nhân",
+    "username": "Tên đăng nhập",
+    "email": "Email",
+    "save": "Lưu thay đổi",
+    "cancel": "Hủy",
+    "noUserFound": "Không tìm thấy thông tin người dùng!",
+    "updateSuccess": "Cập nhật thông tin thành công!",
+    "updateFail": "Cập nhật thất bại!"
+  },
+    "notFound": {
+    "title": "404 - Trang không tồn tại",
+    "message": "Xin lỗi, đường dẫn bạn truy cập hiện không khả dụng hoặc đã bị xóa.",
+    "backToDashboard": "Quay lại Bảng điều khiển"
+  }
+}

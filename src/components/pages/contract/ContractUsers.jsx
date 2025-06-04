@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getUsersByContractId } from '../../../api/contractApi';
+import { useTranslation } from 'react-i18next';
 
 function ContractUsers() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [users, setUsers] = useState([]);
 
@@ -18,17 +20,17 @@ function ContractUsers() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>👥 Danh sách người dùng của hợp đồng #{id}</h2>
-        <Link className="link-button" to="/contracts">← Quay lại</Link>
+        <h2>{t('contractUsersTitle', { id })}</h2>
+        <Link className="link-button" to="/contracts">← {t('back')}</Link>
       </div>
 
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Tên người dùng</th>
-            <th>Email</th>
-            <th>Vai trò</th>
+            <th>{t('userId')}</th>
+            <th>{t('username')}</th>
+            <th>{t('email')}</th>
+            <th>{t('role')}</th>
           </tr>
         </thead>
         <tbody>
@@ -43,7 +45,7 @@ function ContractUsers() {
             ))
           ) : (
             <tr>
-              <td colSpan="4" style={{ textAlign: 'center' }}>Không có người dùng liên kết.</td>
+              <td colSpan="4" style={{ textAlign: 'center' }}>{t('noUsersLinked')}</td>
             </tr>
           )}
         </tbody>

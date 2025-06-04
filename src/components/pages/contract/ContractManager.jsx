@@ -3,8 +3,10 @@ import { getContracts, deleteContract } from '../../../api/contractApi';
 import { useNavigate, Link } from 'react-router-dom';
 import ContractListCard from './ContractListCard';
 import '../../css/Contract.css';
+import { useTranslation } from 'react-i18next';
 
 function ContractManager() {
+  const { t } = useTranslation();
   const [contracts, setContracts] = useState([]);
   const navigate = useNavigate();
 
@@ -18,17 +20,16 @@ function ContractManager() {
   };
 
   const handleDelete = async (id) => {
-      await deleteContract(id);
-      fetchContracts();
-    
+    await deleteContract(id);
+    fetchContracts();
   };
 
   return (
     <div className="contract-manager-container">
       <div className="contract-title">
-        <h2>Danh sách hợp đồng</h2>
+        <h2>{t('contractListTitle')}</h2>
       </div>
-      <Link className="link-button" to="/contracts/add">+ Thêm hợp đồng</Link>
+      <Link className="link-button" to="/contracts/add">+ {t('addContract')}</Link>
 
       <div className="contracts-grid">
         {contracts.map(contract => (

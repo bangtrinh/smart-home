@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { addHomeOwner, getHomeOwnerById, updateHomeOwner } from '../../../api/homeOwnerApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../../css/HomeOwnerForm.css';
+import { useTranslation } from 'react-i18next';
 
 function HomeOwnerForm() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [owner, setOwner] = useState({
@@ -34,10 +36,10 @@ function HomeOwnerForm() {
 
   return (
     <div className="homeowner-form-container">
-      <h2>{id ? 'Sửa' : 'Thêm'} chủ nhà</h2>
+      <h2>{id ? t('homeOwnerForm.editTitle') : t('homeOwnerForm.addTitle')}</h2>
       <form className="homeowner-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Họ tên</label>
+          <label>{t('homeOwnerForm.fullName')}</label>
           <input
             type="text"
             value={owner.fullName}
@@ -46,7 +48,7 @@ function HomeOwnerForm() {
           />
         </div>
         <div className="form-group">
-          <label>Email</label>
+          <label>{t('homeOwnerForm.email')}</label>
           <input
             type="email"
             value={owner.email}
@@ -55,7 +57,7 @@ function HomeOwnerForm() {
           />
         </div>
         <div className="form-group">
-          <label>Số điện thoại</label>
+          <label>{t('homeOwnerForm.phone')}</label>
           <input
             type="text"
             value={owner.phone}
@@ -63,7 +65,7 @@ function HomeOwnerForm() {
           />
         </div>
         <div className="form-group">
-          <label>Địa chỉ</label>
+          <label>{t('homeOwnerForm.address')}</label>
           <input
             type="text"
             value={owner.address}
@@ -72,8 +74,8 @@ function HomeOwnerForm() {
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="save-btn">Lưu</button>
-          <button type="button" className="cancel-btn" onClick={() => navigate('/homeowners')}>Hủy</button>
+          <button type="submit" className="save-btn">{t('homeOwnerForm.save')}</button>
+          <button type="button" className="cancel-btn" onClick={() => navigate('/homeowners')}>{t('homeOwnerForm.cancel')}</button>
         </div>
       </form>
     </div>

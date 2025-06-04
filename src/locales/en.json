@@ -1,0 +1,310 @@
+{
+  "logout": "Logout",
+  "profileSettings": "Profile Settings",
+  "changePassword": "Change Password",
+  "addContract": "Add...",
+  "enterContractCode": "Enter contract code to link",
+  "enterOtpCode": "Enter OTP code",
+  "sendRequest": "Send Request",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "otpSent": "OTP has been sent!",
+  "linkContractFailed": "Linking contract failed!",
+  "linkContractSuccess": "Contract linked successfully!",
+  "otpVerificationFailed": "OTP verification failed!",
+  "noNewNotifications": "No new notifications",
+  "clearAll": "Clear All",
+  "language": "Language",
+  "vietnamese": "Vietnamese",
+  "english": "English",
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "devices": "Devices",
+    "contracts": "Contracts",
+    "history": "History",
+    "homeowners": "Homeowners",
+    "users": "Users",
+    "logout": "Logout"
+  },
+  "dashboard": {
+    "welcome": {
+      "title": "Hello, {{username}}!",
+      "subtitle": "Welcome Home!",
+      "aqi": {
+        "1": "The air is fresh, a perfect day to go outside!",
+        "2": "Air quality is fair, you can go out but stay aware.",
+        "3": "Moderate air, sensitive people should limit outdoor activities.",
+        "4": "Poor air quality, better to stay indoors today.",
+        "5": "Very poor air quality, avoid outdoor activities as much as possible."
+      },
+      "weather": {
+        "temp": "Outdoor Temperature",
+        "noData": "No data",
+            "weatherDescriptions": {
+            "clear_sky": "Clear Sky",
+            "few_clouds": "Few Clouds",
+            "scattered_clouds": "Scattered Clouds",
+            "broken_clouds": "Broken Clouds",
+            "shower_rain": "Shower Rain",
+            "rain": "Rain",
+            "thunderstorm": "Thunderstorm",
+            "snow": "Snow",
+            "mist": "Mist"
+            }
+      }
+    },
+    "home": {
+      "title": "{{name}}'s Home",
+      "stats": {
+        "temp": "Indoor temperature"
+      }
+    },
+    "devices": {
+      "noDevices": "No devices found",
+      "selectDevice": "Select a device",
+      "power": "POWER",
+      "on": "ON",
+      "off": "OFF",
+      "notControllable": "This device is not under your control",
+      "myDevices": {
+        "title": "My Devices",
+        "noDevices": "No controllable devices available"
+      }
+    },
+    "schedule": {
+      "countdown": "{{device}} will be turned {{action}} in",
+      "scheduledTime": "Scheduled for",
+      "cancel": "Cancel",
+      "form": {
+        "selectDate": "Select date:",
+        "selectTime": "Select time:",
+        "action": "Action:",
+        "turnOn": "Turn On",
+        "turnOff": "Turn Off",
+        "setTimer": "Set Timer"
+      },
+      "errors": {
+        "timeRequired": "Please select time and action",
+        "futureTime": "Time must be in the future",
+        "createSuccess": "Scheduled to {{action}} device at {{time}}",
+        "createError": "Failed to create schedule. Please try again.",
+        "cancelSuccess": "Schedule canceled successfully",
+        "cancelError": "Failed to cancel schedule. Please try again."
+      }
+    },
+    "members": {
+      "title": "Members",
+      "noMembers": "No members available",
+      "kick": "Kick"
+    }
+  },
+  "admindashboard": {
+    "userInfoTitle": "User Information",
+    "username": "Username",
+    "email": "Email",
+    "roles": "Roles",
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password",
+    "loading": "Loading user information..."
+  },
+    "id": "ID",
+    "status": "Status",
+    "on": "On",
+    "off": "Off",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deviceControlActions": {
+        "requestSuccess": "OTP request sent successfully!",
+        "requestFail": "Failed to send control request",
+        "otpPlaceholder": "Enter OTP",
+        "confirmSuccess": "Control registration successful!",
+        "confirmFail": "Invalid OTP or confirmation error",
+        "unsubscribeConfirm": "Are you sure you want to cancel device control?",
+        "unsubscribeSuccess": "Unsubscribed successfully!",
+        "unsubscribeFail": "Error when unsubscribing",
+        "subscribe": "Subscribe",
+        "unsubscribe": "Unsubscribe"
+  },
+  "deviceControlHistory": {
+    "title": "Device Control History",
+    "loading": "Loading data...",
+    "empty": "No control history yet.",
+    "time": "Time",
+    "device": "Device",
+    "action": "Action",
+    "actionOn": "On",
+    "actionOff": "Off"
+  },
+    "deviceForm": {
+        "addTitle": "Add Device",
+        "editTitle": "Edit Device",
+        "deviceNameLabel": "Device Name",
+        "deviceNamePlaceholder": "Enter device name",
+        "contractLabel": "Belongs to Contract",
+        "contractSelectPlaceholder": "-- Select Contract --",
+        "saveButton": "Save",
+        "cancelButton": "Cancel"
+  },
+  "deviceManager": {
+    "pageTitle": "Device Management",
+    "addDeviceButton": "+ Add Device",
+    "deleteConfirm": "Are you sure you want to delete this device?",
+    "noDevicesMessage": "No devices available."
+  },
+   "deviceScheduleForm": {
+    "scheduleTimeLabel": "Schedule Time:",
+    "actionLabel": "Action:",
+    "actionOn": "Turn On",
+    "actionOff": "Turn Off",
+    "submitButton": "Set Schedule",
+    "successMessage": "Schedule set successfully!",
+    "failMessage": "Failed to set schedule."
+  },
+  "mydevices": {
+  "pageTitle": "My Devices",
+  "pageSubtitle": "Manage and control smart home devices",
+  "noDevicesMessage": "No devices found in this contract.",
+    "publishError": "Cannot control this device.",
+    "empty": "No device found."
+  },
+  "homeownerCard": {
+    "owner": "Homeowner",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "homeOwnerDetails": {
+    "loading": "Loading...",
+    "title": "Homeowner Details",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "contractsTitle": "Contracts of this homeowner",
+    "noContracts": "No contracts found.",
+    "backToList": "Back to homeowner list"
+  },
+  "homeOwnerForm": {
+    "addTitle": "Add Homeowner",
+    "editTitle": "Edit Homeowner",
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "address": "Address",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+    "homeOwnerManager": {
+    "title": "Homeowners List",
+    "add": "Add Homeowner",
+    "confirmDelete": "Are you sure you want to delete this homeowner?"
+  },
+  "userCard": {
+    "id": "ID",
+    "email": "Email",
+    "delete": "Delete",
+    "showDevices": "Show Devices",
+    "hideDevices": "Hide Devices"
+  },
+    "userManager": {
+    "title": "User List",
+    "confirmDelete": "Delete this user?"
+  },
+  "contractListCard": {
+    "confirmUnlink": "Are you sure you want to unlink from contract {{contractCode}}?",
+    "unlinkSuccess": "Unlinked contract successfully!",
+    "unlinkError": "Cannot unlink the contract",
+    "confirmDelete": "Delete this contract?",
+    "owner": "Owner",
+    "start": "Start",
+    "end": "End",
+    "unlink": "Unlink",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+"loadingData": "Loading data...",
+  "noContractFound": "No contract found.",
+  "backToContractList": "Back to contract list",
+  "homeOwner": "Home owner",
+  "startDate": "Start date",
+  "endDate": "End date",
+  "linkedUsersCount": "Number of linked users",
+  "noLinkedUsers": "No linked users.",
+  "devicesOfUser": "{{username}}'s devices",
+  
+  "owner": "Owner",
+  "member": "Member",
+  "editContract": "Edit Contract",
+  "contractCode": "Contract Code",
+  "selectHomeOwner": "-- Select Home Owner --",
+  "active": "Active",
+  "save": "Save",
+  "contractListTitle": "Contract List",
+    "contractUsersTitle": "User list of contract #{{id}}",
+  "back": "Back",
+  "userId": "ID",
+  "username": "Username",
+  "email": "Email",
+  "role": "Role",
+  "noUsersLinked": "No linked users.",
+  "myContracts": "My Contracts",
+  "loadingMyContracts": "Loading your contracts...",
+  "noContractsYet": "You have no contracts yet.",
+  "pleaseEnterContractCode": "Please enter the contract code",
+  "otpSentToOwner": "OTP has been sent to the owner for confirmation!",
+  "errorSendingLinkRequest": "Error sending link request",
+  "pleaseEnterOtp": "Please enter OTP",
+  "linkSuccess": "Contract linked successfully!",
+  "linkConfirmFailed": "Link confirmation failed",
+  "errorFetchingContracts": "Error fetching contracts",
+  "oldPassword": "Old Password",
+  "newPassword": "New Password",
+  "confirmNewPassword": "Confirm New Password",
+  "newPasswordMismatch": "New password and confirmation do not match!",
+  "passwordChangeSuccess": "Password changed successfully!",
+  "passwordChangeFailed": "Password change failed!",
+  "resetPassword": "Reset Password",
+  "enterTokenAndNewPassword": "Enter verification token and new password",
+  "verificationToken": "Verification Token",
+  "confirmPassword": "Confirm Password",
+  "backToLogin": "Back to Login",
+  "confirmPasswordMismatch": "Confirm password does not match.",
+  "passwordResetSuccess": "Password has been successfully updated. You can now log in.",
+  "passwordResetFailed": "Failed to update password",
+  "forgotPassword": "Forgot Password",
+  "enterEmailForResetLink": "Enter email to receive password reset link",
+  "enterYourEmail": "Enter your email",
+  "send": "Send",
+  "forgotPasswordEmailSent": "Password reset email sent. Please check your inbox.",
+  "forgotPasswordEmailFailed": "Failed to send password reset email",
+  
+  "welcome": "Welcome",
+  "pleaseLogin": "Please login to continue",
+  "password": "Password",
+  "rememberMe": "Remember me",
+  "login": "Login",
+  "noAccount": "Don't have an account?",
+  "register": "Register",
+  "loginSuccess": "Login successful!",
+  "loginFailed": "Login failed!",
+  "createAccount": "Create an account to continue",
+  "alreadyAccount": "Already have an account?",
+  "registerSuccess": "Registration successful!",
+  "registerFailed": "Registration failed",
+  "editProfile": {
+    "title": "Edit Profile",
+    "username": "Username",
+    "email": "Email",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "noUserFound": "User information not found!",
+    "updateSuccess": "Profile updated successfully!",
+    "updateFail": "Failed to update profile!"
+  },
+  "notFound": {
+    "title": "404 - Page Not Found",
+    "message": "Sorry, the page you are looking for is unavailable or has been removed.",
+    "backToDashboard": "Back to Dashboard"
+  }
+}
